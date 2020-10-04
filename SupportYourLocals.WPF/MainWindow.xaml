@@ -5,8 +5,37 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SupportYourLocals.WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        xmlns:m="clr-namespace:Microsoft.Maps.MapControl.WPF;assembly=Microsoft.Maps.MapControl.WPF"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="Map" Height="450" Width="800" ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen">
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Row="1" Margin="10">
+            <Grid>
+                <TextBox Background="White" Padding="10 0 25 0"/>
+                <materialDesign:PackIcon Kind="MapMarker" VerticalAlignment="Center" Margin="2"/>
+                <Button HorizontalAlignment="Right" Style="{StaticResource MaterialDesignFlatButton}">
+                    <materialDesign:PackIcon Kind="Search"/>
+                </Button>
+            </Grid>
+        </StackPanel>
+
+        <Button Grid.Column="1" HorizontalAlignment="Right" Style="{StaticResource MaterialDesignFlatButton}">
+            <materialDesign:PackIcon Kind="Close"/>
+        </Button>
+
+        <m:Map CredentialsProvider="AttsGkqIHCOIEA11KtQZDphl5bi8lppin64jeg-ZOOhiS4cdHA_EXJwHSbyZi4Xo" Mode="Road" Grid.Column="1" Grid.Row="1" ZoomLevel="16" Center="54.7316978, 25.2598058">
+            <Canvas
+            m:MapLayer.Position="54.7316978, 25.2598058"
+            m:MapLayer.PositionOrigin="BottomCenter" Width="30" Height="30"
+            >
+                <materialDesign:PackIcon Kind="MapMarker" Width="30" Height="30" Foreground="#FF3C3C3C"/>
+            </Canvas>
+        </m:Map>
     </Grid>
 </Window>
