@@ -24,5 +24,6 @@ namespace SupportYourLocals.WPF
         {
             InitializeComponent();
         }
+
     }
 }
