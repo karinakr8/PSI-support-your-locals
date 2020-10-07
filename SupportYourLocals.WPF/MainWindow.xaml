@@ -5,8 +5,71 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SupportYourLocals.WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="MainWindow" Height="530" Width="800">
+
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300
+"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <!-- Header with help button and title of the window-->
+        <Grid Grid.ColumnSpan="2" Background="#2EB875">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
+                <Button Width="25" Height="25" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White">
+                    <materialDesign:PackIcon Kind="QuestionMark"/>
+                </Button>
+                
+            </StackPanel>
+            <Label Content="Search local sellers" FontFamily="Segoe UI Black" FontSize="16" Foreground="White"/>
+        </Grid>
+        <!-- User input for the search-->
+        <Grid Grid.Row="1" >
+            <Grid >
+                <Label Content="Search phrase" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="37,50,0,0" FontFamily="Yu Gothic UI Semibold" FontSize="16"/>
+                <TextBox HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Strawberries" materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="120" Margin="37,87,0,0" />
+
+                <Label Content="City" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="37,130,0,0" FontFamily="Yu Gothic UI Semibold" FontSize="16"/>
+                <TextBox HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Margin="37,167,0,0"/>
+
+
+                <Label Content="Adress" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="37,210,0,0" FontFamily="Yu Gothic UI Semibold" FontSize="16"/>
+                
+                <TextBox HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Margin="37,247,0,0"/>
+
+                <Label Content="Radius from location (km)" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="37,290,0,0" FontFamily="Yu Gothic UI Semibold" FontSize="16"/>
+
+                <Slider HorizontalAlignment="Left" VerticalAlignment="Top" Margin="37,327,0,0" Height="22" Width="156" TickFrequency="10" Value="1" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="0" SmallChange="1" LargeChange="1"/>
+                <Button Content="Find" HorizontalAlignment="Left" Margin="37,370,0,0" VerticalAlignment="Top" Width="160" FontFamily="Yu Gothic UI Semibold" FontSize="16" Foreground="White" Background="#66ffb5" BorderBrush="{x:Null}">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="10"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+
+            </Grid>
+            
+
+        </Grid>
         
+        
+        <!-- Place for a map-->
+        <Grid Grid.Column="2" Grid.Row="2">
+                
+        </Grid>
+
+        
+
     </Grid>
+
+
+
+
 </Window>
