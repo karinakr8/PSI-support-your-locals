@@ -19,7 +19,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <!-- Header with help button and title of the window-->
-                <Grid Grid.ColumnSpan="2" Background="#2EB875">
+                <Grid Grid.ColumnSpan="2" Background="#41aea9">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="81*"/>
                         <ColumnDefinition Width="707*"/>
@@ -39,33 +39,71 @@
                 </Grid>
                 <!-- User input for the search-->
                 <Grid Grid.Row="1" >
-                    <Grid HorizontalAlignment="Left" Margin="0,0,0,-0.4" Width="300" >
-                        <Label Content="Search phrase" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 40 0 0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Width="160"/>
-                        <TextBox  HorizontalContentAlignment="Center" Margin="0 75 0 0" Height="23" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Strawberries" materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="160" />
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="0*"/>
+                    </Grid.ColumnDefinitions>
+                    <!-- Buttons for changing search labels and textboxes-->
+                    <Grid Height="40" VerticalAlignment="Top" Grid.ColumnSpan="1" Margin="0,0,0,0" Background="#e8ffff" >
+                        <Button x:Name="SearchMarketplacesButton" Content="Search marketplaces"  HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="160,10,0,0" VerticalAlignment="Top" Width="120" BorderThickness="0" Background="Transparent" Foreground="#808080" Click="SearchMarketplacesButton_Click" />
+                        <Button x:Name="SearchSellersButton" Content="Search local sellers" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="20,10,0,0" VerticalAlignment="Top" Width="120" BorderThickness="0" Background="Transparent"  FontWeight="Bold" Click="SearchSellersButton_Click"/>
+                    </Grid>
+                    <!-- Seach local sellers grid-->
+                    <Grid x:Name="GridSellersSearch" HorizontalAlignment="Left" Grid.ColumnSpan="2" Margin="0,40,0,0" Width="300" Background="#e8ffff" Visibility="Visible">
+                        <Label x:Name="Label1Seller" Content="Search phrase" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Width="160" />
+                        <TextBox x:Name="TextBox1Seller"  HorizontalContentAlignment="Center" Margin="0 45 0 0 " Height="23" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Strawberries" materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="160" />
 
-                        <Label Content="City" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 120 0 0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Width="160"/>
-                        <TextBox HorizontalContentAlignment="Center" Margin="0 155 0 0" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="160" />
+                        <Label x:Name="Label2Seller" Content="City" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 90 0 0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Width="160"/>
+                        <TextBox x:Name="TextBox2Seller" HorizontalContentAlignment="Center" Margin="0 125 0 0" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="160" />
 
 
-                        <Label Content="Adress" HorizontalContentAlignment="Center" Margin="0 190 0 0" VerticalAlignment="Top" FontFamily="Yu Gothic UI Semibold" FontSize="16" Width="160"/>
+                        <Label x:Name="Label3Seller" Content="Adress" HorizontalContentAlignment="Center" Margin="0 160 0 0" VerticalAlignment="Top" FontFamily="Yu Gothic UI Semibold" FontSize="16" Width="160"/>
 
-                        <TextBox HorizontalContentAlignment="Center" Margin="0 225 0 0" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="160" />
+                        <TextBox x:Name="TextBox3Seller" HorizontalContentAlignment="Center" Margin="0 195 0 0" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="160" />
 
-                        <Label Content="Radius from adress location (km)" HorizontalContentAlignment="Center" Margin="0 270 0 0" VerticalAlignment="Top"  FontFamily="Yu Gothic UI Semibold" FontSize="16"/>
+                        <Label x:Name="Label4Seller" Content="Radius from adress location (km)" HorizontalContentAlignment="Center" Margin="0 240 0 0" VerticalAlignment="Top"  FontFamily="Yu Gothic UI Semibold" FontSize="16" Grid.ColumnSpan="2"/>
 
-                        <Slider  VerticalAlignment="Top" HorizontalContentAlignment="Center" Margin="0 305 0 0" Height="22" Width="160" TickFrequency="10" Value="1" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="0" SmallChange="1" LargeChange="1"/>
-                        <Button Content="Find" HorizontalContentAlignment="Center" Margin="0 360 0 0" VerticalAlignment="Top" Width="160" FontFamily="Yu Gothic UI Semibold" FontSize="16" Foreground="White" Background="#66ffb5" BorderBrush="{x:Null}">
+                        <Slider x:Name="Slider1Seller"  VerticalAlignment="Top" HorizontalContentAlignment="Center" Margin="0 280 0 0" Height="22" Width="160" TickFrequency="10" Value="1" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="0" SmallChange="1" LargeChange="1"/>
+                        <Button x:Name="Button1Seller" Content="Find" HorizontalContentAlignment="Center" Margin="0 330 0 0" VerticalAlignment="Top" Width="160" FontFamily="Yu Gothic UI Semibold" FontSize="16" Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}">
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="10"/>
                                 </Style>
                             </Button.Resources>
                         </Button>
-                        <Button Content="Add a local seller"  HorizontalContentAlignment="Center" Margin="0 400 0 0" VerticalAlignment="Top" Width="160" Background="Transparent" BorderBrush="{x:Null}" Foreground="#808080"/>
-
+                        <Button x:Name="LabelAddSeller" Content="Add a local seller"  HorizontalContentAlignment="Center" Margin="0 370 0 0" VerticalAlignment="Top" Width="160" Background="Transparent" BorderBrush="{x:Null}" Foreground="#808080"/>
 
 
                     </Grid>
+                    
+                    <!-- Search marketplaces grid-->
+                    <Grid x:Name="GridMarketplacesSearch" HorizontalAlignment="Left" Margin="0,40,0,0" Width="300" Background="#e8ffff" Visibility="Collapsed">
+
+                        <Label Content="City" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 10 0 0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Height="32" Width="160"/>
+                        <TextBox HorizontalAlignment="Center" Height="23"  Margin="0 45 0 0"  materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="160" />
+
+                        <Label Content="Marketplace" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 90 0 0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Height="32"/>
+                        <ComboBox HorizontalAlignment="Center" Height="23"  VerticalAlignment="Top" Width="160" Margin="0 125 0 0"/>
+                        <Label HorizontalAlignment="Center" HorizontalContentAlignment="Center" Content="Or" Margin="0 160 0 0" VerticalAlignment="Top" Foreground="#C0C0C0" Width="160" Height="26"/>
+
+                        <Label Content="Type of goods" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 195 0 0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Height="32"/>
+                        <ComboBox HorizontalAlignment="Center" Margin="0 230 0 0" VerticalAlignment="Top" Width="160" Height="22"/>
+
+                        <Button Content="Find" HorizontalAlignment="Center" Margin="0 295 0 0" VerticalAlignment="Top" Width="160" FontFamily="Yu Gothic UI Semibold" FontSize="16" Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}" Height="25">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+
+                        <!--Button for adding, updating marketplaces-->
+                        <Button Content="Update marketplaces" HorizontalAlignment="Center" Margin="0 340 0 0" VerticalAlignment="Top" Width="160" Background="Transparent" BorderBrush="{x:Null}" Foreground="#808080" Height="19"/>
+
+
+                    </Grid>
+                    
+
 
 
                 </Grid>
@@ -88,65 +126,6 @@
             </Grid>
         </TabItem>
 
-        <TabItem Header="Market">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="300"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="30"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <!-- Header with help button and title of the window-->
-                <Grid Grid.ColumnSpan="2" Background="#2EB875">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
-                        <Button Width="25" Height="25" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White">
-                            <materialDesign:PackIcon Kind="Account"/>
-                        </Button>
-
-                        <Button Width="25" Height="25" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White">
-                            <materialDesign:PackIcon Kind="QuestionMark"/>
-                        </Button>
-
-                    </StackPanel>
-                    <Label Content="Find marketplaces near you" FontFamily="Segoe UI Black" FontSize="16" Foreground="White"/>
-                </Grid>
-                <!-- User input for the search-->
-                <Grid Grid.Row="1" >
-                    <Grid >
-                        <Label Content="City" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 40 0 0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Width="160"/>
-                        <TextBox HorizontalAlignment="Center" Height="23" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Strawberries" materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="160" Margin="0 75 0 0" />
-
-                        <Label Content="Marketplace" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 130 0 0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Width="160"/>
-                        <ComboBox HorizontalAlignment="Center" Height="23"  VerticalAlignment="Top" Width="160" Margin="0 165 0 0"/>
-                        <Button Content="Find" HorizontalAlignment="Center" Margin="0 325 0 0" VerticalAlignment="Top" Width="160" FontFamily="Yu Gothic UI Semibold" FontSize="16" Foreground="White" Background="#66ffb5" BorderBrush="{x:Null}">
-                            <Button.Resources>
-                                <Style TargetType="Border">
-                                    <Setter Property="CornerRadius" Value="10"/>
-                                </Style>
-                            </Button.Resources>
-                        </Button>
-                        <Label Content="Type of goods" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 225 0 0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Width="160"/>
-                        <ComboBox HorizontalAlignment="Center" Margin="0 260 0 0" VerticalAlignment="Top" Width="160"/>
-                        <Label HorizontalAlignment="Center" HorizontalContentAlignment="Center" Content="Or" Margin=" 0 195 0 0" VerticalAlignment="Top" Foreground="#C0C0C0" Width="160"/>
-
-                        <!--Button for adding, updating marketplaces-->
-                        <Button Content="Update marketplaces" HorizontalAlignment="Center" Margin="0 370 0 0" VerticalAlignment="Top" Width="160" Background="Transparent" BorderBrush="{x:Null}" Foreground="#808080"/>
-
-
-                    </Grid>
-
-
-                </Grid>
-
-
-                <!-- Place for a map-->
-                <Grid Grid.Column="1" Margin="0,30,0,0" Grid.RowSpan="2"/>
-
-            </Grid>
-        </TabItem>
-
 
         <TabItem Header="Login">
 
@@ -157,7 +136,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <!-- Header with help button and title of the window-->
-                <Grid Grid.ColumnSpan="2" Background="#2EB875">
+                <Grid Grid.ColumnSpan="2" Background="#41aea9">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
                         <Button Width="25" Height="25" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White">
                             <materialDesign:PackIcon Kind="Account"/>
@@ -183,9 +162,9 @@
 
 
                 <!-- Place for a map-->
-                <Grid Grid.Column="2" Grid.Row="2">
+                <Grid Grid.Column="2" Grid.Row="2" Background="#e8ffff">
                     <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Height="260"  Width="400">
-                        <Button Content="Find" HorizontalAlignment="Center" Margin="0 140 0 0" VerticalAlignment="Top" Width="160" FontFamily="Yu Gothic UI Semibold" FontSize="16" Foreground="White" Background="#66ffb5" BorderBrush="{x:Null}">
+                        <Button Content="Find" HorizontalAlignment="Center" Margin="0 140 0 0" VerticalAlignment="Top" Width="160" FontFamily="Yu Gothic UI Semibold" FontSize="16" Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}">
                             <Button.Resources>
                                 <Style TargetType="{x:Type Border}">
                                     <Setter Property="CornerRadius" Value="10"/>
