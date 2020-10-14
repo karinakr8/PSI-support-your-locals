@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SupportYourLocals.WPF"
         mc:Ignorable="d"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" xmlns:m="clr-namespace:Microsoft.Maps.MapControl.WPF;assembly=Microsoft.Maps.MapControl.WPF"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         Title="MainWindow" Height="530" Width="800">
     <TabControl>
         <TabItem Header="Search">
@@ -111,14 +111,7 @@
 
                 <!-- Place for a map-->
                 <Grid Grid.Column="2" Grid.Row="2">
-                    <m:Map CredentialsProvider="AttsGkqIHCOIEA11KtQZDphl5bi8lppin64jeg-ZOOhiS4cdHA_EXJwHSbyZi4Xo" Mode="Road" Grid.Column="1" Grid.Row="1" ZoomLevel="16" Center="54.7316978, 25.2598058">
-                        <Canvas
-            m:MapLayer.Position="54.7316978, 25.2598058"
-            m:MapLayer.PositionOrigin="BottomCenter" Width="30" Height="30"
-            >
-                            <materialDesign:PackIcon Kind="MapMarker" Width="30" Height="30" Foreground="#FF3C3C3C"/>
-                        </Canvas>
-                    </m:Map>
+                    
                 </Grid>
 
 
