@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SupportYourLocals.WPF"
+        xmlns:map="clr-namespace:MapControl;assembly=MapControl.WPF"
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         Title="MainWindow" Height="530" Width="800">
@@ -111,7 +112,7 @@
 
                 <!-- Place for a map-->
                 <Grid Grid.Column="2" Grid.Row="2">
-                    
+                    <map:Map x:Name="MainMap"/>
                 </Grid>
 
 
