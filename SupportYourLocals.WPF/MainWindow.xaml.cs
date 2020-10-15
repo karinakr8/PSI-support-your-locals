@@ -29,7 +29,20 @@ namespace SupportYourLocals.WPF
             InitializeComponent();
 
             ImageLoader.HttpClient.DefaultRequestHeaders.Add("User-Agent", "XAML Map Control Test Application");
+
+            // Setup image cache
+            var cache = new MapControl.Caching.ImageFileCache(TileImageLoader.DefaultCacheFolder);
+            TileImageLoader.Cache = cache;
+
+            // Setup map
             SYLMap = new Map.Map(MainMap);
+
+            // Clean outdated image cache 2s after launch of program
+            Loaded += async (s, e) =>
+            {
+                await Task.Delay(2000);
+                await cache.Clean();
+            };
         }
 
         private void SearchMarketplacesButton_Click(object sender, RoutedEventArgs e)
