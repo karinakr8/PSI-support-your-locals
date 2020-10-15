@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MapControl;
+using SupportYourLocals.Map;
 
 namespace SupportYourLocals.WPF
 {
@@ -20,9 +22,14 @@ namespace SupportYourLocals.WPF
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Map.Map SYLMap;
+
         public MainWindow()
         {
             InitializeComponent();
+
+            ImageLoader.HttpClient.DefaultRequestHeaders.Add("User-Agent", "XAML Map Control Test Application");
+            SYLMap = new Map.Map(MainMap);
         }
 
         private void SearchMarketplacesButton_Click(object sender, RoutedEventArgs e)
