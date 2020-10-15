@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Linq;
 using MapControl;
 
 namespace SupportYourLocals.Map
@@ -24,6 +25,28 @@ namespace SupportYourLocals.Map
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Bottom
             });
+        }
+
+        public void AddMarker(Location position, string label)
+        {
+            WPFMap.Children.Add(new Pushpin
+            {
+                Location = position,
+                Content = label
+            });
+        }
+
+        public void AddMarker (double lat, double lon, string label)
+        {
+            AddMarker(new Location(lat, lon), label);
+        }
+
+        public void RemoveAllMarkers ()
+        {
+            var toRemove = WPFMap.Children.OfType<Pushpin>().ToList();
+
+            foreach (var item in toRemove)
+                WPFMap.Children.Remove(item);
         }
     }
 }
