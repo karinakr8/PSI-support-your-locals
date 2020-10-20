@@ -9,13 +9,28 @@ namespace SupportYourLocals.Map
     {
         private readonly MapControl.Map WPFMap;
 
+        public Location Center
+        {
+            set { WPFMap.Center = value; }
+            get { return WPFMap.Center;  }
+        }
+
+        public double Zoom
+        {
+            set { WPFMap.ZoomLevel = value; }
+            get { return WPFMap.ZoomLevel; }
+        }
+
         public Map (MapControl.Map passed_map)
         {
+            // Can't create a new map, so use the existing one
             WPFMap = passed_map;
 
-            WPFMap.ZoomLevel = 15;
-            WPFMap.MaxZoomLevel = 19;
-            WPFMap.Center = new Location(54.675083, 25.273633);
+            Zoom = 14;
+            WPFMap.MaxZoomLevel = 19; // Any closer and the map starts getting blurry
+
+            // Default center is at MIF
+            Center = new Location(54.675083, 25.273633);
 
             // Add OSM layer
             WPFMap.MapLayer = MapTileLayer.OpenStreetMapTileLayer;
@@ -29,7 +44,7 @@ namespace SupportYourLocals.Map
         }
 
         public delegate void MarkerClickedHandler(Marker marker);
-        public event MarkerClickedHandler MarkerClicked;
+        public event MarkerClickedHandler MarkerClicked; // Gets called when any marker gets clicked
 
         protected virtual void OnMarkerClicked(Marker marker)
         {
@@ -68,6 +83,11 @@ namespace SupportYourLocals.Map
 
             foreach (var item in toRemove)
                 WPFMap.Children.Remove(item);
+        }
+
+        public void SetCenterFromCoordinates(double lat, double lon)
+        {
+            Center = new Location(lat, lon);
         }
 
         private void onMarkerClick (object sender, MouseButtonEventArgs e)
