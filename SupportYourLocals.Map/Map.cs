@@ -2,6 +2,7 @@
 using System.Linq;
 using MapControl;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 
 namespace SupportYourLocals.Map
 {
@@ -11,26 +12,30 @@ namespace SupportYourLocals.Map
 
         public Location Center
         {
-            set { WPFMap.Center = value; }
+            set { WPFMap.TargetCenter = value; }
             get { return WPFMap.Center;  }
         }
 
         public double Zoom
         {
-            set { WPFMap.ZoomLevel = value; }
+            set { WPFMap.TargetZoomLevel = value; }
             get { return WPFMap.ZoomLevel; }
         }
 
-        public Map (MapControl.Map passed_map)
+        public Map (MapControl.Map passed_map, Location center = null, double zoom = 14)
         {
             // Can't create a new map, so use the existing one
             WPFMap = passed_map;
 
-            Zoom = 14;
+            WPFMap.ZoomLevel = zoom;
             WPFMap.MaxZoomLevel = 19; // Any closer and the map starts getting blurry
 
+            // Setup easing function for centering and changing zoom level
+            WPFMap.AnimationEasingFunction = new CubicEase();
+            WPFMap.AnimationEasingFunction.EasingMode = EasingMode.EaseInOut;
+
             // Default center is at MIF
-            Center = new Location(54.675083, 25.273633);
+            WPFMap.Center = center ?? new Location(54.675083, 25.273633);
 
             // Add OSM layer
             WPFMap.MapLayer = MapTileLayer.OpenStreetMapTileLayer;
