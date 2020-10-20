@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -10,6 +10,10 @@
 
   <ItemGroup>
     <PackageReference Include="XAML.MapControl" Version="5.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="marker.png" Link="marker.png" />
   </ItemGroup>
 
 </Project>

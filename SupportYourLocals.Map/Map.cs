@@ -27,18 +27,17 @@ namespace SupportYourLocals.Map
             });
         }
 
-        public void AddMarker(Location position, string label)
+        public void AddMarker(Location position)
         {
-            WPFMap.Children.Add(new Pushpin
+            WPFMap.Children.Add(new Marker
             {
-                Location = position,
-                Content = label
+                Location = position
             });
         }
 
-        public void AddMarker (double lat, double lon, string label)
+        public void AddMarker (double lat, double lon)
         {
-            AddMarker(new Location(lat, lon), label);
+            AddMarker(new Location(lat, lon));
         }
 
         public void RemoveLastMarker()
@@ -52,7 +51,7 @@ namespace SupportYourLocals.Map
 
         public void RemoveAllMarkers ()
         {
-            var toRemove = WPFMap.Children.OfType<Pushpin>().ToList();
+            var toRemove = WPFMap.Children.OfType<Marker>().ToList();
 
             foreach (var item in toRemove)
                 WPFMap.Children.Remove(item);

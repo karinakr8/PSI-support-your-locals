@@ -16,4 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\SupportYourLocals.Map\SupportYourLocals.Map.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="..\SupportYourLocals.Map\marker.png" Link="marker.png" />
+  </ItemGroup>
 </Project>
