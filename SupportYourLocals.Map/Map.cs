@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Linq;
 using MapControl;
+using System.Windows.Input;
 
 namespace SupportYourLocals.Map
 {
@@ -27,13 +28,24 @@ namespace SupportYourLocals.Map
             });
         }
 
+        public delegate void MarkerClickedHandler(Marker marker);
+        public event MarkerClickedHandler MarkerClicked;
+
+        protected virtual void OnMarkerClicked(Marker marker)
+        {
+            MarkerClicked?.Invoke(marker);
+        }
+
         public void AddMarker(Location position, string label)
         {
-            WPFMap.Children.Add(new Marker
+            var marker = new Marker
             {
                 Location = position,
                 Label = label
-            });
+            };
+            marker.MouseDown += new MouseButtonEventHandler(onMarkerClick);
+
+            WPFMap.Children.Add(marker);
         }
 
         public void AddMarker (double lat, double lon, string label)
@@ -56,6 +68,14 @@ namespace SupportYourLocals.Map
 
             foreach (var item in toRemove)
                 WPFMap.Children.Remove(item);
+        }
+
+        private void onMarkerClick (object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton != MouseButton.Left)
+                return;
+
+            OnMarkerClicked((Marker) sender);
         }
     }
 }

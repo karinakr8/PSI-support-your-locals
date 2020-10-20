@@ -6,7 +6,7 @@ using System.Windows.Media.Imaging;
 
 namespace SupportYourLocals.Map
 {
-    class Marker : Image
+    public class Marker : Image
     {
         private const string defaultImageSrc = "marker.png";
         private const int markerSize = 64;
