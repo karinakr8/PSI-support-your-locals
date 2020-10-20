@@ -1,11 +1,7 @@
 ﻿using MapControl;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace SupportYourLocals.Map
@@ -15,6 +11,7 @@ namespace SupportYourLocals.Map
         private const string defaultImageSrc = "marker.png";
         private const int markerSize = 64;
         private static BitmapImage defaultImage = null;
+        public string Label;
 
         public Marker ()
         {

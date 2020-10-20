@@ -27,17 +27,18 @@ namespace SupportYourLocals.Map
             });
         }
 
-        public void AddMarker(Location position)
+        public void AddMarker(Location position, string label)
         {
             WPFMap.Children.Add(new Marker
             {
-                Location = position
+                Location = position,
+                Label = label
             });
         }
 
-        public void AddMarker (double lat, double lon)
+        public void AddMarker (double lat, double lon, string label)
         {
-            AddMarker(new Location(lat, lon));
+            AddMarker(new Location(lat, lon), label);
         }
 
         public void RemoveLastMarker()
