@@ -9,7 +9,8 @@ namespace SupportYourLocals.Map
     public class Marker : Image
     {
         private const string defaultImageSrc = "marker.png";
-        private const int markerSize = 64;
+        private const int markerSizeX = 35;
+        private const int markerSizeY = 57;
         private static BitmapImage defaultImage = null;
         public string Label;
 
@@ -29,8 +30,8 @@ namespace SupportYourLocals.Map
             {
                 defaultImage = new BitmapImage();
                 defaultImage.BeginInit();
-                defaultImage.DecodePixelHeight = markerSize;
-                defaultImage.DecodePixelWidth = markerSize;
+                defaultImage.DecodePixelWidth = markerSizeX;
+                defaultImage.DecodePixelHeight = markerSizeY;
                 defaultImage.UriSource = new Uri(defaultImageSrc, UriKind.Relative);
                 defaultImage.EndInit();
             }
