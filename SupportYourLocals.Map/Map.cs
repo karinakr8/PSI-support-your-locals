@@ -56,21 +56,21 @@ namespace SupportYourLocals.Map
             MarkerClicked?.Invoke(marker);
         }
 
-        public void AddMarker(Location position, int id)
+        public void AddMarker(Location position, string label)
         {
             var marker = new Marker
             {
                 Location = position,
-                id = id
+                Label = label
             };
             marker.MouseDown += new MouseButtonEventHandler(onMarkerClick);
 
             WPFMap.Children.Add(marker);
         }
 
-        public void AddMarker (double lat, double lon, int id)
+        public void AddMarker (double lat, double lon, string label)
         {
-            AddMarker(new Location(lat, lon), id);
+            AddMarker(new Location(lat, lon), label);
         }
 
         public void RemoveLastMarker()

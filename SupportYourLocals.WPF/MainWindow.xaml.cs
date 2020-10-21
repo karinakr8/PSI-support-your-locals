@@ -16,7 +16,6 @@ using MapControl;
 using SupportYourLocals.Map;
 using Microsoft.VisualBasic.FileIO;
 using System.IO;
-using SupportYourLocals.Data;
 
 namespace SupportYourLocals.WPF
 {
@@ -26,7 +25,6 @@ namespace SupportYourLocals.WPF
     public partial class MainWindow : Window
     {
         private Map.Map SYLMap;
-        private readonly IDataStorage data;
 
         private string filePath = @"./Data.csv";
 
@@ -38,7 +36,6 @@ namespace SupportYourLocals.WPF
 
         public MainWindow()
         {
-            // data = new CSVDataStorage() or smth like that
             InitializeComponent();
 
             ImageLoader.HttpClient.DefaultRequestHeaders.Add("User-Agent", "XAML Map Control Test Application");
@@ -70,7 +67,7 @@ namespace SupportYourLocals.WPF
             {
                 userSelectedLocation = true;
                 MainMap.TargetCenter = MainMap.ViewToLocation(e.GetPosition(MainMap));
-                SYLMap.AddMarker(MainMap.TargetCenter, personsID);
+                SYLMap.AddMarker(MainMap.TargetCenter, "Selected location");
             }
             else
             {
@@ -177,7 +174,7 @@ namespace SupportYourLocals.WPF
             }
             // Adding all markers to a map
             for (int i = 0; i < listXCoord.Count; i++)
-                SYLMap.AddMarker(listXCoord[i], listYCoord[i], listpersonsID[i]);
+                SYLMap.AddMarker(listXCoord[i], listYCoord[i], listpersonsID[i].ToString());
         }
 
         private void SearchMarketplacesButton_Click(object sender, RoutedEventArgs e)
