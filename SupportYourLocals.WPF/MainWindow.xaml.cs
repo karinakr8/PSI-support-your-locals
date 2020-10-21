@@ -70,7 +70,7 @@ namespace SupportYourLocals.WPF
             {
                 userSelectedLocation = true;
                 MainMap.TargetCenter = MainMap.ViewToLocation(e.GetPosition(MainMap));
-                SYLMap.AddMarker(MainMap.TargetCenter, "Selected location");
+                SYLMap.AddMarker(MainMap.TargetCenter, personsID);
             }
             else
             {
@@ -177,7 +177,7 @@ namespace SupportYourLocals.WPF
             }
             // Adding all markers to a map
             for (int i = 0; i < listXCoord.Count; i++)
-                SYLMap.AddMarker(listXCoord[i], listYCoord[i], listpersonsID[i].ToString());
+                SYLMap.AddMarker(listXCoord[i], listYCoord[i], listpersonsID[i]);
         }
 
         private void SearchMarketplacesButton_Click(object sender, RoutedEventArgs e)
