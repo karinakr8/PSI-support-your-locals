@@ -41,6 +41,15 @@ namespace SupportYourLocals.Map
             AddMarker(new Location(lat, lon), label);
         }
 
+        public void RemoveLastMarker()
+        {
+            var toRemove = WPFMap.Children.OfType<Pushpin>().ToList();
+            if (toRemove.Count != 0)
+            {
+                WPFMap.Children.Remove(toRemove[toRemove.Count - 1]);
+            }
+        }
+
         public void RemoveAllMarkers ()
         {
             var toRemove = WPFMap.Children.OfType<Pushpin>().ToList();
