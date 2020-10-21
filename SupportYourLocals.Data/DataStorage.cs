@@ -4,6 +4,21 @@ using MapControl;
 
 namespace SupportYourLocals.Data
 {
+    public enum ProductType
+    {
+        vegetables,
+        fruits,
+        berries,
+        mushrooms,
+        meat,
+        tools,
+        clothing,
+        shoes,
+        flowers,
+        art,
+        other
+    }
+
     public class LocationData
     {
         public int id;
@@ -11,6 +26,7 @@ namespace SupportYourLocals.Data
         public string name;
         public int addedByID;
         public DateTime time;
+        public Dictionary<ProductType, string> products;
     }
 
     public interface IDataStorage
