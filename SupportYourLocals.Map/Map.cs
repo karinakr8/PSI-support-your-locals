@@ -75,7 +75,7 @@ namespace SupportYourLocals.Map
 
         public void RemoveLastMarker()
         {
-            var toRemove = WPFMap.Children.OfType<Pushpin>().ToList();
+            var toRemove = WPFMap.Children.OfType<Marker>().ToList();
             if (toRemove.Count != 0)
             {
                 WPFMap.Children.Remove(toRemove[toRemove.Count - 1]);
