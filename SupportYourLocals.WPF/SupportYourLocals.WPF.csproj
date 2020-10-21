@@ -14,6 +14,7 @@
     <PackageReference Include="XAML.MapControl" Version="5.3.1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SupportYourLocals.Data\SupportYourLocals.Data.csproj" />
     <ProjectReference Include="..\SupportYourLocals.Map\SupportYourLocals.Map.csproj" />
   </ItemGroup>
   <ItemGroup>

@@ -12,7 +12,7 @@ namespace SupportYourLocals.Map
         private const int markerSizeX = 35;
         private const int markerSizeY = 57;
         private static BitmapImage defaultImage = null;
-        public string Label;
+        public int id;
 
         public Marker ()
         {
