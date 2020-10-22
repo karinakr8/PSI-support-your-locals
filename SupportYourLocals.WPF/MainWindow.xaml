@@ -7,7 +7,7 @@
         xmlns:map="clr-namespace:MapControl;assembly=MapControl.WPF"
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Title="MainWindow" Height="530" Width="800">
+        Title="MainWindow" Height="530" Width="800" ResizeMode="NoResize">
     <TabControl>
         <TabItem Header="Search">
             <Grid>
@@ -76,15 +76,37 @@
 
                         <!-- User input for adding a local seller-->
                         <Grid x:Name="GridSellerAdd" HorizontalAlignment="Right" Grid.ColumnSpan="2" Margin="0,0,0,0" Width="300" Background="#e8ffff" Visibility="Collapsed">
-                            <Label x:Name="LabelAddLocalSeller" Content="Double click on a map to add a local seller's place" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,0" FontFamily="Yu Gothic UI Semibold" FontSize="12" Width="300" />
+                            <!-- Change this label into something else-->
+                            <Label x:Name="LabelAddLocalSeller" Content="Double click on a map to pin a local seller's location" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,0" FontFamily="Yu Gothic UI Semibold" Foreground="#808080" FontSize="12" Width="300" />
+                            
+                            <Label x:Name="LabelProductType" Content="Product type" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,60,0,0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Width="160" />
+                            <!--<TextBox x:Name="TextProduct"  HorizontalContentAlignment="Center" Margin="0,90,0,0 " Height="23" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Strawberries" materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="160" /> -->
+                            <ComboBox  x:Name="ComboBoxProductType" HorizontalAlignment="Center" Margin="0,90,0,0" VerticalAlignment="Top" Width="160" Height="22"/>
 
-                            <Label x:Name="LabelProduct" Content="Product" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,60,0,0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Width="160" />
-                            <TextBox x:Name="TextProduct"  HorizontalContentAlignment="Center" Margin="0,90,0,0 " Height="23" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Strawberries" materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="160" />
+                            <Label x:Name="LabelProduct" Content="Product" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,120,0,0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Width="160" />
+                            <!-- Hardcoded part, maybe need a change-->
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" Margin="0 150 0 135"  HorizontalContentAlignment="Center" VerticalContentAlignment="Top">
 
-                            <Label x:Name="LabelTime" Content="Time" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,120,0,0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Width="160" />
-                            <TextBox x:Name="TextTime"  HorizontalContentAlignment="Center" Margin="0,150,0,0 " Height="23" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Strawberries" materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="160" />
+                                <StackPanel Name="StackPanelAddLocalSellerProducts" Margin="15 0 0 0">
+                                    <StackPanel Name="StackPanelAddLocalSellerProductsOfElements1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="25 0 0 5">
 
-                            <Button x:Name="ButtonSave" Content="Save" HorizontalContentAlignment="Center" Margin="0,200,0,0" VerticalAlignment="Top" Width="160" FontFamily="Yu Gothic UI Semibold" FontSize="16" Foreground="White" Background="#a6f6f1" Click="ButtonSave_Clicked" BorderBrush="{x:Null}">
+                                        <TextBox x:Name="AddLocalSellerAddProductTextBox1"  HorizontalContentAlignment="Center"  Height="23"  TextWrapping="Wrap" materialDesign:HintAssist.Hint="Strawberries" materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="160"  />
+
+                                        <Button Name="AddLocalSellerAddProductButton1" Width="25" Height="25" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#808080" Click="AddLocalSellerAddProduct1_Click">
+                                            <materialDesign:PackIcon Kind="PlusThick"/>
+                                        </Button>
+
+
+
+                                    </StackPanel>
+                                </StackPanel>
+
+                            </ScrollViewer>
+
+                            <!--<Label x:Name="LabelTime" Content="Time" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,320,0,0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Width="160" />
+                            <TextBox x:Name="TextTime"  HorizontalContentAlignment="Center" Margin="0,350,0,0 " Height="23" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Strawberries" materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="160" /> -->
+
+                            <Button x:Name="ButtonSave" Content="Save" HorizontalContentAlignment="Center" Margin="0,280,0,0" VerticalAlignment="Top" Width="160" FontFamily="Yu Gothic UI Semibold" FontSize="16" Foreground="White" Background="#a6f6f1" Click="ButtonSave_Clicked" BorderBrush="{x:Null}">
                                 <Button.Resources>
                                     <Style TargetType="Border">
                                         <Setter Property="CornerRadius" Value="10"/>
@@ -92,7 +114,7 @@
                                 </Button.Resources>
                             </Button>
 
-                            <Button x:Name="ButtonCancel" Content="Cancel" HorizontalContentAlignment="Center" Margin="0,240,0,0" VerticalAlignment="Top" Width="160" FontFamily="Yu Gothic UI Semibold" FontSize="16" Foreground="White" Background="#a6f6f1" Click="ButtonCancel_Clicked" BorderBrush="{x:Null}">
+                            <Button x:Name="ButtonCancel" Content="Cancel" HorizontalContentAlignment="Center" Margin="0,320,0,0" VerticalAlignment="Top" Width="160" FontFamily="Yu Gothic UI Semibold" FontSize="16" Foreground="White" Background="#a6f6f1" Click="ButtonCancel_Clicked" BorderBrush="{x:Null}">
                                 <Button.Resources>
                                     <Style TargetType="Border">
                                         <Setter Property="CornerRadius" Value="10"/>
@@ -100,7 +122,7 @@
                                 </Button.Resources>
                             </Button>
 
-                            <Label x:Name="ErrorLabel1" Content="Select current place on a map" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,270,0,0" FontFamily="Yu Gothic UI Semibold" FontSize="12" Width="300" Visibility="Collapsed" />
+                            <Label x:Name="ErrorLabel1" Content="Select current place on a map" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,220,0,0" FontFamily="Yu Gothic UI Semibold" Background="#FF451D" Foreground="white" FontSize="12" Width="300" Visibility="Collapsed"  />
                         </Grid>
 
                     </Grid>

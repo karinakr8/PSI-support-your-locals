@@ -12,13 +12,13 @@ namespace SupportYourLocals.Data
         private static string filePath = @"./Data.csv";
         private static int personsID = 1000;
 
-        public static void SaveData(String product, String time, Location position)
+        public static void SaveData(String product, Location position)
         {
             var csv = new StringBuilder();
 
             personsID = GetPersonsID(personsID);
 
-            var newLine = string.Format("{0},{1},{2},{3}", product, time, position, personsID);
+            var newLine = string.Format("{0},{1},{2}", product, position, personsID);
 
             csv.AppendLine(newLine);
 

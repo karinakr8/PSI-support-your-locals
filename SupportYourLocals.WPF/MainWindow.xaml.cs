@@ -17,6 +17,7 @@ using SupportYourLocals.Map;
 using Microsoft.VisualBasic.FileIO;
 using System.IO;
 using SupportYourLocals.Data;
+using MaterialDesignThemes.Wpf;
 
 namespace SupportYourLocals.WPF
 {
@@ -25,6 +26,8 @@ namespace SupportYourLocals.WPF
     /// </summary>
     public partial class MainWindow : Window
     {
+        private int AddProductLineNumber = 2;
+
         private Map.Map SYLMap;
         private readonly IDataStorage data;
 
@@ -32,12 +35,14 @@ namespace SupportYourLocals.WPF
 
         private bool userSelectedLocation = false;
 
+        List<StackPanel> listStackPanelAddProduct = new List<StackPanel>();
         List<double> listXCoord = new List<double>();
         List<double> listYCoord = new List<double>();
         List<int> listPersonsID = new List<int>();
 
         private int personsID = 1000;
 
+        
         public MainWindow()
         {
             // data = new CSVDataStorage() or smth like that
@@ -58,6 +63,8 @@ namespace SupportYourLocals.WPF
                 await Task.Delay(2000);
                 await cache.Clean();
             };
+
+            listStackPanelAddProduct.Add(StackPanelAddLocalSellerProductsOfElements1);
         }
 
         private void UpdateMarketplaces_Click(object sender, RoutedEventArgs e)
@@ -95,8 +102,8 @@ namespace SupportYourLocals.WPF
         {
             //Clean up
             ErrorLabel1.Visibility = Visibility.Collapsed;
-            TextProduct.Clear();
-            TextTime.Clear();
+            //TextProduct.Clear();
+            //TextTime.Clear();
             GridSellerAdd.Visibility = Visibility.Visible;
         }
 
@@ -105,10 +112,11 @@ namespace SupportYourLocals.WPF
             // Saving data to csv file
             if (userSelectedLocation)
             {
-                String product = TextProduct.Text;
-                String time = TextTime.Text;
+                //String product = TextProduct.Text;
+                String product = "Testing value";
+                //String time = TextTime.Text;
 
-                CSVData.SaveData(product, time, MainMap.TargetCenter);
+                CSVData.SaveData(product, MainMap.TargetCenter);
 
                 GridSellerAdd.Visibility = Visibility.Collapsed;//------------------------------------------------------------------
                 SYLMap.RemoveLastMarker();
@@ -152,6 +160,57 @@ namespace SupportYourLocals.WPF
             SearchSellersButton.FontWeight = FontWeights.Bold;
             SearchMarketplacesButton.Foreground =  new SolidColorBrush((Color)ColorConverter.ConvertFromString("#808080"));
             SearchSellersButton.Foreground = new SolidColorBrush(Colors.Black);
+        }
+
+        private void AddLocalSellerAddProduct1_Click(object sender, RoutedEventArgs e) 
+        {
+            var stackPanel = new StackPanel();
+            stackPanel.Name = "StackPanelAddLocalSellerProductsOfElements" + AddProductLineNumber;
+            stackPanel.Orientation = Orientation.Horizontal;
+            stackPanel.HorizontalAlignment = HorizontalAlignment.Center;
+            stackPanel.Margin = new Thickness(0, 0, 0, 5);
+
+            var textBox = new TextBox();
+            textBox.Name = "AddLocalSellerAddProductTextBox" + AddProductLineNumber;
+            textBox.HorizontalAlignment = HorizontalAlignment.Center;
+            textBox.VerticalAlignment = VerticalAlignment.Top;
+            textBox.Height = 23;
+            textBox.Width = 160;
+            textBox.TextWrapping = TextWrapping.Wrap;
+            textBox.HorizontalContentAlignment = HorizontalAlignment.Center;
+            //MaterialDesignThemes.Wpf.PackIcon.KindProperty(
+            //add roundness
+
+           /* var button = new Button();
+            button.Name = "AddLocalSellerAddProductButton" + AddProductLineNumber;
+            button.Height = 25;
+            button.Background = null;
+            button.BorderBrush = null;
+            button.Foreground = new System.Windows.Media.SolidColorBrush((Color)ColorConverter.ConvertFromString("#808080"));*/
+            //add action when new button is clicked
+            //button.Click += new EventHandler(AddLocalSellerAddProduct1_Click);
+
+            /*var NewInt = ToString(AddProductLineNumber - 1);
+            var NewName = ToString()
+            var NewButtonName = ToString("AddLocalSellerAddProductionButton" + (AddProductLineNumber - 1));*/
+            stackPanel.Children.Add(textBox);
+            //stackPanel.Children.Add(button);
+            //StackPanelAddLocalSellerProductsOfElements1.Children.Remove(AddLocalSellerAddProductButton1);
+            //stackPanel.Children.Add(AddLocalSellerAddProductButton1);
+            listStackPanelAddProduct[listStackPanelAddProduct.Count - 1].Children.Remove(AddLocalSellerAddProductButton1);
+            listStackPanelAddProduct.Add(stackPanel);
+            listStackPanelAddProduct[listStackPanelAddProduct.Count - 1].Children.Add(AddLocalSellerAddProductButton1);
+            
+            StackPanelAddLocalSellerProducts.Children.Add(stackPanel);
+
+
+            //fixing stackpanel alignments and indices
+           
+            AddProductLineNumber++;
+            listStackPanelAddProduct[listStackPanelAddProduct.Count - 2].Margin = new Thickness(0, 0, 0, 5);
+            listStackPanelAddProduct[listStackPanelAddProduct.Count - 1].Margin = new Thickness(25, 0, 0, 5);
+            //StackPanelAddLocalSellerProductsOfElements1.Margin = new Thickness(0, 0, 0, 5);
+            //AddLocalSellerAddProductButton1.Visibility = Visibility.Collapsed;
         }
     }
 }
