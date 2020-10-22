@@ -14,7 +14,6 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using MapControl;
 using SupportYourLocals.Map;
-using SupportYourLocals.Data;
 using Microsoft.VisualBasic.FileIO;
 using System.IO;
 using SupportYourLocals.Data;
