@@ -28,11 +28,13 @@ namespace SupportYourLocals.WPF
         private Map.Map SYLMap;
         private readonly IDataStorage data;
 
-        private string filePath = @"./Data.csv";
-
         private bool updateMarketplacesWasClicked = false;
 
         private bool userSelectedLocation = false;
+
+        List<double> listXCoord = new List<double>();
+        List<double> listYCoord = new List<double>();
+        List<int> listPersonsID = new List<int>();
 
         private int personsID = 1000;
 
@@ -61,7 +63,10 @@ namespace SupportYourLocals.WPF
         private void UpdateMarketplaces_Click(object sender, RoutedEventArgs e)
         {
             updateMarketplacesWasClicked = true;
-            SetMarkers(sender, e);
+            CSVData.SetMarkers(listXCoord, listYCoord, listPersonsID);
+            // Adding all markers to a map
+            for (int i = 0; i < listXCoord.Count; i++)
+                SYLMap.AddMarker(listXCoord[i], listYCoord[i], listPersonsID[i]);
         }
         private void MapMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -77,7 +82,12 @@ namespace SupportYourLocals.WPF
                 userSelectedLocation = false;
                 SYLMap.RemoveLastMarker();
                 if (updateMarketplacesWasClicked)
-                    SetMarkers(sender, e);
+                {
+                    CSVData.SetMarkers(listXCoord, listYCoord, listPersonsID);
+                    // Adding all markers to a map
+                    for (int i = 0; i < listXCoord.Count; i++)
+                        SYLMap.AddMarker(listXCoord[i], listYCoord[i], listPersonsID[i]);
+                }
             }
         }
 
@@ -95,11 +105,20 @@ namespace SupportYourLocals.WPF
             // Saving data to csv file
             if (userSelectedLocation)
             {
-                SaveData();
+                String product = TextProduct.Text;
+                String time = TextTime.Text;
+
+                CSVData.SaveData(product, time, MainMap.TargetCenter);
+
                 GridSellerAdd.Visibility = Visibility.Collapsed;//------------------------------------------------------------------
                 SYLMap.RemoveLastMarker();
                 if (updateMarketplacesWasClicked)
-                    SetMarkers(sender, e);
+                {
+                    CSVData.SetMarkers(listXCoord, listYCoord, listPersonsID);
+                    // Adding all markers to a map
+                    for (int i = 0; i < listXCoord.Count; i++)
+                        SYLMap.AddMarker(listXCoord[i], listYCoord[i], listPersonsID[i]);
+                }
             }
             else
             {
@@ -107,77 +126,12 @@ namespace SupportYourLocals.WPF
             }
         }
 
-        private void SaveData()
-        {
-            // Checking person's ID
-            List<double> personID = new List<double>();
-            using (TextFieldParser csvParser = new TextFieldParser(filePath))
-            {
-                csvParser.CommentTokens = new string[] { "#" };
-                csvParser.SetDelimiters(new string[] { "," });
-                csvParser.HasFieldsEnclosedInQuotes = true;
-
-                // Skip the row with the column names
-                csvParser.ReadLine();
-
-                while (!csvParser.EndOfData)
-                {
-                    // Read current line fields, pointer moves to the next line.
-                    string[] fields = csvParser.ReadFields();
-                    personID.Add(Double.Parse(fields[4]));
-                }
-            }
-
-            String product = TextProduct.Text;
-            String time = TextTime.Text;
-            var csv = new StringBuilder();
-
-
-            // Setting person's ID
-            personsID = personsID + personID.Count;
-
-            var newLine = string.Format("{0},{1},{2},{3}", product, time, MainMap.TargetCenter, personsID);
-
-            csv.AppendLine(newLine);
-
-            File.AppendAllText(filePath, csv.ToString());
-        }
-
         private void ButtonCancel_Clicked(object sender, RoutedEventArgs e)
         {
             GridSellerAdd.Visibility = Visibility.Collapsed;
             SYLMap.RemoveLastMarker();
             if (updateMarketplacesWasClicked)
-                SetMarkers(sender, e);
-        }
-
-        private void SetMarkers(object sender, RoutedEventArgs e)
-        {
-            List<double> listXCoord = new List<double>();
-            List<double> listYCoord = new List<double>();
-            List<int> listpersonsID = new List<int>();
-
-            using (TextFieldParser csvParser = new TextFieldParser(filePath))
-            {
-                csvParser.CommentTokens = new string[] { "#" };
-                csvParser.SetDelimiters(new string[] { "," });
-                csvParser.HasFieldsEnclosedInQuotes = true;
-
-                // Skip the row with the column names
-                csvParser.ReadLine();
-
-                while (!csvParser.EndOfData)
-                {
-                    // Saving data to a list
-                    string[] fields = csvParser.ReadFields();
-                    listXCoord.Add(Double.Parse(fields[2]));
-                    listYCoord.Add(Double.Parse(fields[3]));
-                    listpersonsID.Add(Int32.Parse(fields[4]));
-                }
-            }
-            // Adding all markers to a map
-            for (int i = 0; i < listXCoord.Count; i++)
-                SYLMap.AddMarker(listXCoord[i], listYCoord[i], listpersonsID[i]);
+                CSVData.SetMarkers(listXCoord, listYCoord, listPersonsID);
         }
 
         private void SearchMarketplacesButton_Click(object sender, RoutedEventArgs e)
