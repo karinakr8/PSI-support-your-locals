@@ -36,6 +36,7 @@ namespace SupportYourLocals.WPF
         private bool userSelectedLocation = false;
 
         List<StackPanel> listStackPanelAddProduct = new List<StackPanel>();
+        List<Button> listButtonRemoveProduct = new List<Button>();
         List<double> listXCoord = new List<double>();
         List<double> listYCoord = new List<double>();
         List<int> listPersonsID = new List<int>();
@@ -65,6 +66,7 @@ namespace SupportYourLocals.WPF
             };
 
             listStackPanelAddProduct.Add(StackPanelAddLocalSellerProductsOfElements1);
+            listButtonRemoveProduct.Add(AddLocalSellerRemoveProductButton1);
         }
 
         private void UpdateMarketplaces_Click(object sender, RoutedEventArgs e)
@@ -178,39 +180,43 @@ namespace SupportYourLocals.WPF
             textBox.Width = 160;
             textBox.TextWrapping = TextWrapping.Wrap;
             textBox.HorizontalContentAlignment = HorizontalAlignment.Center;
-            //MaterialDesignThemes.Wpf.PackIcon.KindProperty(
-            //add roundness
 
-           /* var button = new Button();
-            button.Name = "AddLocalSellerAddProductButton" + AddProductLineNumber;
+            var button = new Button();
             button.Height = 25;
-            button.Background = null;
-            button.BorderBrush = null;
-            button.Foreground = new System.Windows.Media.SolidColorBrush((Color)ColorConverter.ConvertFromString("#808080"));*/
-            //add action when new button is clicked
-            //button.Click += new EventHandler(AddLocalSellerAddProduct1_Click);
+            button.Width = 25;
+            button.Content = "―";
 
-            /*var NewInt = ToString(AddProductLineNumber - 1);
-            var NewName = ToString()
-            var NewButtonName = ToString("AddLocalSellerAddProductionButton" + (AddProductLineNumber - 1));*/
+            button.FontWeight = FontWeights.Bold;
+            button.Name = "AddLocalSellerRemoveProductButton" + AddProductLineNumber;
+            button.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#808080"));
+            button.BorderBrush = null;
+            button.Background = null;
+            button.Click += new RoutedEventHandler(AddLocalSellerRemoveProduct1_Click);
+
             stackPanel.Children.Add(textBox);
-            //stackPanel.Children.Add(button);
-            //StackPanelAddLocalSellerProductsOfElements1.Children.Remove(AddLocalSellerAddProductButton1);
-            //stackPanel.Children.Add(AddLocalSellerAddProductButton1);
-            listStackPanelAddProduct[listStackPanelAddProduct.Count - 1].Children.Remove(AddLocalSellerAddProductButton1);
+            listStackPanelAddProduct[listStackPanelAddProduct.Count - 1].Children.Add(button); //Add minus button
+            listButtonRemoveProduct.Add(button);
+            listStackPanelAddProduct[listStackPanelAddProduct.Count - 1].Children.Remove(AddLocalSellerAddProductButton1);//Remove Plus button
             listStackPanelAddProduct.Add(stackPanel);
             listStackPanelAddProduct[listStackPanelAddProduct.Count - 1].Children.Add(AddLocalSellerAddProductButton1);
-            
             StackPanelAddLocalSellerProducts.Children.Add(stackPanel);
-
-
-            //fixing stackpanel alignments and indices
            
             AddProductLineNumber++;
-            listStackPanelAddProduct[listStackPanelAddProduct.Count - 2].Margin = new Thickness(0, 0, 0, 5);
             listStackPanelAddProduct[listStackPanelAddProduct.Count - 1].Margin = new Thickness(25, 0, 0, 5);
-            //StackPanelAddLocalSellerProductsOfElements1.Margin = new Thickness(0, 0, 0, 5);
-            //AddLocalSellerAddProductButton1.Visibility = Visibility.Collapsed;
         }
+
+        private void AddLocalSellerRemoveProduct1_Click(object sender, RoutedEventArgs e)
+        {
+            Button button = sender as Button;
+            button.Visibility = Visibility.Collapsed;
+            foreach(var stackPanel in listStackPanelAddProduct)
+            {
+                if (stackPanel.Children.Contains(button))
+                {
+                    stackPanel.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
     }
 }
