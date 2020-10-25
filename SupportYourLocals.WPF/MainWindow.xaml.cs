@@ -17,6 +17,8 @@ using SupportYourLocals.Map;
 using Microsoft.VisualBasic.FileIO;
 using System.IO;
 using SupportYourLocals.Data;
+using MaterialDesignThemes.Wpf;
+using System.Runtime.CompilerServices;
 
 namespace SupportYourLocals.WPF
 {
@@ -25,6 +27,9 @@ namespace SupportYourLocals.WPF
     /// </summary>
     public partial class MainWindow : Window
     {
+        int i = 0;
+        private int AddProductLineNumber = 2;
+
         private Map.Map SYLMap;
         private readonly IDataStorage data;
 
@@ -32,11 +37,25 @@ namespace SupportYourLocals.WPF
 
         private bool userSelectedLocation = false;
 
+
         List<double> listXCoord = new List<double>();
         List<double> listYCoord = new List<double>();
         List<int> listPersonsID = new List<int>();
 
+        // List for StackPanel elements in Main StackPanel
+        List<List<StackPanel>> listOfStackPanelListsAddProduct = new List<List<StackPanel>>();
+        // List for "+" buttons in scrollviewer AddLocalSeller
+        List<Button> listAddButtons = new List<Button>();
+
+        // List for Main StackPanels
+        // These stackpanels consist of other stackpanels and buttons. One Main stack panel represent one type of products, in instance- fruits
+        List<StackPanel> listMainStackPanel = new List<StackPanel>();
+        // Dictionaries to load scrollviews and store data based on chosen enum
+        Dictionary<string, ScrollViewer> dictionaryOfScrollViewsAddProduct = new Dictionary<string, ScrollViewer>();
+        Dictionary<string, List<TextBox>> dictionaryOfTextBoxListAddProduct = new Dictionary<string, List<TextBox>>();
+
         private int personsID = 1000;
+
 
         public MainWindow()
         {
@@ -58,6 +77,48 @@ namespace SupportYourLocals.WPF
                 await Task.Delay(2000);
                 await cache.Clean();
             };
+
+            // Filling combobox for product types and filling dictionaries
+            var productTypes = Enum.GetValues(typeof(Data.ProductType));
+
+            foreach (var productType in productTypes)
+            {
+                // Adding elements to combobox
+                ComboBoxProductType.Items.Add(productType);
+                
+                // Create first textBox and button and add to the secondary stack panel
+                var stackPanel = createStackPanelForProductTypes(productType);
+                var textBox = createTextFieldForProductTypes();
+                stackPanel.Children.Add(textBox);
+                var button = createButtonForProductTypes(productType.ToString(), "+", AddLocalSellerAddProduct1_Click, "AddLocalSellerAddTextFieldButton" + productType.ToString());
+                stackPanel.Children.Add(button);
+                listAddButtons.Add(button);
+
+                //create a temporary list to store first textbox of a stack panel
+                var listTextBoxes = new List<TextBox>();
+                listTextBoxes.Add(textBox);
+                dictionaryOfTextBoxListAddProduct.Add("textBoxList" + productType.ToString(), listTextBoxes);
+
+                listOfStackPanelListsAddProduct.Add(new List<StackPanel>());
+                listOfStackPanelListsAddProduct[listOfStackPanelListsAddProduct.Count - 1].Add(stackPanel);
+
+                // Create main stack panel and add the secondary stack panel
+                var stackPanelMain = new StackPanel();
+                stackPanelMain.Name = "stackPanelMain" + productType.ToString();
+                stackPanelMain.Children.Add((listOfStackPanelListsAddProduct[listOfStackPanelListsAddProduct.Count - 1])[(listOfStackPanelListsAddProduct[listOfStackPanelListsAddProduct.Count - 1]).Count - 1]);
+                listMainStackPanel.Add(stackPanelMain);
+
+                // Create new instance of a scroll viewer for an enum and add main stack panel
+                var scrollViewer = createScrollViewerForProductTypes();
+                scrollViewer.Name = "scrollViewerMain" + productType.ToString();
+                scrollViewer.Content = listMainStackPanel[listMainStackPanel.Count - 1];
+                scrollViewer.Visibility = Visibility.Collapsed;
+
+                dictionaryOfScrollViewsAddProduct.Add("scrollViewerMain" + productType.ToString(), scrollViewer);
+
+                StackPanelWithScrollViewerAddSellers.Children.Add(scrollViewer);
+
+            }
         }
 
         private void UpdateMarketplaces_Click(object sender, RoutedEventArgs e)
@@ -95,8 +156,8 @@ namespace SupportYourLocals.WPF
         {
             //Clean up
             ErrorLabel1.Visibility = Visibility.Collapsed;
-            TextProduct.Clear();
-            TextTime.Clear();
+            //TextProduct.Clear();
+            //TextTime.Clear();
             GridSellerAdd.Visibility = Visibility.Visible;
         }
 
@@ -105,12 +166,13 @@ namespace SupportYourLocals.WPF
             // Saving data to csv file
             if (userSelectedLocation)
             {
-                String product = TextProduct.Text;
-                String time = TextTime.Text;
+                //String product = TextProduct.Text;
+                String product = "Testing value";
+                //String time = TextTime.Text;
 
-                CSVData.SaveData(product, time, MainMap.TargetCenter);
+                CSVData.SaveData(product, MainMap.TargetCenter);
 
-                GridSellerAdd.Visibility = Visibility.Collapsed;//------------------------------------------------------------------
+                GridSellerAdd.Visibility = Visibility.Collapsed;
                 SYLMap.RemoveLastMarker();
                 if (updateMarketplacesWasClicked)
                 {
@@ -150,8 +212,135 @@ namespace SupportYourLocals.WPF
             GridMarketplacesSearch.Visibility = Visibility.Collapsed;
             SearchMarketplacesButton.FontWeight = FontWeights.Normal;
             SearchSellersButton.FontWeight = FontWeights.Bold;
-            SearchMarketplacesButton.Foreground =  new SolidColorBrush((Color)ColorConverter.ConvertFromString("#808080"));
+            SearchMarketplacesButton.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#808080"));
             SearchSellersButton.Foreground = new SolidColorBrush(Colors.Black);
+        }
+
+        private void AddLocalSellerAddProduct1_Click(object sender, RoutedEventArgs e)
+        {
+            var stackPanel = createStackPanelForProductTypeElements();
+
+            var textBox = createTextFieldForProductTypes();
+
+            var productType = ComboBoxProductType.SelectedItem.ToString();
+
+            var button = createButtonForProductTypes(productType, "―", AddLocalSellerRemoveProduct1_Click, null);
+
+            stackPanel.Children.Add(textBox);
+            //dictionaryOfScrollViewsAddProduct["scrollViewerMain" + productType.ToString()].
+            
+            //int index = Array.IndexOf(Enum.GetValues(ComboBoxProductType.SelectedItem.GetType()), e);
+            int index = ComboBoxProductType.SelectedIndex;
+            // Remove "+" button from the last line before new line (textbox) is added
+            (listOfStackPanelListsAddProduct[index])[listOfStackPanelListsAddProduct[index].Count - 1].Children.Remove(listAddButtons[index]);
+
+            // Add "—" button to the last line before new line is inicialized
+            (listOfStackPanelListsAddProduct[index])[listOfStackPanelListsAddProduct[index].Count - 1].Children.Add(createButtonForProductTypes(productType, "—", AddLocalSellerRemoveProduct1_Click, null));
+
+
+            //temporaryList[temporaryList.Count - 1].Children.Add(createButtonForProductTypes(productType, "—", AddLocalSellerRemoveProduct1_Click, null)); 
+            stackPanel.Children.Add(listAddButtons[index]);
+
+            listOfStackPanelListsAddProduct[index].Add(stackPanel);
+            //(listOfStackPanelListsAddProduct[index])[listOfStackPanelListsAddProduct[index].Count - 1].Children.Add(listAddButtons[index]);
+
+
+            //dictionaryOfScrollViewsAddProduct["scrollViewerMain" + productType.ToString()].Content = listMainStackPanel[index];
+
+
+            listMainStackPanel[index].Children.Remove(listAddButtons[index]);
+            //listMainStackPanel[index].Children.Add(createButtonForProductTypes(productType, "—", AddLocalSellerRemoveProduct1_Click, null));
+            listMainStackPanel[index].Children.Add(stackPanel);
+            
+            AddProductLineNumber++;
+        }
+
+        //after clicking save button, save only values of these textfields which visibility = Visible
+        private void AddLocalSellerRemoveProduct1_Click(object sender, RoutedEventArgs e)
+        {
+            int index = ComboBoxProductType.SelectedIndex;
+            Button button = sender as Button;
+            button.Visibility = Visibility.Collapsed;
+            //listOfStackPanelListsAddProduct[index].Add(stackPanel);
+            foreach (var stackPanel in listOfStackPanelListsAddProduct[index])
+            {
+                if (stackPanel.Children.Contains(button))
+                {
+                    stackPanel.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
+        private void ComboBoxProductType_SelectionChanged(object sender, EventArgs e)
+        {
+            
+            var productType = ComboBoxProductType.SelectedItem.ToString();
+
+            LabelForScrollViewerAddLocalSeller.Visibility = Visibility.Collapsed;
+
+            dictionaryOfScrollViewsAddProduct["scrollViewerMain" + productType.ToString()].Visibility = Visibility.Visible;
+
+            foreach(KeyValuePair<string, ScrollViewer> entry in dictionaryOfScrollViewsAddProduct)
+            {
+                if(entry.Key != "scrollViewerMain" + productType.ToString())
+                {
+                    entry.Value.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
+        private Button createButtonForProductTypes(string enumValue, string content, Action<object, RoutedEventArgs> actionOnClickName, string buttonName)
+        {
+            var button = new Button();
+            button.Height = 25;
+            button.Width = 25;
+
+            button.Content = content;
+
+            button.FontWeight = FontWeights.Bold;
+            button.Name = buttonName;
+            button.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#808080"));
+            button.BorderBrush = null;
+            button.Background = null;
+            button.Click += new RoutedEventHandler(actionOnClickName);
+            return button;
+        }
+        private TextBox createTextFieldForProductTypes()
+        {
+            var textBox = new TextBox();
+            textBox.HorizontalAlignment = HorizontalAlignment.Center;
+            textBox.VerticalAlignment = VerticalAlignment.Top;
+            textBox.Height = 23;
+            textBox.Width = 160;
+            textBox.TextWrapping = TextWrapping.Wrap;
+            textBox.HorizontalContentAlignment = HorizontalAlignment.Center;
+            textBox.Text = i.ToString();
+            i++;
+            return textBox;
+        }
+
+        private StackPanel createStackPanelForProductTypeElements()
+        {
+            var stackPanel = new StackPanel();
+            stackPanel.Orientation = Orientation.Horizontal;
+            stackPanel.HorizontalAlignment = HorizontalAlignment.Center;
+            stackPanel.Margin = new Thickness(40, 0, 0, 5);
+            return stackPanel;
+        }
+        private StackPanel createStackPanelForProductTypes(object productType)
+        {
+            var stackPanel = createStackPanelForProductTypeElements();
+            return stackPanel;
+        }
+
+        private ScrollViewer createScrollViewerForProductTypes()
+        {
+            var scrollViewer = new ScrollViewer();
+            scrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+            scrollViewer.HorizontalContentAlignment = HorizontalAlignment.Center;
+            scrollViewer.VerticalContentAlignment = VerticalAlignment.Center;
+            scrollViewer.Height = 120;
+            return scrollViewer;
         }
     }
 }
