@@ -9,7 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ExtensionMethods\SupportYourLocals.ExtensionMethods.csproj" />
     <ProjectReference Include="..\SupportYourLocals.ExtensionMethods\SupportYourLocals.ExtensionMethods.csproj" />
   </ItemGroup>
 
