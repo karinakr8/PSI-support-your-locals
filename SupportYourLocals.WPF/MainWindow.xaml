@@ -8,7 +8,10 @@
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         Title="MainWindow" Height="530" Width="800" ResizeMode="NoResize">
+    
     <TabControl>
+        <!--<materialDesign:PackIcon Name="AddProductButton" Kind="PlusThick" Width="25" Height="25" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#808080"/>
+        <materialDesign:PackIcon Name="RemoveProductButton" Kind="Minus" Width="25" Height="25" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#808080"/>-->
         <TabItem Header="Search">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -85,14 +88,15 @@
                             
                             <Label x:Name="LabelProductType" Content="Product type" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,60,0,0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Width="160" />
                             <!--<TextBox x:Name="TextProduct"  HorizontalContentAlignment="Center" Margin="0,90,0,0 " Height="23" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Strawberries" materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="160" /> -->
-                            <ComboBox  x:Name="ComboBoxProductType" HorizontalAlignment="Center" Margin="0,90,0,0" VerticalAlignment="Top" Width="160" Height="22"/>
+                            <ComboBox  x:Name="ComboBoxProductType" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="0,90,0,0" VerticalAlignment="Top" Width="160" Height="22" SelectionChanged="ComboBoxProductType_SelectionChanged"/>
 
                             <Label x:Name="LabelProduct" Content="Product" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,120,0,0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Width="160" />
                             <!-- Hardcoded part, maybe need a change-->
-                            <ScrollViewer HorizontalScrollBarVisibility="Auto" Margin="0 150 0 130"  HorizontalContentAlignment="Center" VerticalContentAlignment="Top">
+                            <StackPanel Name="StackPanelWithScrollViewerAddSellers" Height="100">
+                            <!--<ScrollViewer x:Name="ScrollViewerAddLocalSeller" HorizontalScrollBarVisibility="Auto" Margin="0 150 0 130"  HorizontalContentAlignment="Center" VerticalContentAlignment="Top">
 
-                                <StackPanel Name="StackPanelAddLocalSellerProducts" Margin="15 0 0 0">
-                                    <StackPanel Name="StackPanelAddLocalSellerProductsOfElements1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="25 0 0 5">
+                                <StackPanel Name="StackPanelAddLocalSellerProducts" Margin="15 0 0 0" Visibility="Collapsed">-->
+                                    <!--<StackPanel Name="StackPanelAddLocalSellerProductsOfElements1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="25 0 0 5">
 
                                         <TextBox x:Name="AddLocalSellerAddProductTextBox1"  HorizontalContentAlignment="Center"  Height="23"  TextWrapping="Wrap" materialDesign:HintAssist.Hint="Strawberries" materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="160" />
 
@@ -103,11 +107,11 @@
                                         
 
 
-                                    </StackPanel>
-                                </StackPanel>
+                                    </StackPanel>-->
+                                <!--</StackPanel>
 
-                            </ScrollViewer>
-
+                            </ScrollViewer>-->
+                            </StackPanel>
                             <!--<Label x:Name="LabelTime" Content="Time" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,320,0,0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Width="160" />
                             <TextBox x:Name="TextTime"  HorizontalContentAlignment="Center" Margin="0,350,0,0 " Height="23" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Strawberries" materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="160" /> -->
 
