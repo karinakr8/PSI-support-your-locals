@@ -22,10 +22,10 @@ namespace SupportYourLocals.Map
             get { return WPFMap.ZoomLevel; }
         }
 
-        public Map (MapControl.Map passed_map, Location center = null, double zoom = 14)
+        public Map (MapControl.Map passedMap, Location center = null, double zoom = 14)
         {
             // Can't create a new map, so use the existing one
-            WPFMap = passed_map;
+            WPFMap = passedMap;
 
             WPFMap.ZoomLevel = zoom;
             WPFMap.MaxZoomLevel = 19; // Any closer and the map starts getting blurry
@@ -48,22 +48,22 @@ namespace SupportYourLocals.Map
             });
         }
 
-        public delegate void MarkerClickedHandler(Marker marker);
+        public delegate void MarkerClickedHandler (Marker marker);
         public event MarkerClickedHandler MarkerClicked; // Gets called when any marker gets clicked
 
-        protected virtual void OnMarkerClicked(Marker marker)
+        protected virtual void OnMarkerClicked (Marker marker)
         {
             MarkerClicked?.Invoke(marker);
         }
 
-        public void AddMarker(Location position, int id)
+        public void AddMarker (Location position, int id)
         {
             var marker = new Marker
             {
                 Location = position,
                 id = id
             };
-            marker.MouseDown += new MouseButtonEventHandler(onMarkerClick);
+            marker.MouseDown += new MouseButtonEventHandler(OnMarkerClick);
 
             WPFMap.Children.Add(marker);
         }
@@ -73,29 +73,27 @@ namespace SupportYourLocals.Map
             AddMarker(new Location(lat, lon), id);
         }
 
-        public void RemoveLastMarker()
+        public void RemoveLastMarker ()
         {
-            var toRemove = WPFMap.Children.OfType<Marker>().ToList();
-            if (toRemove.Count != 0)
-            {
-                WPFMap.Children.Remove(toRemove[toRemove.Count - 1]);
-            }
+            var toRemove = WPFMap.Children.OfType<Marker>().LastOrDefault();
+            if (toRemove != null)
+                WPFMap.Children.Remove(toRemove);
         }
 
         public void RemoveAllMarkers ()
         {
             var toRemove = WPFMap.Children.OfType<Marker>().ToList();
 
-            foreach (var item in toRemove)
+            foreach (Marker item in toRemove)
                 WPFMap.Children.Remove(item);
         }
 
-        public void SetCenterFromCoordinates(double lat, double lon)
+        public void SetCenterFromCoordinates (double lat, double lon)
         {
             Center = new Location(lat, lon);
         }
 
-        private void onMarkerClick (object sender, MouseButtonEventArgs e)
+        private void OnMarkerClick (object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton != MouseButton.Left)
                 return;
