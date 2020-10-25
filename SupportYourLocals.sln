@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SupportYourLocals.WPF", "Su
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SupportYourLocals.Map", "SupportYourLocals.Map\SupportYourLocals.Map.csproj", "{74611E00-230D-4E35-941E-62C3B56D873E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SupportYourLocals.Data", "SupportYourLocals.Data\SupportYourLocals.Data.csproj", "{3C6D134A-2D8D-49BE-8729-6E42A3E4B240}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SupportYourLocals.Data", "SupportYourLocals.Data\SupportYourLocals.Data.csproj", "{3C6D134A-2D8D-49BE-8729-6E42A3E4B240}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SupportYourLocals.ExtensionMethods", "SupportYourLocals.ExtensionMethods\SupportYourLocals.ExtensionMethods.csproj", "{BD4DC530-EB2A-442E-B736-D5B175A78767}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{3C6D134A-2D8D-49BE-8729-6E42A3E4B240}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C6D134A-2D8D-49BE-8729-6E42A3E4B240}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C6D134A-2D8D-49BE-8729-6E42A3E4B240}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD4DC530-EB2A-442E-B736-D5B175A78767}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD4DC530-EB2A-442E-B736-D5B175A78767}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD4DC530-EB2A-442E-B736-D5B175A78767}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD4DC530-EB2A-442E-B736-D5B175A78767}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

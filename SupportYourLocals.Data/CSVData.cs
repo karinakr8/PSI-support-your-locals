@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using MapControl;
 using Microsoft.VisualBasic.FileIO;
+using SupportYourLocals.ExtensionMethods;
 
 namespace SupportYourLocals.Data
 {
@@ -18,7 +19,7 @@ namespace SupportYourLocals.Data
 
             personsID = GetPersonsID(personsID);
 
-            var newLine = string.Format("{0},{1},{2}", product, position, personsID);
+            var newLine = "{0},{1},{2}".Format(product, position, personsID);
 
             csv.AppendLine(newLine);
 
@@ -31,8 +32,8 @@ namespace SupportYourLocals.Data
             List<double> personID = new List<double>();
             using (TextFieldParser csvParser = new TextFieldParser(filePath))
             {
-                csvParser.CommentTokens = new string[] { "#" };
-                csvParser.SetDelimiters(new string[] { "," });
+                csvParser.CommentTokens = new[] { "#" };
+                csvParser.SetDelimiters(new[] { "," });
                 csvParser.HasFieldsEnclosedInQuotes = true;
 
                 // Skip the row with the column names
@@ -42,12 +43,12 @@ namespace SupportYourLocals.Data
                 {
                     // Read current line fields, pointer moves to the next line.
                     string[] fields = csvParser.ReadFields();
-                    personID.Add(Double.Parse(fields[4]));
+                    personID.Add(double.Parse(fields[4]));
                 }
             }
 
             // Setting person's ID
-            personsID = personsID + personID.Count;
+            personsID += personID.Count;
             return personsID;
         }
 
@@ -55,8 +56,8 @@ namespace SupportYourLocals.Data
         {
             using (TextFieldParser csvParser = new TextFieldParser(filePath))
             {
-                csvParser.CommentTokens = new string[] { "#" };
-                csvParser.SetDelimiters(new string[] { "," });
+                csvParser.CommentTokens = new[] { "#" };
+                csvParser.SetDelimiters(new[] { "," });
                 csvParser.HasFieldsEnclosedInQuotes = true;
 
                 // Skip the row with the column names
@@ -66,9 +67,9 @@ namespace SupportYourLocals.Data
                 {
                     // Saving data to a list
                     string[] fields = csvParser.ReadFields();
-                    listXCoord.Add(Double.Parse(fields[2]));
-                    listYCoord.Add(Double.Parse(fields[3]));
-                    listPersonsID.Add(Int32.Parse(fields[4]));
+                    listXCoord.Add(double.Parse(fields[2]));
+                    listYCoord.Add(double.Parse(fields[3]));
+                    listPersonsID.Add(int.Parse(fields[4]));
                 }
             }
         }

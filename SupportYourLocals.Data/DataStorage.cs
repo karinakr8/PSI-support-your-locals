@@ -6,33 +6,34 @@ namespace SupportYourLocals.Data
 {
     public enum ProductType
     {
-        vegetables,
-        fruits,
-        berries,
-        mushrooms,
-        meat,
-        tools,
-        clothing,
-        shoes,
-        flowers,
-        art,
-        other
+        Vegetables,
+        Fruits,
+        Berries,
+        Mushrooms,
+        Meat,
+        Tools,
+        Clothing,
+        Shoes,
+        Flowers,
+        Art,
+        Other
     }
 
     public class LocationData
     {
-        public int id;
-        public Location location;
-        public string name;
-        public int addedByID;
-        public DateTime time;
-        public Dictionary<ProductType, string> products;
+        public int ID { get; set; }
+        public Location Location { get; set; }
+        public string Name { get; set; }
+        public int AddedByID { get; set; }
+        public DateTime Time { get; set; }
+        public Dictionary<ProductType, List<string> > Products { get; set; }
     }
 
     public interface IDataStorage
     {
         public LocationData GetData(int id);
         public List<LocationData> GetAllData();
+        public int GetDataCount();
         public void AddData(LocationData data);
         public void AddDataList(List<LocationData> dataList)
         {
@@ -41,5 +42,6 @@ namespace SupportYourLocals.Data
         }
         public void UpdateData(int id, LocationData data);
         public void RemoveData(int id);
+        public void SaveData();
     }
 }
