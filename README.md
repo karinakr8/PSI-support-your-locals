@@ -3,4 +3,4 @@
 Project name is Support Your Locals
 
 ## Github Actions
-Backend: ![](https://github.com/karinakr8/PSI-support-your-locals/workflows/Backend-CI/badge.svg)
+Backend: ![](https://github.com/karinakr8/PSI-support-your-locals/workflows/Project-CI/badge.svg)

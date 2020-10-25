@@ -1,4 +1,4 @@
-name: Backend-CI
+name: Project-CI
 
 on:
   push:
@@ -11,7 +11,7 @@ on:
       - "**"
 
 jobs:
-  build-backend:
+  build-project:
     # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}
     defaults:
