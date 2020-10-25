@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using MapControl;
 using Microsoft.VisualBasic.FileIO;
+using SupportYourLocals.ExtensionMethods;
 
 namespace SupportYourLocals.Data
 {
@@ -18,7 +19,7 @@ namespace SupportYourLocals.Data
 
             personsID = GetPersonsID(personsID);
 
-            var newLine = string.Format("{0},{1},{2}", product, position, personsID);
+            var newLine = "{0},{1},{2}".Format(product, position, personsID);
 
             csv.AppendLine(newLine);
 
