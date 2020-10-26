@@ -15,37 +15,45 @@ namespace SupportYourLocals.Data
 
         public static void SaveData(String product, Location position)
         {
-            var csv = new StringBuilder();
+            StringBuilder csv = new StringBuilder();
 
+            if(!File.Exists(filePath))
+            {                
+                csv.AppendLine("Something,xCoord,yCoord,ID");
+                                          
+            }      
+            
             personsID = GetPersonsID(personsID);
 
             var newLine = "{0},{1},{2}".Format(product, position, personsID);
-
             csv.AppendLine(newLine);
-
-            File.AppendAllText(filePath, csv.ToString());
+            File.AppendAllText(filePath, csv.ToString());                   
         }
 
         public static int GetPersonsID(int personsID)
         {
             // Checking person's ID
             List<double> personID = new List<double>();
-            using (TextFieldParser csvParser = new TextFieldParser(filePath))
+
+            if(File.Exists(filePath))
             {
-                csvParser.CommentTokens = new[] { "#" };
-                csvParser.SetDelimiters(new[] { "," });
-                csvParser.HasFieldsEnclosedInQuotes = true;
-
-                // Skip the row with the column names
-                csvParser.ReadLine();
-
-                while (!csvParser.EndOfData)
+                using (TextFieldParser csvParser = new TextFieldParser(filePath))
                 {
-                    // Read current line fields, pointer moves to the next line.
-                    string[] fields = csvParser.ReadFields();
-                    personID.Add(double.Parse(fields[3]));
+                    csvParser.CommentTokens = new[] { "#" };
+                    csvParser.SetDelimiters(new[] { "," });
+                    csvParser.HasFieldsEnclosedInQuotes = true;
+
+                    // Skip the row with the column names
+                    csvParser.ReadLine();
+
+                    while (!csvParser.EndOfData)
+                    {
+                        // Read current line fields, pointer moves to the next line.
+                        string[] fields = csvParser.ReadFields();
+                        personID.Add(double.Parse(fields[3]));
+                    }
                 }
-            }
+            }            
 
             // Setting person's ID
             personsID += personID.Count;
