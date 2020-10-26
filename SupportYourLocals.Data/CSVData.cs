@@ -13,13 +13,13 @@ namespace SupportYourLocals.Data
         private static string filePath = @"./Data.csv";
         private static int personsID = 1000;
 
-        public static void SaveData(String productType, Dictionary<ProductType, List<string>> dictionaryProducts, Location position)
+        public static void SaveData(String product, Location position)
         {
             var csv = new StringBuilder();
 
             personsID = GetPersonsID(personsID);
 
-            var newLine = "{0},{1},{2}".Format(productType, position, personsID);
+            var newLine = "{0},{1},{2}".Format(product, position, personsID);
 
             csv.AppendLine(newLine);
 
@@ -43,7 +43,7 @@ namespace SupportYourLocals.Data
                 {
                     // Read current line fields, pointer moves to the next line.
                     string[] fields = csvParser.ReadFields();
-                    //personID.Add(double.Parse(fields[4]));
+                    personID.Add(double.Parse(fields[4]));
                 }
             }
 
