@@ -19,13 +19,14 @@ namespace SupportYourLocals.Data
 
             if(!File.Exists(filePath))
             {                
-                csv.AppendLine("Something,xCoord,yCoord,ID");
-                                          
+                csv.AppendLine("Something,xCoord,yCoord,ID,Time");                                          
             }      
             
             personsID = GetPersonsID(personsID);
 
-            var newLine = "{0},{1},{2}".Format(product, position, personsID);
+            string currentTime = DateTime.Now.ToString("H:mm:ss");
+
+            var newLine = "{0},{1},{2},{3}".Format(product, position, personsID, currentTime);
             csv.AppendLine(newLine);
             File.AppendAllText(filePath, csv.ToString());                   
         }
