@@ -43,7 +43,7 @@ namespace SupportYourLocals.Data
                 {
                     // Read current line fields, pointer moves to the next line.
                     string[] fields = csvParser.ReadFields();
-                    personID.Add(double.Parse(fields[4]));
+                    personID.Add(double.Parse(fields[3]));
                 }
             }
 
@@ -67,9 +67,9 @@ namespace SupportYourLocals.Data
                 {
                     // Saving data to a list
                     string[] fields = csvParser.ReadFields();
-                    listXCoord.Add(double.Parse(fields[2]));
-                    listYCoord.Add(double.Parse(fields[3]));
-                    listPersonsID.Add(int.Parse(fields[4]));
+                    listXCoord.Add(double.Parse(fields[1]));
+                    listYCoord.Add(double.Parse(fields[2]));
+                    listPersonsID.Add(int.Parse(fields[3]));
                 }
             }
         }
