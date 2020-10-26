@@ -153,7 +153,7 @@
 
                 <!-- Place for a map-->
                 <Grid Grid.Column="2" Grid.Row="2">
-                    <map:Map x:Name="MainMap" MouseLeftButtonDown="MapMouseLeftButtonDown" Grid.ColumnSpan="2"/>
+                    <map:Map x:Name="MainMap" MouseLeftButtonDown="MapMouseLeftButtonDown" MouseRightButtonDown="MapMouseRightButtonDown" Grid.ColumnSpan="2"/>
                 </Grid>
 
             </Grid>
