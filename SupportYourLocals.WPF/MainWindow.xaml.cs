@@ -35,12 +35,7 @@ namespace SupportYourLocals.WPF
 
         private bool updateMarketplacesWasClicked = false;
 
-        private bool userSelectedLocation = false;
-
-
-        List<double> listXCoord = new List<double>();
-        List<double> listYCoord = new List<double>();
-        List<int> listPersonsID = new List<int>();
+        private bool userSelectedLocation = false;        
 
         // List for StackPanel elements in Main StackPanel
         List<List<StackPanel>> listOfStackPanelListsAddProduct = new List<List<StackPanel>>();
@@ -52,9 +47,7 @@ namespace SupportYourLocals.WPF
         List<StackPanel> listMainStackPanel = new List<StackPanel>();
         // Dictionaries to load scrollviews and store data based on chosen enum
         Dictionary<string, ScrollViewer> dictionaryOfScrollViewsAddProduct = new Dictionary<string, ScrollViewer>();
-        Dictionary<string, List<TextBox>> dictionaryOfTextBoxListAddProduct = new Dictionary<string, List<TextBox>>();
-
-        private int personsID = 1000;
+        Dictionary<string, List<TextBox>> dictionaryOfTextBoxListAddProduct = new Dictionary<string, List<TextBox>>();        
 
 
         public MainWindow()
@@ -124,10 +117,15 @@ namespace SupportYourLocals.WPF
         private void UpdateMarketplaces_Click(object sender, RoutedEventArgs e)
         {
             updateMarketplacesWasClicked = true;
-            CSVData.SetMarkers(listXCoord, listYCoord, listPersonsID);
+
+            CSVData csvData = new CSVData();
+            List<LocationData> listLocationData = new List<LocationData>();
+            listLocationData = csvData.GetAllData();
+
             // Adding all markers to a map
-            for (int i = 0; i < listXCoord.Count; i++)
-                SYLMap.AddMarker(listXCoord[i], listYCoord[i], listPersonsID[i]);
+            SYLMap.RemoveAllMarkers();
+            for (int i = 0; i < listLocationData.Count; i++)
+                SYLMap.AddMarker(listLocationData[i].Location);
         }
 
         private void MapMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -139,9 +137,11 @@ namespace SupportYourLocals.WPF
                 {
                     SYLMap.RemoveLastMarker();
                 }
+
                 userSelectedLocation = true;
                 MainMap.TargetCenter = MainMap.ViewToLocation(e.GetPosition(MainMap));
-                SYLMap.AddMarker(MainMap.TargetCenter, personsID);
+
+                SYLMap.AddMarker(MainMap.TargetCenter);
             }
         }
 
@@ -161,6 +161,7 @@ namespace SupportYourLocals.WPF
             //TextProduct.Clear();
             //TextTime.Clear();
             GridSellerAdd.Visibility = Visibility.Visible;
+            userSelectedLocation = false;
         }
 
         private void ButtonSave_Clicked(object sender, RoutedEventArgs e)
@@ -168,22 +169,19 @@ namespace SupportYourLocals.WPF
             // Saving data to csv file
             if (userSelectedLocation)
             {
-                //String product = TextProduct.Text;
                 string product = "Testing value";
-                //String time = TextTime.Text;
+
                 userSelectedLocation = false;
 
-                CSVData.SaveData(product, MainMap.TargetCenter);
+                CSVData csvData = new CSVData();
+                csvData.SaveData(product, MainMap.TargetCenter);
+                List<LocationData> listLocationData = new List<LocationData>();
+                listLocationData = csvData.GetAllData();
 
                 GridSellerAdd.Visibility = Visibility.Collapsed;
-                SYLMap.RemoveLastMarker();
-                if (updateMarketplacesWasClicked)
-                {
-                    CSVData.SetMarkers(listXCoord, listYCoord, listPersonsID);
-                    // Adding all markers to a map
-                    for (int i = 0; i < listXCoord.Count; i++)
-                        SYLMap.AddMarker(listXCoord[i], listYCoord[i], listPersonsID[i]);
-                }
+                
+                // Adding last marker to map
+                SYLMap.AddMarker(MainMap.TargetCenter);
             }
             else
             {
@@ -203,6 +201,11 @@ namespace SupportYourLocals.WPF
 
         private void SearchMarketplacesButton_Click(object sender, RoutedEventArgs e)
         {
+            if (userSelectedLocation)
+            {
+                SYLMap.RemoveLastMarker();
+            }
+            GridSellerAdd.Visibility = Visibility.Collapsed;
             GridSellersSearch.Visibility = Visibility.Collapsed;
             GridMarketplacesSearch.Visibility = Visibility.Visible;
             SearchSellersButton.FontWeight = FontWeights.Normal;

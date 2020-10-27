@@ -8,33 +8,18 @@ using SupportYourLocals.ExtensionMethods;
 
 namespace SupportYourLocals.Data
 {
-    public class CSVData
+    public class CSVData : IDataStorage
     {
-        private static string filePath = @"./Data.csv";
-        private static int personsID = 1000;
+        private string filePath = @"./Data.csv";
 
-        public static void SaveData(String product, Location position)
+        public LocationData GetData(int id)
         {
-            StringBuilder csv = new StringBuilder();
-
-            if(!File.Exists(filePath))
-            {                
-                csv.AppendLine("Something,xCoord,yCoord,ID,Time");                                          
-            }      
-            
-            personsID = GetPersonsID(personsID);
-
-            string currentTime = DateTime.Now.ToString("H:mm:ss");
-
-            var newLine = "{0},{1},{2},{3}".Format(product, position, personsID, currentTime);
-            csv.AppendLine(newLine);
-            File.AppendAllText(filePath, csv.ToString());                   
+            throw new NotImplementedException();
         }
 
-        public static int GetPersonsID(int personsID)
+        public List<LocationData> GetAllData()
         {
-            // Checking person's ID
-            List<double> personID = new List<double>();
+            List<LocationData> listLocationData = new List<LocationData>();            
 
             if(File.Exists(filePath))
             {
@@ -49,38 +34,90 @@ namespace SupportYourLocals.Data
 
                     while (!csvParser.EndOfData)
                     {
-                        // Read current line fields, pointer moves to the next line.
+                        LocationData locationData = new LocationData();
+
                         string[] fields = csvParser.ReadFields();
-                        personID.Add(double.Parse(fields[3]));
+
+                        // Saving one marker data
+                        locationData.Location = new Location(double.Parse(fields[1]), double.Parse(fields[2]));
+                        locationData.ID = int.Parse(fields[3]);
+                        //locationData.Name = ;
+                        //locationData.AddedByID = ;
+                        locationData.Time = fields[4];
+                        //locationData.Products.Add();
+
+                        // Saving data to a list
+                        listLocationData.Add(locationData);
                     }
                 }
-            }            
-
-            // Setting person's ID
-            personsID += personID.Count;
-            return personsID;
+            }
+            
+            return listLocationData;
         }
 
-        public static void SetMarkers(List<double> listXCoord, List<double> listYCoord, List<int> listPersonsID)
+        public int GetDataCount()
         {
-            using (TextFieldParser csvParser = new TextFieldParser(filePath))
+            throw new NotImplementedException();
+        }
+
+        public void AddData(LocationData data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateData(int id, LocationData data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveData(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SaveData(String product, Location position)
+        {
+            int locationID = 1000;
+
+            List<int> listLocationID = new List<int>();
+            
+            StringBuilder csv = new StringBuilder();
+
+            if (!File.Exists(filePath))
             {
-                csvParser.CommentTokens = new[] { "#" };
-                csvParser.SetDelimiters(new[] { "," });
-                csvParser.HasFieldsEnclosedInQuotes = true;
-
-                // Skip the row with the column names
-                csvParser.ReadLine();
-
-                while (!csvParser.EndOfData)
+                csv.AppendLine("Something,xCoord,yCoord,ID,Time");
+            }
+            // Checking location's ID -----------------------------------------------
+            else
+            {
+                LocationData locationData = new LocationData();
+                using (TextFieldParser csvParser = new TextFieldParser(filePath))
                 {
-                    // Saving data to a list
-                    string[] fields = csvParser.ReadFields();
-                    listXCoord.Add(double.Parse(fields[1]));
-                    listYCoord.Add(double.Parse(fields[2]));
-                    listPersonsID.Add(int.Parse(fields[3]));
+                    csvParser.CommentTokens = new[] { "#" };
+                    csvParser.SetDelimiters(new[] { "," });
+                    csvParser.HasFieldsEnclosedInQuotes = true;
+
+                    // Skip the row with the column names
+                    csvParser.ReadLine();
+
+                    while (!csvParser.EndOfData)
+                    {
+                        // Read current line fields, pointer moves to the next line.
+                        string[] fields = csvParser.ReadFields();
+                        listLocationID.Add(Int32.Parse(fields[3]));
+                    }
                 }
             }
+            //----------------------------------------------------------------------
+
+            // Setting person's ID
+            locationID += listLocationID.Count;
+
+            string currentTime = DateTime.Now.ToString("H:mm:ss");
+
+            var newLine = "{0},{1},{2},{3}".Format(product, position, locationID, currentTime);
+            csv.AppendLine(newLine);
+            File.AppendAllText(filePath, csv.ToString());
         }
     }
 }

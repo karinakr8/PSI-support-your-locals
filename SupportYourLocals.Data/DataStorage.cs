@@ -25,7 +25,7 @@ namespace SupportYourLocals.Data
         public Location Location { get; set; }
         public string Name { get; set; }
         public int AddedByID { get; set; }
-        public DateTime Time { get; set; }
+        public string Time { get; set; }
         public Dictionary<ProductType, List<string> > Products { get; set; }
     }
 
@@ -42,6 +42,6 @@ namespace SupportYourLocals.Data
         }
         public void UpdateData(int id, LocationData data);
         public void RemoveData(int id);
-        public void SaveData();
+        public void SaveData(String product, Location position);
     }
 }
