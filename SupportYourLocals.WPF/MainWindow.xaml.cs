@@ -19,6 +19,7 @@ using System.IO;
 using SupportYourLocals.Data;
 using MaterialDesignThemes.Wpf;
 using System.Runtime.CompilerServices;
+using SupportYourLocals.ExtensionMethods;
 
 namespace SupportYourLocals.WPF
 {
@@ -383,6 +384,21 @@ namespace SupportYourLocals.WPF
                 }
             }
             return dictionaryListString;
+        }
+
+        private void FindLocation_Click(object sender, RoutedEventArgs e)
+        {
+            var address = TextBox3Seller.Text;
+            if (TextBox2Seller.Text != "")
+                address = "{0}, {1}".Format(address, TextBox2Seller.Text);
+
+            var location = SYLMap.AddressToLocation(address);
+
+            if (location == null)
+                return; // Show some kinda error message
+
+            SYLMap.AddMarker(location, 10);
+            SYLMap.Center = location;
         }
     }
 
