@@ -5,10 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.WindowsDesktop.App.WPF"/>
+    <FrameworkReference Include="Microsoft.WindowsDesktop.App.WPF" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Nominatim.API" Version="1.6.0" />
     <PackageReference Include="XAML.MapControl" Version="5.3.1" />
   </ItemGroup>
 

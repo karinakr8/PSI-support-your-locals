@@ -3,6 +3,8 @@ using System.Linq;
 using MapControl;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
+using Nominatim.API.Geocoders;
+using Nominatim.API.Models;
 
 namespace SupportYourLocals.Map
 {
@@ -91,6 +93,44 @@ namespace SupportYourLocals.Map
         public void SetCenterFromCoordinates (double lat, double lon)
         {
             Center = new Location(lat, lon);
+        }
+
+        public Location AddressToLocation (string address)
+        {
+            var geocoder = new ForwardGeocoder();
+            var request = geocoder.Geocode(new ForwardGeocodeRequest
+            {
+                queryString = address
+            });
+            request.Wait();
+
+            if (request.Status != System.Threading.Tasks.TaskStatus.RanToCompletion)
+                return null;
+
+            if (request.Result.Length < 1)
+                return null;
+
+            return new Location(request.Result[0].Latitude, request.Result[0].Longitude);
+        }
+
+        public string LocationToAddress(Location location)
+        {
+            var geocoder = new ReverseGeocoder();
+            var request = geocoder.ReverseGeocode(new ReverseGeocodeRequest
+            {
+                Longitude = location.Longitude,
+                Latitude = location.Latitude,
+                BreakdownAddressElements = true
+            });
+            request.Wait();
+
+            if (request.Status != System.Threading.Tasks.TaskStatus.RanToCompletion)
+                return null;
+
+            if (request.Result.PlaceID == 0)
+                return null;
+
+            return request.Result.DisplayName;
         }
 
         private void OnMarkerClick (object sender, MouseButtonEventArgs e)
