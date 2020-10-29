@@ -27,6 +27,16 @@ namespace SupportYourLocals.Data
         public int AddedByID { get; set; }
         public DateTime Time { get; set; }
         public Dictionary<ProductType, List<string> > Products { get; set; }
+
+        public LocationData(int id, Location location, string name, int addedByID, DateTime time, Dictionary<ProductType, List<string>> products)
+        {
+            ID = id;
+            Location = location;
+            Name = name;
+            AddedByID = addedByID;
+            Time = time;
+            Products = products;
+        }
     }
 
     public interface IDataStorage

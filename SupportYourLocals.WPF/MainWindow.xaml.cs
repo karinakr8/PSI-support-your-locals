@@ -27,7 +27,6 @@ namespace SupportYourLocals.WPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        int i = 0;
         private int AddProductLineNumber = 2;
 
         private readonly Map.Map SYLMap;
@@ -54,6 +53,10 @@ namespace SupportYourLocals.WPF
         Dictionary<ProductType, ScrollViewer> dictionaryOfScrollViewsAddProduct = new Dictionary<ProductType, ScrollViewer>();
         Dictionary<ProductType, List<TextBox>> dictionaryOfTextBoxListAddProduct = new Dictionary<ProductType, List<TextBox>>();
 
+        XMLData xmlData = new XMLData();
+
+
+
         private int personsID = 1000;
 
 
@@ -79,6 +82,11 @@ namespace SupportYourLocals.WPF
             };
 
             // Filling combobox for product types and filling dictionaries
+            loadAddLocalSellerFieldsAndCollections();
+        }
+
+        private void loadAddLocalSellerFieldsAndCollections()
+        {
             var productTypes = Enum.GetValues(typeof(ProductType));
 
 
@@ -119,8 +127,28 @@ namespace SupportYourLocals.WPF
 
                 dictionaryOfScrollViewsAddProduct.Add((ProductType)productType, scrollViewer);
 
-                StackPanelWithScrollViewerAddSellers.Children.Add(scrollViewer);
+                StackPanelWithScrollViewerAddSellers.Children.Add(dictionaryOfScrollViewsAddProduct[(ProductType)productType]);
 
+            }
+        }
+
+        private void clearAddLocalSellerCollections()
+        {
+            dictionaryOfScrollViewsAddProduct.Clear();
+            dictionaryOfTextBoxListAddProduct.Clear();
+            listAddButtons.Clear();
+            listOfStackPanelListsAddProduct.Clear();
+            listMainStackPanel.Clear();
+        }
+
+        public void clearAddLocalSellerInputFieldsAndUserInterface()
+        {
+            AddLocalSellerNameTextBox.Clear();
+            ComboBoxProductType.Items.Clear();
+            //StackPanelWithScrollViewerAddSellers.
+            foreach (var scrollviewer in dictionaryOfScrollViewsAddProduct)
+            {
+                scrollviewer.Value.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -159,6 +187,7 @@ namespace SupportYourLocals.WPF
         private void LabelAddSeller_Click(object sender, RoutedEventArgs e)
         {
             //Clean up
+            loadAddLocalSellerFieldsAndCollections();
             ErrorLabel1.Visibility = Visibility.Collapsed;
             //TextProduct.Clear();
             //TextTime.Clear();
@@ -168,6 +197,11 @@ namespace SupportYourLocals.WPF
         private void ButtonSave_Clicked(object sender, RoutedEventArgs e)
         {
             // Saving data to csv file
+            //IDataStorage temp = new XmlDataProvider();
+            var productTypes = Enum.GetValues(typeof(ProductType));
+
+
+
             if (userSelectedLocation)
             {
                 //String product = TextProduct.Text;
@@ -177,8 +211,10 @@ namespace SupportYourLocals.WPF
 
                 //var dictionaryProducts = convertDictionaryListTextBoxToDictionaryListString(dictionaryOfTextBoxListAddProduct);
                 var dictionaryListString = convertDictionaryListTextBoxToDictionaryListString(dictionaryOfTextBoxListAddProduct);
-                /// This line will be used, when SaveData is changed
-                //CSVData.SaveData(productType, dictionaryListString, MainMap.TargetCenter);
+
+                ///change ID of a local seller
+                ///Change AddedById field
+                xmlData.AddData(new LocationData(1000, MainMap.TargetCenter, AddLocalSellerNameTextBox.Text, 10, DateTime.Now, dictionaryListString));
 
                 GridSellerAdd.Visibility = Visibility.Collapsed;
                 SYLMap.RemoveLastMarker();
@@ -189,11 +225,19 @@ namespace SupportYourLocals.WPF
                     for (int i = 0; i < listXCoord.Count; i++)
                         SYLMap.AddMarker(listXCoord[i], listYCoord[i], listPersonsID[i]);
                 }
+
+                // Clear everything for the next usages of "Add local seller"
+                clearAddLocalSellerInputFieldsAndUserInterface();
+                clearAddLocalSellerCollections();
             }
             else
             {
                 ErrorLabel1.Visibility = Visibility.Visible;
             }
+
+            
+            
+            
         }
 
         private void ButtonCancel_Clicked(object sender, RoutedEventArgs e)
@@ -202,6 +246,10 @@ namespace SupportYourLocals.WPF
             SYLMap.RemoveLastMarker();
             if (updateMarketplacesWasClicked)
                 CSVData.SetMarkers(listXCoord, listYCoord, listPersonsID);
+
+            // Clean up Add local seller window
+            clearAddLocalSellerInputFieldsAndUserInterface();
+            clearAddLocalSellerCollections();
         }
 
         private void SearchMarketplacesButton_Click(object sender, RoutedEventArgs e)
@@ -251,7 +299,7 @@ namespace SupportYourLocals.WPF
             dictionaryOfTextBoxListAddProduct[productTypesEnum].Add(textBox);
 
             listMainStackPanel[index].Children.Remove(listAddButtons[index]);
-            //listMainStackPanel[index].Children.Add(createButtonForProductTypes(productType, "—", AddLocalSellerRemoveProduct1_Click, null));
+
             listMainStackPanel[index].Children.Add(stackPanel);
 
             AddProductLineNumber++;
@@ -261,38 +309,44 @@ namespace SupportYourLocals.WPF
         private void AddLocalSellerRemoveProduct1_Click(object sender, RoutedEventArgs e)
         {
             int index = ComboBoxProductType.SelectedIndex;
-            TextBox textBox = sender as TextBox;
+            var productTypesEnum = (ProductType)Enum.Parse(typeof(ProductType), ComboBoxProductType.SelectedValue.ToString());
             Button button = sender as Button;
             button.Visibility = Visibility.Collapsed;
-            //listOfStackPanelListsAddProduct[index].Add(stackPanel);
+            // Might change this later
+            int i = 0;
             foreach (var stackPanel in listOfStackPanelListsAddProduct[index])
             {
-
+                
                 if (stackPanel.Children.Contains(button))
                 {
                     //stackPanel.Visibility = Visibility.Collapsed;
+                    (dictionaryOfTextBoxListAddProduct[productTypesEnum]).RemoveAt(i);
                     stackPanel.Children.Clear();
                     stackPanel.Margin = new Thickness(0, 0, 0, 0);
-                    //textBox.Clear();
                 }
+                i++;
             }
         }
 
         private void ComboBoxProductType_SelectionChanged(object sender, EventArgs e)
         {
+            if(ComboBoxProductType.SelectedValue != null) { 
+                var productType = (ProductType)Enum.Parse(typeof(ProductType), ComboBoxProductType.SelectedValue.ToString());
+                    LabelForScrollViewerAddLocalSeller.Visibility = Visibility.Collapsed;
 
-            var productType = (ProductType)Enum.Parse(typeof(ProductType), ComboBoxProductType.SelectedValue.ToString());
+                    dictionaryOfScrollViewsAddProduct[productType].Visibility = Visibility.Visible;
 
-            LabelForScrollViewerAddLocalSeller.Visibility = Visibility.Collapsed;
-
-            dictionaryOfScrollViewsAddProduct[productType].Visibility = Visibility.Visible;
-
-            foreach (KeyValuePair<ProductType, ScrollViewer> entry in dictionaryOfScrollViewsAddProduct)
+                    foreach (KeyValuePair<ProductType, ScrollViewer> entry in dictionaryOfScrollViewsAddProduct)
+                    {
+                        if (entry.Key != productType)
+                        {
+                            entry.Value.Visibility = Visibility.Collapsed;
+                        }
+                    }
+            }
+            else
             {
-                if (entry.Key != productType)
-                {
-                    entry.Value.Visibility = Visibility.Collapsed;
-                }
+                LabelForScrollViewerAddLocalSeller.Visibility = Visibility.Visible;
             }
         }
 
@@ -325,9 +379,7 @@ namespace SupportYourLocals.WPF
                 Width = 160,
                 TextWrapping = TextWrapping.Wrap,
                 HorizontalContentAlignment = HorizontalAlignment.Center,
-                Text = i.ToString()
             };
-            i++;
             return textBox;
         }
 
