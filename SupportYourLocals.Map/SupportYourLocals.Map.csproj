@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <Resource Include="marker.png" Link="marker.png" />
+    <Resource Include="marker2.png" Link="marker2.png" />
   </ItemGroup>
 
 </Project>

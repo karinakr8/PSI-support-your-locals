@@ -397,7 +397,7 @@ namespace SupportYourLocals.WPF
             if (location == null)
                 return; // Show some kinda error message
 
-            SYLMap.AddMarker(location, 10);
+            SYLMap.AddMarkerTemp(location);
             SYLMap.Center = location;
         }
     }

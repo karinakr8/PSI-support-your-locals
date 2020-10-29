@@ -11,6 +11,7 @@ namespace SupportYourLocals.Map
     public class Map
     {
         private readonly MapControl.Map WPFMap;
+        private readonly Marker tempMarker;
 
         public Location Center
         {
@@ -48,14 +49,36 @@ namespace SupportYourLocals.Map
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Bottom
             });
+
+            tempMarker = new Marker2();
+            tempMarker.MouseDown += new MouseButtonEventHandler(OnMarkerClick);
         }
 
         public delegate void MarkerClickedHandler (Marker marker);
         public event MarkerClickedHandler MarkerClicked; // Gets called when any marker gets clicked
+        public event MarkerClickedHandler MarkerTempClicked; // Gets called when the temporary marker gets clicked
 
         protected virtual void OnMarkerClicked (Marker marker)
         {
             MarkerClicked?.Invoke(marker);
+        }
+
+        protected virtual void OnTempMarkerClicked(Marker marker)
+        {
+            MarkerTempClicked?.Invoke(marker);
+        }
+
+        public void AddMarkerTemp (Location position)
+        {
+            tempMarker.Location = position;
+            if (!WPFMap.Children.Contains(tempMarker))
+                WPFMap.Children.Add(tempMarker);
+        }
+
+        public void RemoveMarkerTemp ()
+        {
+            if (WPFMap.Children.Contains(tempMarker))
+                WPFMap.Children.Remove(tempMarker);
         }
 
         public void AddMarker (Location position, int id)
@@ -138,7 +161,10 @@ namespace SupportYourLocals.Map
             if (e.ChangedButton != MouseButton.Left)
                 return;
 
-            OnMarkerClicked((Marker) sender);
+            if (sender == tempMarker)
+                OnTempMarkerClicked((Marker) sender);
+            else
+                OnMarkerClicked((Marker)sender);
         }
     }
 }
