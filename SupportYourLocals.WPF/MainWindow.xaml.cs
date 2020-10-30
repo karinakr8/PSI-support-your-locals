@@ -137,21 +137,28 @@ namespace SupportYourLocals.WPF
         private void MapMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             //Double tap on a map
-            if (e.ClickCount == 2 && GridSellerAdd.Visibility == Visibility.Visible)
+            if (e.ClickCount == 2)
             {
-                userSelectedLocation = true;
-                MainMap.TargetCenter = MainMap.ViewToLocation(e.GetPosition(MainMap));
-                SYLMap.AddMarkerTemp(MainMap.TargetCenter);
+                SYLMap.Center = MainMap.ViewToLocation(e.GetPosition(MainMap));
+                SYLMap.AddMarkerTemp(SYLMap.Center);
+
+                if (GridSellerAdd.Visibility == Visibility.Visible)
+                {
+                    userSelectedLocation = true;
+                }
+                else
+                {
+                    var address = SYLMap.LocationToAddressSplit(SYLMap.Center);
+                    TextBox2Seller.Text = address.Item2;
+                    TextBox3Seller.Text = address.Item1;
+                }
             }
         }
 
         private void MapMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {                                
-                if (userSelectedLocation)
-                {
-                    SYLMap.RemoveMarkerTemp();
-                    userSelectedLocation = false;
-                }
+            SYLMap.RemoveMarkerTemp();
+            userSelectedLocation = false;
         }
 
         private void LabelAddSeller_Click(object sender, RoutedEventArgs e)
