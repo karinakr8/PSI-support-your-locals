@@ -98,13 +98,6 @@ namespace SupportYourLocals.Map
             AddMarker(new Location(lat, lon), id);
         }
 
-        public void RemoveLastMarker ()
-        {
-            var toRemove = WPFMap.Children.OfType<Marker>().LastOrDefault();
-            if (toRemove != null)
-                WPFMap.Children.Remove(toRemove);
-        }
-
         public void RemoveAllMarkers ()
         {
             var toRemove = WPFMap.Children.OfType<Marker>().ToList();
