@@ -8,15 +8,15 @@ namespace SupportYourLocals.Map
 {
     public class Marker : Image
     {
-        private const string defaultImageSrc = "marker.png";
-        private const int markerSizeX = 35;
-        private const int markerSizeY = 57;
+        protected virtual string DefaultImageSrc => "marker.png";
+        protected virtual int MarkerSizeX => 35;
+        protected virtual int MarkerSizeY => 57;
         private static BitmapImage defaultImage = null;
         public int id;
 
         public Marker ()
         {
-            Source = getImage();
+            Source = GetImage();
 
             HorizontalAlignment = HorizontalAlignment.Center;
             VerticalAlignment = VerticalAlignment.Bottom;
@@ -24,15 +24,15 @@ namespace SupportYourLocals.Map
             MapPanel.InitMapElement(this);
         }
 
-        private static BitmapImage getImage()
+        private BitmapImage GetImage()
         {
             if (defaultImage == null)
             {
                 defaultImage = new BitmapImage();
                 defaultImage.BeginInit();
-                defaultImage.DecodePixelWidth = markerSizeX;
-                defaultImage.DecodePixelHeight = markerSizeY;
-                defaultImage.UriSource = new Uri(defaultImageSrc, UriKind.Relative);
+                defaultImage.DecodePixelWidth = MarkerSizeX;
+                defaultImage.DecodePixelHeight = MarkerSizeY;
+                defaultImage.UriSource = new Uri(DefaultImageSrc, UriKind.Relative);
                 defaultImage.EndInit();
             }
 
@@ -44,5 +44,10 @@ namespace SupportYourLocals.Map
             get { return MapPanel.GetLocation(this); }
             set { MapPanel.SetLocation(this, value); }
         }
+    }
+
+    public class Marker2 : Marker
+    {
+        protected override string DefaultImageSrc => "marker2.png";
     }
 }

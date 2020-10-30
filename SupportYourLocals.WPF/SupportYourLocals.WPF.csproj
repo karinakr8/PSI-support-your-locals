@@ -19,5 +19,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="..\SupportYourLocals.Map\marker.png" Link="marker.png" />
+    <Resource Include="..\SupportYourLocals.Map\marker2.png" Link="marker2.png" />
   </ItemGroup>
 </Project>

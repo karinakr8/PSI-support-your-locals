@@ -137,25 +137,28 @@ namespace SupportYourLocals.WPF
         private void MapMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             //Double tap on a map
-            if (e.ClickCount == 2 && GridSellerAdd.Visibility == Visibility.Visible)
+            if (e.ClickCount == 2)
             {
-                if(userSelectedLocation)
+                SYLMap.Center = MainMap.ViewToLocation(e.GetPosition(MainMap));
+                SYLMap.AddMarkerTemp(SYLMap.Center);
+
+                if (GridSellerAdd.Visibility == Visibility.Visible)
                 {
-                    SYLMap.RemoveLastMarker();
+                    userSelectedLocation = true;
                 }
-                userSelectedLocation = true;
-                MainMap.TargetCenter = MainMap.ViewToLocation(e.GetPosition(MainMap));
-                SYLMap.AddMarker(MainMap.TargetCenter, personsID);
+                else
+                {
+                    var address = SYLMap.LocationToAddressSplit(SYLMap.Center);
+                    TextBox2Seller.Text = address.Item2;
+                    TextBox3Seller.Text = address.Item1;
+                }
             }
         }
 
         private void MapMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {                                
-                if (userSelectedLocation)
-                {
-                    SYLMap.RemoveLastMarker();
-                    userSelectedLocation = false;
-                }
+            SYLMap.RemoveMarkerTemp();
+            userSelectedLocation = false;
         }
 
         private void LabelAddSeller_Click(object sender, RoutedEventArgs e)
@@ -184,7 +187,7 @@ namespace SupportYourLocals.WPF
                 //CSVData.SaveData(productType, dictionaryListString, MainMap.TargetCenter);
 
                 GridSellerAdd.Visibility = Visibility.Collapsed;
-                SYLMap.RemoveLastMarker();
+                SYLMap.RemoveMarkerTemp();
                 if (updateMarketplacesWasClicked)
                 {
                     CSVData.SetMarkers(listXCoord, listYCoord, listPersonsID);
@@ -204,7 +207,7 @@ namespace SupportYourLocals.WPF
             GridSellerAdd.Visibility = Visibility.Collapsed;
             if(userSelectedLocation)
             {
-                SYLMap.RemoveLastMarker();
+                SYLMap.RemoveMarkerTemp();
                 userSelectedLocation = false;
             }
         }
@@ -397,7 +400,7 @@ namespace SupportYourLocals.WPF
             if (location == null)
                 return; // Show some kinda error message
 
-            SYLMap.AddMarker(location, 10);
+            SYLMap.AddMarkerTemp(location);
             SYLMap.Center = location;
         }
     }

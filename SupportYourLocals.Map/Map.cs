@@ -5,23 +5,25 @@ using System.Windows.Input;
 using System.Windows.Media.Animation;
 using Nominatim.API.Geocoders;
 using Nominatim.API.Models;
+using System;
 
 namespace SupportYourLocals.Map
 {
     public class Map
     {
         private readonly MapControl.Map WPFMap;
+        private readonly Marker tempMarker;
 
         public Location Center
         {
             set { WPFMap.TargetCenter = value; }
-            get { return WPFMap.Center;  }
+            get { return WPFMap.TargetCenter;  }
         }
 
         public double Zoom
         {
             set { WPFMap.TargetZoomLevel = value; }
-            get { return WPFMap.ZoomLevel; }
+            get { return WPFMap.TargetZoomLevel; }
         }
 
         public Map (MapControl.Map passedMap, Location center = null, double zoom = 14)
@@ -48,14 +50,36 @@ namespace SupportYourLocals.Map
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Bottom
             });
+
+            tempMarker = new Marker2();
+            tempMarker.MouseDown += new MouseButtonEventHandler(OnMarkerClick);
         }
 
         public delegate void MarkerClickedHandler (Marker marker);
         public event MarkerClickedHandler MarkerClicked; // Gets called when any marker gets clicked
+        public event MarkerClickedHandler MarkerTempClicked; // Gets called when the temporary marker gets clicked
 
         protected virtual void OnMarkerClicked (Marker marker)
         {
             MarkerClicked?.Invoke(marker);
+        }
+
+        protected virtual void OnTempMarkerClicked(Marker marker)
+        {
+            MarkerTempClicked?.Invoke(marker);
+        }
+
+        public void AddMarkerTemp (Location position)
+        {
+            tempMarker.Location = position;
+            if (!WPFMap.Children.Contains(tempMarker))
+                WPFMap.Children.Add(tempMarker);
+        }
+
+        public void RemoveMarkerTemp ()
+        {
+            if (WPFMap.Children.Contains(tempMarker))
+                WPFMap.Children.Remove(tempMarker);
         }
 
         public void AddMarker (Location position, int id)
@@ -73,13 +97,6 @@ namespace SupportYourLocals.Map
         public void AddMarker (double lat, double lon, int id)
         {
             AddMarker(new Location(lat, lon), id);
-        }
-
-        public void RemoveLastMarker ()
-        {
-            var toRemove = WPFMap.Children.OfType<Marker>().LastOrDefault();
-            if (toRemove != null)
-                WPFMap.Children.Remove(toRemove);
         }
 
         public void RemoveAllMarkers ()
@@ -113,7 +130,7 @@ namespace SupportYourLocals.Map
             return new Location(request.Result[0].Latitude, request.Result[0].Longitude);
         }
 
-        public string LocationToAddress(Location location)
+        private GeocodeResponse LocationToAddressInternal(Location location)
         {
             var geocoder = new ReverseGeocoder();
             var request = geocoder.ReverseGeocode(new ReverseGeocodeRequest
@@ -130,7 +147,27 @@ namespace SupportYourLocals.Map
             if (request.Result.PlaceID == 0)
                 return null;
 
-            return request.Result.DisplayName;
+            return request.Result;
+        }
+
+        public string LocationToAddress(Location location)
+        {
+            return LocationToAddressInternal(location).DisplayName;
+        }
+
+        public Tuple<string, string> LocationToAddressSplit(Location location)
+        {
+            // Return value 1 - address, 2 - city/district
+            var result = LocationToAddressInternal(location);
+
+            string city = result.Address.District;
+
+            if (result.Address.City != null)
+                city = result.Address.City;
+
+            int index = result.DisplayName.IndexOf(city);
+            // Return the address part without the trailing ", " and the city/district
+            return new Tuple<string, string> (result.DisplayName.Substring(0, index - 2), city);
         }
 
         private void OnMarkerClick (object sender, MouseButtonEventArgs e)
@@ -138,7 +175,10 @@ namespace SupportYourLocals.Map
             if (e.ChangedButton != MouseButton.Left)
                 return;
 
-            OnMarkerClicked((Marker) sender);
+            if (sender == tempMarker)
+                OnTempMarkerClicked((Marker) sender);
+            else
+                OnMarkerClicked((Marker)sender);
         }
     }
 }
