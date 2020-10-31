@@ -78,7 +78,7 @@
                         <Button x:Name="LabelAddSeller" Content="Add a local seller"  HorizontalContentAlignment="Center" Margin="0 370 0 0" VerticalAlignment="Top" Width="160" Background="Transparent" BorderBrush="{x:Null}" Foreground="#808080" Click="LabelAddSeller_Click"/>
 
                         <!-- User input for adding a local seller-->
-                        <Grid x:Name="GridSellerAdd" HorizontalAlignment="Right" Grid.ColumnSpan="2" Margin="0,0,0,0" Width="300" Background="#e8ffff" Visibility="Visible">
+                        <Grid x:Name="GridSellerAdd" HorizontalAlignment="Right" Grid.ColumnSpan="2" Margin="0,0,0,0" Width="300" Background="#e8ffff" Visibility="Collapsed">
                             <!-- Change this label into something else-->
                             <Label x:Name="LabelAddLocalSeller" Content="Double click on a map to pin a local seller's location" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,0,0,0" FontFamily="Yu Gothic UI Semibold" Foreground="#808080" FontSize="12" Width="300" />
 

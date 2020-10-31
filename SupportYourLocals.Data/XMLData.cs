@@ -12,17 +12,25 @@ namespace SupportYourLocals.Data
 {
     public class XMLData : IDataStorage
     {
-        private string filePath = @"./LocalSellersData.xml";
-        private string fileName = "LocalSellersData.xml";
-        XDocument doc = new XDocument();
-        XmlDocument document = new XmlDocument();
+        private const string filePath = @"./LocalSellersData.xml";
+        private const string fileName = "LocalSellersData.xml";
+        readonly XDocument doc = null;
+        readonly XmlDocument document = new XmlDocument();
+        Dictionary<int, LocationData> dictionaryLocationDataById = new Dictionary<int, LocationData>();
+
         public XMLData()
         {
+            //Data storage to dictionaryLocationDataById for easier data access in methods in this class such as GetData or GetAllData
+            var tempListOfLocationData = GetAllData();
+            foreach (var location in tempListOfLocationData)
+            {
+                dictionaryLocationDataById.Add(location.ID, location);
+            }
 
-            doc = XDocument.Load(filePath);
             if (!File.Exists(filePath))
             {
-                doc.Save(filePath);
+                doc = new XDocument(new XElement("LocalSellers"));
+                doc.Save(fileName);
             }
             else
             {
@@ -37,21 +45,20 @@ namespace SupportYourLocals.Data
 
         public void AddData(LocationData data)
         {
-            // Add a local seller after clicking save
-            //XDocument doc = XDocument.Load(filePath);
             XElement root = new XElement("LocalSeller");
             root.Add(new XAttribute("ID", data.ID));
             root.Add(new XAttribute("Location", data.Location));
             root.Add(new XAttribute("Name", data.Name));
             root.Add(new XAttribute("AddedByID", data.AddedByID));
             root.Add(new XAttribute("Time", data.Time));
-            addProductTypesToXml(data, root);
-
+            AddProductTypesToXml(data, root);
             doc.Element("LocalSellers").Add(root);
             doc.Save(filePath);
+
+            dictionaryLocationDataById.Add(data.ID, data);
         }
 
-        private static void addProductTypesToXml(LocationData data, XElement root)
+        private void AddProductTypesToXml(LocationData data, XElement root)
         {
             foreach (var productType in data.Products)
             {
@@ -70,8 +77,6 @@ namespace SupportYourLocals.Data
                     }
                     root.Add(productTypeBranch);
                 }
-
-
             }
         }
 
@@ -80,73 +85,57 @@ namespace SupportYourLocals.Data
             var localSellers = new List<LocationData>();
             var dictionary = new Dictionary<ProductType, List<string>>();
 
-
-            /*if (File.Exists(filePath)){
-                document.Load(fileName);*/
-                XmlNodeList localSellerNode = document.GetElementsByTagName("LocalSeller");
-                foreach (XmlNode localSeller in localSellerNode)
+            XmlNodeList localSellerNode = document.GetElementsByTagName("LocalSeller");
+            foreach (XmlNode localSeller in localSellerNode)
+             {
+                var id = Int32.Parse(localSeller.Attributes[0].Value);
+                var location = Location.Parse(localSeller.Attributes[1].Value);
+                var name = localSeller.Attributes[2].Value;
+                var addedById = Int32.Parse(localSeller.Attributes[3].Value);
+                var time = DateTime.Parse(localSeller.Attributes[4].Value);
+                XmlNodeList productTypeNode = localSeller.ChildNodes;
+                foreach (XmlNode productType in productTypeNode)
                 {
-                    var id = Int32.Parse(localSeller.Attributes[0].Value);
-                    var location = Location.Parse(localSeller.Attributes[1].Value);
-                    var name = localSeller.Attributes[2].Value;
-                    var addedById = Int32.Parse(localSeller.Attributes[3].Value);
-                    var time = DateTime.Parse(localSeller.Attributes[4].Value);
+                    ProductType productTypeEnum = (ProductType)Enum.Parse(typeof(ProductType), productType.Attributes[0].Value);
+                    XmlNodeList productNode = productType.ChildNodes;
 
-                    
-                    XmlNodeList productTypeNode = localSeller.ChildNodes;
-                    foreach (XmlNode productType in productTypeNode)
+                    var productsList = new List<string>();
+                    foreach (XmlNode product in productNode)
                     {
-                        ProductType productTypeEnum = (ProductType)Enum.Parse(typeof(ProductType), productType.Attributes[0].Value);
-                        XmlNodeList productNode = productType.ChildNodes;
-
-                        var productsList = new List<string>();
-                        foreach (XmlNode product in productNode)
-                        {
-                            productsList.Add(product.InnerText);
-                        }
-                        dictionary.Add(productTypeEnum, productsList);
+                        productsList.Add(product.InnerText);
                     }
-                    localSellers.Add(new LocationData(id, location, name, addedById, time, dictionary));
+                    dictionary.Add(productTypeEnum, productsList);
                 }
-            //}
+                localSellers.Add(new LocationData(id, location, name, addedById, time, dictionary));
+            }
             return localSellers;
         }
 
         public LocationData GetData(int id)
         {
-            foreach (var locationData in GetAllData())
-            {
-                if(locationData.ID == id)
-                {
-                    return locationData;
-                }
-            }
-            return null;
+            return dictionaryLocationDataById[id];
         }
 
         public int GetDataCount()
         {
-            return GetAllData().Count;
+            return dictionaryLocationDataById.Count;
         }
 
-        // Works properly
         public void RemoveData(int id)
         {
-            // Remove a seller 
-            /*if (File.Exists(filePath))
-            {*/
-                document.Load(fileName);
-                XmlNodeList localSellerNode = document.GetElementsByTagName("LocalSeller");
-                foreach (XmlNode localSeller in localSellerNode)
+            document.Load(fileName);
+            XmlNodeList localSellerNode = document.GetElementsByTagName("LocalSeller");
+            foreach (XmlNode localSeller in localSellerNode)
+            {
+                if(int.Parse(localSeller.Attributes[0].Value) == id)
                 {
-                    if(Int32.Parse(localSeller.Attributes[0].Value) == id)
-                    {
-                        localSeller.ParentNode.RemoveChild(localSeller);
-                        break;
-                    }
+                    localSeller.ParentNode.RemoveChild(localSeller);
+                    break;
                 }
-                document.Save(fileName);
-            //}
+            }
+            document.Save(fileName);
+
+            dictionaryLocationDataById.Remove(id);
         }
 
         public void SaveData()
@@ -154,7 +143,6 @@ namespace SupportYourLocals.Data
             doc.Save(filePath);
         }
 
-        // Should work properly
         public void UpdateData(int id, LocationData data)
         {
             RemoveData(id);
