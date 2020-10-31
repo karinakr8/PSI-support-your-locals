@@ -36,7 +36,6 @@ namespace SupportYourLocals.WPF
 
         private bool userSelectedLocation = false;
 
-
         List<double> listXCoord = new List<double>();
         List<double> listYCoord = new List<double>();
         List<int> listPersonsID = new List<int>();
@@ -52,10 +51,6 @@ namespace SupportYourLocals.WPF
         // Dictionaries to load scrollviews and store data based on chosen enum
         Dictionary<ProductType, ScrollViewer> dictionaryOfScrollViewsAddProduct = new Dictionary<ProductType, ScrollViewer>();
         Dictionary<ProductType, List<TextBox>> dictionaryOfTextBoxListAddProduct = new Dictionary<ProductType, List<TextBox>>();
-
-       // XMLData xmlData = new XMLData();
-
-
 
         private int personsID = 1000;
 

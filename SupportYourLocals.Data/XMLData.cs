@@ -88,10 +88,10 @@ namespace SupportYourLocals.Data
             XmlNodeList localSellerNode = document.GetElementsByTagName("LocalSeller");
             foreach (XmlNode localSeller in localSellerNode)
              {
-                var id = Int32.Parse(localSeller.Attributes[0].Value);
+                var id = int.Parse(localSeller.Attributes[0].Value);
                 var location = Location.Parse(localSeller.Attributes[1].Value);
                 var name = localSeller.Attributes[2].Value;
-                var addedById = Int32.Parse(localSeller.Attributes[3].Value);
+                var addedById = int.Parse(localSeller.Attributes[3].Value);
                 var time = DateTime.Parse(localSeller.Attributes[4].Value);
                 XmlNodeList productTypeNode = localSeller.ChildNodes;
                 foreach (XmlNode productType in productTypeNode)
