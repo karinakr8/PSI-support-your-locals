@@ -178,7 +178,7 @@ namespace SupportYourLocals.Map
             if (sender == tempMarker)
                 OnTempMarkerClicked((Marker) sender);
             else
-                OnMarkerClicked((Marker)sender);
+                OnMarkerClicked((Marker)sender); 
         }
     }
 }
