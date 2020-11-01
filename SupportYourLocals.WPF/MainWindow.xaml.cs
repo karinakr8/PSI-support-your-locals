@@ -227,10 +227,6 @@ namespace SupportYourLocals.WPF
         {
             GridSellerAdd.Visibility = Visibility.Collapsed;
 
-            SYLMap.RemoveLastMarker();
-            if (updateMarketplacesWasClicked)
-                CSVData.SetMarkers(listXCoord, listYCoord, listPersonsID);
-
             if(userSelectedLocation)
             {
                 SYLMap.RemoveMarkerTemp();
