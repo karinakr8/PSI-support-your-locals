@@ -19,6 +19,7 @@ using System.IO;
 using SupportYourLocals.Data;
 using MaterialDesignThemes.Wpf;
 using System.Runtime.CompilerServices;
+using SupportYourLocals.ExtensionMethods;
 
 namespace SupportYourLocals.WPF
 {
@@ -155,24 +156,28 @@ namespace SupportYourLocals.WPF
         private void MapMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             //Double tap on a map
-            if (e.ClickCount == 2 && GridSellerAdd.Visibility == Visibility.Visible)
+            if (e.ClickCount == 2)
             {
-                userSelectedLocation = true;
-                MainMap.TargetCenter = MainMap.ViewToLocation(e.GetPosition(MainMap));
-                SYLMap.AddMarker(MainMap.TargetCenter, personsID);
-            }
-            else
-            {
-                userSelectedLocation = false;
-                SYLMap.RemoveLastMarker();
-                if (updateMarketplacesWasClicked)
+                SYLMap.Center = MainMap.ViewToLocation(e.GetPosition(MainMap));
+                SYLMap.AddMarkerTemp(SYLMap.Center);
+
+                if (GridSellerAdd.Visibility == Visibility.Visible)
                 {
-                    CSVData.SetMarkers(listXCoord, listYCoord, listPersonsID);
-                    // Adding all markers to a map
-                    for (int i = 0; i < listXCoord.Count; i++)
-                        SYLMap.AddMarker(listXCoord[i], listYCoord[i], listPersonsID[i]);
+                    userSelectedLocation = true;
+                }
+                else
+                {
+                    var address = SYLMap.LocationToAddressSplit(SYLMap.Center);
+                    TextBox2Seller.Text = address.Item2;
+                    TextBox3Seller.Text = address.Item1;
                 }
             }
+        }
+
+        private void MapMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {                                
+            SYLMap.RemoveMarkerTemp();
+            userSelectedLocation = false;
         }
 
         private void LabelAddSeller_Click(object sender, RoutedEventArgs e)
@@ -190,12 +195,15 @@ namespace SupportYourLocals.WPF
             if (userSelectedLocation)
             {
                 string productType = ComboBoxProductType.Text;
+
                 var dictionaryListString = ConvertDictionaryListTextBoxToDictionaryListString(dictionaryOfTextBoxListAddProduct);
+                userSelectedLocation = false;
+
 
                 data.AddData(new LocationData(1000, MainMap.TargetCenter, AddLocalSellerNameTextBox.Text, 10, DateTime.Now, dictionaryListString));
 
                 GridSellerAdd.Visibility = Visibility.Collapsed;
-                SYLMap.RemoveLastMarker();
+                SYLMap.RemoveMarkerTemp();
                 if (updateMarketplacesWasClicked)
                 {
                     CSVData.SetMarkers(listXCoord, listYCoord, listPersonsID);
@@ -218,13 +226,21 @@ namespace SupportYourLocals.WPF
         private void ButtonCancel_Clicked(object sender, RoutedEventArgs e)
         {
             GridSellerAdd.Visibility = Visibility.Collapsed;
+
             SYLMap.RemoveLastMarker();
             if (updateMarketplacesWasClicked)
                 CSVData.SetMarkers(listXCoord, listYCoord, listPersonsID);
 
+            if(userSelectedLocation)
+            {
+                SYLMap.RemoveMarkerTemp();
+                userSelectedLocation = false;
+            }
+
             // Clean up Add local seller window
             ClearAddLocalSellerInputFieldsAndUserInterface();
             ClearAddLocalSellerCollections();
+
         }
 
         private void SearchMarketplacesButton_Click(object sender, RoutedEventArgs e)
@@ -397,6 +413,21 @@ namespace SupportYourLocals.WPF
                 }
             }
             return dictionaryListString;
+        }
+
+        private void FindLocation_Click(object sender, RoutedEventArgs e)
+        {
+            var address = TextBox3Seller.Text;
+            if (TextBox2Seller.Text != "")
+                address = "{0}, {1}".Format(address, TextBox2Seller.Text);
+
+            var location = SYLMap.AddressToLocation(address);
+
+            if (location == null)
+                return; // Show some kinda error message
+
+            SYLMap.AddMarkerTemp(location);
+            SYLMap.Center = location;
         }
     }
 
