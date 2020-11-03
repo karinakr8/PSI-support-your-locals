@@ -140,9 +140,9 @@ namespace SupportYourLocals.Data
             dictionaryLocationDataById.Remove(id);
         }
 
-        public void UpdateData(int id, LocationData data)
+        public void UpdateData(LocationData data)
         {
-            RemoveData(id);
+            RemoveData(data.ID);
             AddData(data);
         }
     }

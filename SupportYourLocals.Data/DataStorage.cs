@@ -50,7 +50,7 @@ namespace SupportYourLocals.Data
             foreach (var data in dataList)
                 AddData(data);
         }
-        public void UpdateData(int id, LocationData data);
+        public void UpdateData(LocationData data);
         public void RemoveData(int id);
         public void SaveData();
     }
