@@ -300,24 +300,23 @@ namespace SupportYourLocals.WPF
 
         private void ComboBoxProductType_SelectionChanged(object sender, EventArgs e)
         {
-            if(ComboBoxProductType.SelectedValue != null)
-            { 
-                var productType = (ProductType)Enum.Parse(typeof(ProductType), ComboBoxProductType.SelectedValue.ToString());
-                LabelForScrollViewerAddLocalSeller.Visibility = Visibility.Collapsed;
-
-                dictionaryOfScrollViewsAddProduct[productType].Visibility = Visibility.Visible;
-
-                foreach (KeyValuePair<ProductType, ScrollViewer> entry in dictionaryOfScrollViewsAddProduct)
-                {
-                    if (entry.Key != productType)
-                    {
-                        entry.Value.Visibility = Visibility.Collapsed;
-                    }
-                }
-            }
-            else
+            if(ComboBoxProductType.SelectedValue == null)
             {
                 LabelForScrollViewerAddLocalSeller.Visibility = Visibility.Visible;
+                return;
+            }
+
+            var productType = (ProductType)Enum.Parse(typeof(ProductType), ComboBoxProductType.SelectedValue.ToString());
+            LabelForScrollViewerAddLocalSeller.Visibility = Visibility.Collapsed;
+
+            dictionaryOfScrollViewsAddProduct[productType].Visibility = Visibility.Visible;
+
+            foreach (KeyValuePair<ProductType, ScrollViewer> entry in dictionaryOfScrollViewsAddProduct)
+            {
+                if (entry.Key != productType)
+                {
+                    entry.Value.Visibility = Visibility.Collapsed;
+                }
             }
         }
 

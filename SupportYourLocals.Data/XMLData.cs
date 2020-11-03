@@ -13,21 +13,11 @@ namespace SupportYourLocals.Data
     public class XMLData : IDataStorage
     {
         private const string filePath = @"./LocalSellersData.xml";
-        private const string fileName = "LocalSellersData.xml";
-        
-        Dictionary<string, LocationData> dictionaryLocationDataById = new Dictionary<string, LocationData>();
+        readonly Dictionary<string, LocationData> dictionaryLocationDataById = new Dictionary<string, LocationData>();
 
         public XMLData()
         {
-
-            //Data storage to dictionaryLocationDataById for easier data access in methods in this class such as GetData or GetAllData
             dictionaryLocationDataById = LoadData();
-
-        }
-
-        ~XMLData()
-        {
-            SaveData();
         }
 
         private Dictionary<string, LocationData> LoadData()
@@ -35,8 +25,6 @@ namespace SupportYourLocals.Data
             XDocument doc = null;
             if (!File.Exists(filePath))
             {
-                doc = new XDocument(new XElement("LocalSellers"));
-                doc.Save(fileName);
                 return new Dictionary<string, LocationData>();
             }
             else
@@ -87,7 +75,7 @@ namespace SupportYourLocals.Data
                 AddProductTypesToXml(data, root);
                 doc.Element("LocalSellers").Add(root);
             }
-                doc.Save(filePath);
+            doc.Save(filePath);
         }
 
         private void AddProductTypesToXml(LocationData data, XElement root)
@@ -113,34 +101,16 @@ namespace SupportYourLocals.Data
                 root.Add(productTypeBranch);
             }
         }
-        public void AddData(LocationData data)
-        {
-            dictionaryLocationDataById.Add(data.ID, data);
-        }
+        public void AddData(LocationData data) => dictionaryLocationDataById.Add(data.ID, data);
 
-        public List<LocationData> GetAllData()
-        {
-            return dictionaryLocationDataById.Select(d => d.Value).ToList();
-        }
+        public List<LocationData> GetAllData() => dictionaryLocationDataById.Select(d => d.Value).ToList();
 
-        public LocationData GetData(string id)
-        {
-            return dictionaryLocationDataById[id];
-        }
+        public LocationData GetData(string id) => dictionaryLocationDataById[id];
 
-        public int GetDataCount()
-        {
-            return dictionaryLocationDataById.Count;
-        }
+        public int GetDataCount() => dictionaryLocationDataById.Count;
 
-        public void RemoveData(string id)
-        {
-            dictionaryLocationDataById.Remove(id);
-        }
+        public void RemoveData(string id) => dictionaryLocationDataById.Remove(id);
 
-        public void UpdateData(LocationData data)
-        {
-            dictionaryLocationDataById[data.ID] = data;
-        }
+        public void UpdateData(LocationData data) => dictionaryLocationDataById[data.ID] = data;
     }
 }
