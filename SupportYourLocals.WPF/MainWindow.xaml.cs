@@ -54,8 +54,7 @@ namespace SupportYourLocals.WPF
         Dictionary<ProductType, List<TextBox>> dictionaryOfTextBoxListAddProduct = new Dictionary<ProductType, List<TextBox>>();
 
         private int personsID = 1000;
-
-
+        public static int idForTesting = 1000;
         public MainWindow()
         {
             // data = new CSVDataStorage() or smth like that
@@ -199,9 +198,9 @@ namespace SupportYourLocals.WPF
                 var dictionaryListString = ConvertDictionaryListTextBoxToDictionaryListString(dictionaryOfTextBoxListAddProduct);
                 userSelectedLocation = false;
 
-
-                data.AddData(new LocationData(1000, MainMap.TargetCenter, AddLocalSellerNameTextBox.Text, 10, DateTime.Now, dictionaryListString));
-
+                data.AddData(new LocationData(idForTesting, MainMap.TargetCenter, AddLocalSellerNameTextBox.Text, 10, DateTime.Now, dictionaryListString));
+                idForTesting++;
+                data.SaveData();
                 GridSellerAdd.Visibility = Visibility.Collapsed;
                 SYLMap.RemoveMarkerTemp();
                 if (updateMarketplacesWasClicked)
@@ -424,6 +423,12 @@ namespace SupportYourLocals.WPF
 
             SYLMap.AddMarkerTemp(location);
             SYLMap.Center = location;
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            //data.SaveData();
+            base.OnClosed(e);
         }
     }
 
