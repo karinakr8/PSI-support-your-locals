@@ -72,6 +72,7 @@ namespace SupportYourLocals.WPF
                 await Task.Delay(2000);
                 await cache.Clean();
             };
+            LoadMarkerInformationWindow("70e4afa12b364696a31d0f49162e1fa3");
         }
 
         private void LoadAddLocalSellerFieldsAndCollections()
@@ -168,7 +169,7 @@ namespace SupportYourLocals.WPF
         }
 
         private void MapMouseRightButtonDown(object sender, MouseButtonEventArgs e)
-        {                                
+        {
             SYLMap.RemoveMarkerTemp();
             userSelectedLocation = false;
         }
@@ -212,14 +213,14 @@ namespace SupportYourLocals.WPF
             {
                 ErrorLabel1.Visibility = Visibility.Visible;
             }
-            
+
         }
 
         private void ButtonCancel_Clicked(object sender, RoutedEventArgs e)
         {
             GridSellerAdd.Visibility = Visibility.Collapsed;
 
-            if(userSelectedLocation)
+            if (userSelectedLocation)
             {
                 SYLMap.RemoveMarkerTemp();
                 userSelectedLocation = false;
@@ -286,7 +287,7 @@ namespace SupportYourLocals.WPF
             int i = 0;
             foreach (var stackPanel in listOfStackPanelListsAddProduct[index])
             {
-                
+
                 if (stackPanel.Children.Contains(button))
                 {
                     //stackPanel.Visibility = Visibility.Collapsed;
@@ -300,7 +301,7 @@ namespace SupportYourLocals.WPF
 
         private void ComboBoxProductType_SelectionChanged(object sender, EventArgs e)
         {
-            if(ComboBoxProductType.SelectedValue == null)
+            if (ComboBoxProductType.SelectedValue == null)
             {
                 LabelForScrollViewerAddLocalSeller.Visibility = Visibility.Visible;
                 return;
@@ -417,5 +418,29 @@ namespace SupportYourLocals.WPF
             SYLMap.AddMarkerTemp(location);
             SYLMap.Center = location;
         }
+
+        private void LoadMarkerInformationWindow(string id)
+        {
+            var locationData = data.GetData(id);
+            InformationLocalSellerName.Content = locationData.Name;
+            InformationLocalSellerDate.Content = $"Added: {locationData.Time}";
+            foreach (var products in locationData.Products)
+            {
+                ListViewMarkerInformation.Items.Add(new MarkerInformation { ProductType =  products.Key.ToString(), ProductCount = products.Value.Count, Products = "More info on double click" }); ;
+            }
+        }
+
+        private void CollapseMarkerInformation_Click(object sender, RoutedEventArgs e)
+        {
+            GridMarkerInformation.Visibility = Visibility.Collapsed;
+        }
+    }
+
+    public class MarkerInformation
+    {
+        public string ProductType { get; set; }
+        public int ProductCount { get; set; }
+        public string Products { get; set; }
     }
 }
+

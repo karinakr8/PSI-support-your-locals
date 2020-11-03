@@ -160,8 +160,58 @@
                 <!-- Place for a map-->
                 <Grid Grid.Column="2" Grid.Row="2">
                     <map:Map x:Name="MainMap" MouseLeftButtonDown="MapMouseLeftButtonDown" MouseRightButtonDown="MapMouseRightButtonDown" Grid.ColumnSpan="2"/>
-                </Grid>
+                    <Grid Name="GridMarkerInformation" VerticalAlignment="Bottom" Height="160" Margin="5" Background="#e8ffff">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="100"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
 
+
+
+
+                        <Grid Grid.Row="0">
+                            <Label Name="InformationLocalSellerName" Content="hey" HorizontalAlignment="Left" FontFamily="Yu Gothic UI Semibold" FontSize="13"/>
+                            <Button Name="CollapseMarkerInformation" Width="25" Height="25" HorizontalAlignment="Center" Background="{x:Null}" BorderBrush="{x:Null}" Click="CollapseMarkerInformation_Click" >
+                                <materialDesign:PackIcon Kind="ExpandMore"/>
+                            </Button>
+                            <Label Name="InformationLocalSellerDate" Content="Hey2" HorizontalAlignment="Right" FontFamily="Yu Gothic UI Semibold" FontSize="13" Foreground="#808080"/>
+                        </Grid>
+                        <Grid Grid.Row="1">
+                            <ListView Name="ListViewMarkerInformation" HorizontalContentAlignment="Center">
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="Product Type" Width="160" DisplayMemberBinding="{Binding ProductType}" />
+                                        <GridViewColumn Header="Number of product" Width="122" DisplayMemberBinding="{Binding ProductCount}" />
+                                        <GridViewColumn Header="Products" Width="160" DisplayMemberBinding="{Binding Products}" />
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </Grid>
+                        <Grid Grid.Row="3">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Column="1" Margin="0,0,0,0.4" >
+
+                            <Button Content="Cannot see it" Height="20" Width="90" Margin="10 0 10 0" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Yu Gothic UI Semibold"  Foreground="White" Background="#41aea9" BorderBrush="{x:Null}">
+                                <Button.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="10"/>
+                                    </Style>
+                                </Button.Resources>
+                            </Button>
+                                <Button Content="Still here" Height="20" Width="90" Margin="10 0 10 0" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Yu Gothic UI Semibold"  Foreground="White" Background="#41aea9" BorderBrush="{x:Null}">
+                                    <Button.Resources>
+                                        <Style TargetType="Border">
+                                            <Setter Property="CornerRadius" Value="10"/>
+                                        </Style>
+                                    </Button.Resources>
+                                </Button>
+
+                            </StackPanel>
+                           
+                        </Grid>
+
+                    </Grid>
+                </Grid>
             </Grid>
         </TabItem>
 
