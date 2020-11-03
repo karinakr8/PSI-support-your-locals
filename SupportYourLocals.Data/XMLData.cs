@@ -13,7 +13,7 @@ namespace SupportYourLocals.Data
     public class XMLData : IDataStorage
     {
         private const string filePath = @"./LocalSellersData.xml";
-        readonly Dictionary<string, LocationData> dictionaryLocationDataById = new Dictionary<string, LocationData>();
+        readonly Dictionary<string, LocationData> dictionaryLocationDataById;
 
         public XMLData()
         {
@@ -22,15 +22,12 @@ namespace SupportYourLocals.Data
 
         private Dictionary<string, LocationData> LoadData()
         {
-            XDocument doc = null;
             if (!File.Exists(filePath))
             {
                 return new Dictionary<string, LocationData>();
             }
-            else
-            {
-                doc = XDocument.Load(filePath);
-            }
+
+            XDocument doc = XDocument.Load(filePath);
             var localSellersDictionary = new Dictionary<string, LocationData>();
             var groupElements = from elements in doc.Descendants().Elements("LocalSeller") select elements;
 
