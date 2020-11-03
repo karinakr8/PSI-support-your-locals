@@ -80,7 +80,13 @@
                         <!-- User input for adding a local seller-->
                         <Grid x:Name="GridSellerAdd" HorizontalAlignment="Right" Grid.ColumnSpan="2" Margin="0,0,0,0" Width="300" Background="#e8ffff" Visibility="Collapsed">
                             <!-- Change this label into something else-->
-                            <Label x:Name="LabelAddLocalSeller" Content="Double click on a map to pin a local seller's location" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,0" FontFamily="Yu Gothic UI Semibold" Foreground="#808080" FontSize="12" Width="300" />
+                            <Label x:Name="LabelAddLocalSeller" Content="Double click on a map to pin a local seller's location" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,0,0,0" FontFamily="Yu Gothic UI Semibold" Foreground="#808080" FontSize="12" Width="300" />
+
+                            <Label Name="AddLocalSellerName" Content="Name" HorizontalContentAlignment="Center" Margin="0 15 0 0" VerticalAlignment="Top" FontFamily="Yu Gothic UI Semibold" FontSize="16" Width="160"/>
+
+                            <TextBox Name="AddLocalSellerNameTextBox"  HorizontalContentAlignment="Center" Margin="0 45 0 0" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="160" />
+
+
                             <!-- Just a definition of this button-->
                             <Button Name="AddLocalSellerRemoveProductButton1" Width="25" Height="25" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#808080" Click="AddLocalSellerRemoveProduct1_Click" Visibility="Collapsed">
                                             <materialDesign:PackIcon Kind="Minus"/>
