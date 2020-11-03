@@ -52,9 +52,6 @@ namespace SupportYourLocals.WPF
         // Dictionaries to load scrollviews and store data based on chosen enum
         Dictionary<ProductType, ScrollViewer> dictionaryOfScrollViewsAddProduct = new Dictionary<ProductType, ScrollViewer>();
         Dictionary<ProductType, List<TextBox>> dictionaryOfTextBoxListAddProduct = new Dictionary<ProductType, List<TextBox>>();
-
-        private int personsID = 1000;
-        public static int idForTesting = 1000;
         public MainWindow()
         {
             // data = new CSVDataStorage() or smth like that
@@ -75,9 +72,6 @@ namespace SupportYourLocals.WPF
                 await Task.Delay(2000);
                 await cache.Clean();
             };
-
-            // Filling combobox for product types and filling dictionaries
-            //LoadAddLocalSellerFieldsAndCollections();
         }
 
         private void LoadAddLocalSellerFieldsAndCollections()
@@ -198,8 +192,7 @@ namespace SupportYourLocals.WPF
                 var dictionaryListString = ConvertDictionaryListTextBoxToDictionaryListString(dictionaryOfTextBoxListAddProduct);
                 userSelectedLocation = false;
 
-                data.AddData(new LocationData(idForTesting, MainMap.TargetCenter, AddLocalSellerNameTextBox.Text, 10, DateTime.Now, dictionaryListString));
-                idForTesting++;
+                data.AddData(new LocationData(MainMap.TargetCenter, AddLocalSellerNameTextBox.Text, 10, DateTime.Now, dictionaryListString));
                 data.SaveData();
                 GridSellerAdd.Visibility = Visibility.Collapsed;
                 SYLMap.RemoveMarkerTemp();
@@ -269,9 +262,9 @@ namespace SupportYourLocals.WPF
             stackPanel.Children.Add(textBox);
             int index = ComboBoxProductType.SelectedIndex;
             // Remove "+" button from the last line before new line (textbox) is added
-            (listOfStackPanelListsAddProduct[index])[listOfStackPanelListsAddProduct[index].Count - 1].Children.Remove(listAddButtons[index]);
+            (listOfStackPanelListsAddProduct[index])[^1].Children.Remove(listAddButtons[index]);
             // Add "—" button to the last line before new line is inicialized
-            (listOfStackPanelListsAddProduct[index])[listOfStackPanelListsAddProduct[index].Count - 1].Children.Add(CreateButtonForProductTypes(productType, "—", AddLocalSellerRemoveProduct1_Click, null));
+            (listOfStackPanelListsAddProduct[index])[^1].Children.Add(CreateButtonForProductTypes(productType, "—", AddLocalSellerRemoveProduct1_Click, null));
 
             stackPanel.Children.Add(listAddButtons[index]);
             listOfStackPanelListsAddProduct[index].Add(stackPanel);

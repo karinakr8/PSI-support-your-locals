@@ -21,27 +21,31 @@ namespace SupportYourLocals.Data
 
     public class LocationData
     {
-        public int ID { get; set; }
+        public string ID { get; set; }
         public Location Location { get; set; }
         public string Name { get; set; }
         public int AddedByID { get; set; }
         public DateTime Time { get; set; }
         public Dictionary<ProductType, List<string> > Products { get; set; }
 
-        public LocationData(int id, Location location, string name, int addedByID, DateTime time, Dictionary<ProductType, List<string>> products)
+        public LocationData(Location location, string name, int addedByID, DateTime time, Dictionary<ProductType, List<string>> products)
         {
-            ID = id;
+            ID = GenerateId();
             Location = location;
             Name = name;
             AddedByID = addedByID;
             Time = time;
             Products = products;
         }
+        public string GenerateId()
+        {
+            return Guid.NewGuid().ToString("N");
+        }
     }
 
     public interface IDataStorage
     {
-        public LocationData GetData(int id);
+        public LocationData GetData(string id);
         public List<LocationData> GetAllData();
         public int GetDataCount();
         public void AddData(LocationData data);
@@ -51,7 +55,7 @@ namespace SupportYourLocals.Data
                 AddData(data);
         }
         public void UpdateData(LocationData data);
-        public void RemoveData(int id);
+        public void RemoveData(string id);
         public void SaveData();
     }
 }

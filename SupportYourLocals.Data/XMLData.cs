@@ -15,16 +15,12 @@ namespace SupportYourLocals.Data
         private const string filePath = @"./LocalSellersData.xml";
         private const string fileName = "LocalSellersData.xml";
         XDocument doc = null;
-        readonly XmlDocument document = new XmlDocument();
-        Dictionary<int, LocationData> dictionaryLocationDataById = new Dictionary<int, LocationData>();
+        Dictionary<string, LocationData> dictionaryLocationDataById = new Dictionary<string, LocationData>();
 
         public XMLData()
         {
-
-
             if (!File.Exists(filePath))
             {
-                //document.AppendChild(CreateElement("LocalSellers"));
                 doc = new XDocument(new XElement("LocalSellers"));
                 doc.Save(fileName);
             }
@@ -42,17 +38,15 @@ namespace SupportYourLocals.Data
             SaveData();
         }
 
-        private Dictionary<int, LocationData> LoadData()
+        private Dictionary<string, LocationData> LoadData()
         {
-            var localSellersDictionary = new Dictionary<int, LocationData>();
-            
-
+            var localSellersDictionary = new Dictionary<string, LocationData>();
             var groupElements = from elements in doc.Descendants().Elements("LocalSeller") select elements;
 
             foreach(XElement element in groupElements)
             {
                 var dictionary = new Dictionary<ProductType, List<string>>();
-                var id = int.Parse(element.Attribute("ID").Value);
+                var id = element.Attribute("ID").Value;
                 var location = Location.Parse(element.Attribute("Location").Value);
                 var name = element.Attribute("Name").Value;
                 var addedById = int.Parse(element.Attribute("AddedByID").Value);
@@ -70,7 +64,7 @@ namespace SupportYourLocals.Data
                     }
                     dictionary.Add(productTypeEnum, productsList);
                 }
-                localSellersDictionary.Add(id, new LocationData(id, location, name, addedById, time, dictionary));
+                localSellersDictionary.Add(id, new LocationData(location, name, addedById, time, dictionary));
                 
             }
             return localSellersDictionary;
@@ -119,13 +113,12 @@ namespace SupportYourLocals.Data
             dictionaryLocationDataById.Add(data.ID, data);
         }
 
-
         public List<LocationData> GetAllData()
         {
             return dictionaryLocationDataById.Select(d => d.Value).ToList();
         }
 
-        public LocationData GetData(int id)
+        public LocationData GetData(string id)
         {
             return dictionaryLocationDataById[id];
         }
@@ -135,7 +128,7 @@ namespace SupportYourLocals.Data
             return dictionaryLocationDataById.Count;
         }
 
-        public void RemoveData(int id)
+        public void RemoveData(string id)
         {
             dictionaryLocationDataById.Remove(id);
         }
