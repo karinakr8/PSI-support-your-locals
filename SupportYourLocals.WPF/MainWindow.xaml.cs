@@ -300,19 +300,20 @@ namespace SupportYourLocals.WPF
 
         private void ComboBoxProductType_SelectionChanged(object sender, EventArgs e)
         {
-            if(ComboBoxProductType.SelectedValue != null) { 
+            if(ComboBoxProductType.SelectedValue != null)
+            { 
                 var productType = (ProductType)Enum.Parse(typeof(ProductType), ComboBoxProductType.SelectedValue.ToString());
-                    LabelForScrollViewerAddLocalSeller.Visibility = Visibility.Collapsed;
+                LabelForScrollViewerAddLocalSeller.Visibility = Visibility.Collapsed;
 
-                    dictionaryOfScrollViewsAddProduct[productType].Visibility = Visibility.Visible;
+                dictionaryOfScrollViewsAddProduct[productType].Visibility = Visibility.Visible;
 
-                    foreach (KeyValuePair<ProductType, ScrollViewer> entry in dictionaryOfScrollViewsAddProduct)
+                foreach (KeyValuePair<ProductType, ScrollViewer> entry in dictionaryOfScrollViewsAddProduct)
+                {
+                    if (entry.Key != productType)
                     {
-                        if (entry.Key != productType)
-                        {
-                            entry.Value.Visibility = Visibility.Collapsed;
-                        }
+                        entry.Value.Visibility = Visibility.Collapsed;
                     }
+                }
             }
             else
             {
@@ -417,13 +418,5 @@ namespace SupportYourLocals.WPF
             SYLMap.AddMarkerTemp(location);
             SYLMap.Center = location;
         }
-
-        protected override void OnClosed(EventArgs e)
-        {
-            //data.SaveData();
-            base.OnClosed(e);
-        }
     }
-
-
 }

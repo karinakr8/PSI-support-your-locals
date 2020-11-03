@@ -14,20 +14,12 @@ namespace SupportYourLocals.Data
     {
         private const string filePath = @"./LocalSellersData.xml";
         private const string fileName = "LocalSellersData.xml";
-        XDocument doc = null;
+        
         Dictionary<string, LocationData> dictionaryLocationDataById = new Dictionary<string, LocationData>();
 
         public XMLData()
         {
-            if (!File.Exists(filePath))
-            {
-                doc = new XDocument(new XElement("LocalSellers"));
-                doc.Save(fileName);
-            }
-            else
-            {
-                doc = XDocument.Load(filePath);
-            }
+
             //Data storage to dictionaryLocationDataById for easier data access in methods in this class such as GetData or GetAllData
             dictionaryLocationDataById = LoadData();
 
@@ -40,6 +32,17 @@ namespace SupportYourLocals.Data
 
         private Dictionary<string, LocationData> LoadData()
         {
+            XDocument doc = null;
+            if (!File.Exists(filePath))
+            {
+                doc = new XDocument(new XElement("LocalSellers"));
+                doc.Save(fileName);
+                return new Dictionary<string, LocationData>();
+            }
+            else
+            {
+                doc = XDocument.Load(filePath);
+            }
             var localSellersDictionary = new Dictionary<string, LocationData>();
             var groupElements = from elements in doc.Descendants().Elements("LocalSeller") select elements;
 
@@ -72,7 +75,7 @@ namespace SupportYourLocals.Data
 
         public void SaveData()
         {
-            doc = new XDocument(new XElement("LocalSellers"));
+            XDocument doc = new XDocument(new XElement("LocalSellers"));
             foreach (var data in dictionaryLocationDataById.Values)
             {
                 XElement root = new XElement("LocalSeller");
@@ -83,29 +86,31 @@ namespace SupportYourLocals.Data
                 root.Add(new XAttribute("Time", data.Time));
                 AddProductTypesToXml(data, root);
                 doc.Element("LocalSellers").Add(root);
-                doc.Save(filePath);
             }
+                doc.Save(filePath);
         }
 
         private void AddProductTypesToXml(LocationData data, XElement root)
         {
             foreach (var productType in data.Products)
             {
-                if (productType.Value[0] != "")
+                if (productType.Value[0] == "")
                 {
-                    XElement productTypeBranch = new XElement("ProductType");
-                    productTypeBranch.Add(new XAttribute("type", productType.Key));
-                    foreach (var product in productType.Value)
-                    {
-                        if (product != "")
-                        {
-                            XElement productBranch = new XElement("Product");
-                            productBranch.Add(content: product);
-                            productTypeBranch.Add(productBranch);
-                        }
-                    }
-                    root.Add(productTypeBranch);
+                    continue;
                 }
+                XElement productTypeBranch = new XElement("ProductType");
+                productTypeBranch.Add(new XAttribute("type", productType.Key));
+                foreach (var product in productType.Value)
+                {
+                    if (product == "")
+                    {
+                        continue;
+                    }
+                    XElement productBranch = new XElement("Product");
+                    productBranch.Add(content: product);
+                    productTypeBranch.Add(productBranch);
+                }
+                root.Add(productTypeBranch);
             }
         }
         public void AddData(LocationData data)
@@ -135,8 +140,7 @@ namespace SupportYourLocals.Data
 
         public void UpdateData(LocationData data)
         {
-            RemoveData(data.ID);
-            AddData(data);
+            dictionaryLocationDataById[data.ID] = data;
         }
     }
 }

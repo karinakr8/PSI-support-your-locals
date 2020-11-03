@@ -30,17 +30,14 @@ namespace SupportYourLocals.Data
 
         public LocationData(Location location, string name, int addedByID, DateTime time, Dictionary<ProductType, List<string>> products)
         {
-            ID = GenerateId();
+            ID = GenerateId;
             Location = location;
             Name = name;
             AddedByID = addedByID;
             Time = time;
             Products = products;
         }
-        public string GenerateId()
-        {
-            return Guid.NewGuid().ToString("N");
-        }
+        public string GenerateId => Guid.NewGuid().ToString("N");
     }
 
     public interface IDataStorage
