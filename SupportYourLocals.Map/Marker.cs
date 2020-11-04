@@ -1,5 +1,6 @@
 ﻿using MapControl;
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -11,8 +12,8 @@ namespace SupportYourLocals.Map
         protected virtual string DefaultImageSrc => "marker.png";
         protected virtual int MarkerSizeX => 35;
         protected virtual int MarkerSizeY => 57;
-        private static BitmapImage defaultImage = null;
-        public int id;
+        private static Dictionary<string, BitmapImage> images = new Dictionary<string, BitmapImage>();
+        public string id;
 
         public Marker ()
         {
@@ -26,17 +27,17 @@ namespace SupportYourLocals.Map
 
         private BitmapImage GetImage()
         {
-            if (defaultImage == null)
+            if (!images.ContainsKey(DefaultImageSrc))
             {
-                defaultImage = new BitmapImage();
-                defaultImage.BeginInit();
-                defaultImage.DecodePixelWidth = MarkerSizeX;
-                defaultImage.DecodePixelHeight = MarkerSizeY;
-                defaultImage.UriSource = new Uri(DefaultImageSrc, UriKind.Relative);
-                defaultImage.EndInit();
+                images[DefaultImageSrc] = new BitmapImage();
+                images[DefaultImageSrc].BeginInit();
+                images[DefaultImageSrc].DecodePixelWidth = MarkerSizeX;
+                images[DefaultImageSrc].DecodePixelHeight = MarkerSizeY;
+                images[DefaultImageSrc].UriSource = new Uri(DefaultImageSrc, UriKind.Relative);
+                images[DefaultImageSrc].EndInit();
             }
 
-            return defaultImage;
+            return images[DefaultImageSrc];
         }
 
         public Location Location
