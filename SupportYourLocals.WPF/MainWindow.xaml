@@ -67,7 +67,7 @@
 
                         <Label x:Name="Label4Seller" Content="Radius from adress location (km)" HorizontalContentAlignment="Center" Margin="0 240 0 0" VerticalAlignment="Top"  FontFamily="Yu Gothic UI Semibold" FontSize="16" Grid.ColumnSpan="2"/>
 
-                        <Slider x:Name="Slider1Seller"  VerticalAlignment="Top" HorizontalContentAlignment="Center" Margin="0 280 0 0" Height="22" Width="160" TickFrequency="10" Value="1" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="0" SmallChange="1" LargeChange="1"/>
+                        <Slider x:Name="Slider1Seller"  VerticalAlignment="Top" HorizontalContentAlignment="Center" Margin="0 280 0 0" Height="22" Width="160" TickFrequency="10" Value="1" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="2" SmallChange="1" LargeChange="1"/>
                         <Button x:Name="Button1Seller" Content="Find" HorizontalContentAlignment="Center" Margin="0 330 0 0" VerticalAlignment="Top" Width="160" FontFamily="Yu Gothic UI Semibold" FontSize="16" Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}" Click="FindLocation_Click">
                             <Button.Resources>
                                 <Style TargetType="Border">

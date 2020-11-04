@@ -82,7 +82,12 @@ namespace SupportYourLocals.Map
                 WPFMap.Children.Remove(tempMarker);
         }
 
-        public void AddMarker (Location position, int id)
+        public Location GetMarkerTempLocation ()
+        {
+            return WPFMap.Children.OfType<Marker2>().FirstOrDefault()?.Location;
+        }
+
+        public void AddMarker (Location position, string id)
         {
             var marker = new Marker
             {
@@ -94,7 +99,7 @@ namespace SupportYourLocals.Map
             WPFMap.Children.Add(marker);
         }
 
-        public void AddMarker (double lat, double lon, int id)
+        public void AddMarker (double lat, double lon, string id)
         {
             AddMarker(new Location(lat, lon), id);
         }
@@ -168,6 +173,22 @@ namespace SupportYourLocals.Map
             int index = result.DisplayName.IndexOf(city);
             // Return the address part without the trailing ", " and the city/district
             return new Tuple<string, string> (result.DisplayName.Substring(0, index - 2), city);
+        }
+
+        public double GetDistance(double longitude, double latitude, double longitude2, double latitude2)
+        {
+            var d1 = latitude * (Math.PI / 180.0);
+            var num1 = longitude * (Math.PI / 180.0);
+            var d2 = latitude2 * (Math.PI / 180.0);
+            var num2 = longitude2 * (Math.PI / 180.0) - num1;
+            var d3 = Math.Pow(Math.Sin((d2 - d1) / 2.0), 2.0) + Math.Cos(d1) * Math.Cos(d2) * Math.Pow(Math.Sin(num2 / 2.0), 2.0);
+
+            return 6376500.0 * (2.0 * Math.Atan2(Math.Sqrt(d3), Math.Sqrt(1.0 - d3))); // Distance is in meters
+        }
+
+        public double GetDistance(Location location1, Location location2)
+        {
+            return GetDistance(location1.Longitude, location1.Latitude, location2.Longitude, location2.Latitude);
         }
 
         private void OnMarkerClick (object sender, MouseButtonEventArgs e)

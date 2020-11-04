@@ -33,13 +33,7 @@ namespace SupportYourLocals.WPF
         private readonly Map.Map SYLMap;
         private readonly IDataStorage data = new XMLData();
 
-        private bool updateMarketplacesWasClicked = false;
-
         private bool userSelectedLocation = false;
-
-        List<double> listXCoord = new List<double>();
-        List<double> listYCoord = new List<double>();
-        List<int> listPersonsID = new List<int>();
 
         // List for StackPanel elements in Main StackPanel
         List<List<StackPanel>> listOfStackPanelListsAddProduct = new List<List<StackPanel>>();
@@ -139,11 +133,6 @@ namespace SupportYourLocals.WPF
 
         private void UpdateMarketplaces_Click(object sender, RoutedEventArgs e)
         {
-            updateMarketplacesWasClicked = true;
-            CSVData.SetMarkers(listXCoord, listYCoord, listPersonsID);
-            // Adding all markers to a map
-            for (int i = 0; i < listXCoord.Count; i++)
-                SYLMap.AddMarker(listXCoord[i], listYCoord[i], listPersonsID[i]);
         }
 
         private void MapMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -196,13 +185,6 @@ namespace SupportYourLocals.WPF
                 data.SaveData();
                 GridSellerAdd.Visibility = Visibility.Collapsed;
                 SYLMap.RemoveMarkerTemp();
-                if (updateMarketplacesWasClicked)
-                {
-                    CSVData.SetMarkers(listXCoord, listYCoord, listPersonsID);
-                    // Adding all markers to a map
-                    for (int i = 0; i < listXCoord.Count; i++)
-                        SYLMap.AddMarker(listXCoord[i], listYCoord[i], listPersonsID[i]);
-                }
 
                 // Clear everything for the next usages of "Add local seller"
                 ClearAddLocalSellerInputFieldsAndUserInterface();
@@ -405,17 +387,41 @@ namespace SupportYourLocals.WPF
 
         private void FindLocation_Click(object sender, RoutedEventArgs e)
         {
-            var address = TextBox3Seller.Text;
-            if (TextBox2Seller.Text != "")
-                address = "{0}, {1}".Format(address, TextBox2Seller.Text);
-
-            var location = SYLMap.AddressToLocation(address);
+            var location = SYLMap.GetMarkerTempLocation();
 
             if (location == null)
+            {
+                if (TextBox3Seller.Text.Trim() == "")
+                {
+                    return; // Show error that address box is empty
+                }
+
+                var address = TextBox3Seller.Text;
+                if (TextBox2Seller.Text != "")
+                    address = "{0}, {1}".Format(address, TextBox2Seller.Text);
+
+                location = SYLMap.AddressToLocation(address);
+            }
+
+            if (location == null)
+            {
                 return; // Show some kinda error message
+            }
+
+            SYLMap.RemoveAllMarkers();
 
             SYLMap.AddMarkerTemp(location);
             SYLMap.Center = location;
+
+            double radius = Slider1Seller.Value;
+            var locations = data.GetAllData();
+            foreach (var loc in locations)
+            {
+                if (SYLMap.GetDistance(location, loc.Location) < radius * 1000)
+                {
+                    SYLMap.AddMarker(loc.Location, loc.ID);
+                }
+            }
         }
     }
 }
