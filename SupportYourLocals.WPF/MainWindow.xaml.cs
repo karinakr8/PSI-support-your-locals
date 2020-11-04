@@ -157,7 +157,7 @@ namespace SupportYourLocals.WPF
         }
 
         private void MapMouseRightButtonDown(object sender, MouseButtonEventArgs e)
-        {                                
+        {
             SYLMap.RemoveMarkerTemp();
             userSelectedLocation = false;
         }
@@ -165,6 +165,7 @@ namespace SupportYourLocals.WPF
         private void LabelAddSeller_Click(object sender, RoutedEventArgs e)
         {
             //Clean up
+            GridMarkerInformation.Visibility = Visibility.Collapsed;
             LoadAddLocalSellerFieldsAndCollections();
             ErrorLabel1.Visibility = Visibility.Collapsed;
             GridSellerAdd.Visibility = Visibility.Visible;
@@ -194,14 +195,14 @@ namespace SupportYourLocals.WPF
             {
                 ErrorLabel1.Visibility = Visibility.Visible;
             }
-            
+
         }
 
         private void ButtonCancel_Clicked(object sender, RoutedEventArgs e)
         {
             GridSellerAdd.Visibility = Visibility.Collapsed;
 
-            if(userSelectedLocation)
+            if (userSelectedLocation)
             {
                 SYLMap.RemoveMarkerTemp();
                 userSelectedLocation = false;
@@ -215,6 +216,7 @@ namespace SupportYourLocals.WPF
 
         private void SearchMarketplacesButton_Click(object sender, RoutedEventArgs e)
         {
+            GridMarkerInformation.Visibility = Visibility.Collapsed;
             GridSellersSearch.Visibility = Visibility.Collapsed;
             GridMarketplacesSearch.Visibility = Visibility.Visible;
             SearchSellersButton.FontWeight = FontWeights.Normal;
@@ -268,7 +270,7 @@ namespace SupportYourLocals.WPF
             int i = 0;
             foreach (var stackPanel in listOfStackPanelListsAddProduct[index])
             {
-                
+
                 if (stackPanel.Children.Contains(button))
                 {
                     //stackPanel.Visibility = Visibility.Collapsed;
@@ -282,7 +284,7 @@ namespace SupportYourLocals.WPF
 
         private void ComboBoxProductType_SelectionChanged(object sender, EventArgs e)
         {
-            if(ComboBoxProductType.SelectedValue == null)
+            if (ComboBoxProductType.SelectedValue == null)
             {
                 LabelForScrollViewerAddLocalSeller.Visibility = Visibility.Visible;
                 return;
@@ -356,6 +358,7 @@ namespace SupportYourLocals.WPF
         {
             var scrollViewer = new ScrollViewer
             {
+                VerticalAlignment = VerticalAlignment.Top,
                 HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
                 HorizontalContentAlignment = HorizontalAlignment.Center,
                 VerticalContentAlignment = VerticalAlignment.Center,
@@ -423,5 +426,44 @@ namespace SupportYourLocals.WPF
                 }
             }
         }
+
+        private void LoadMarkerInformationWindow(string id)
+        {
+            var items = new List<MarkerInformation>();
+
+            var locationData = data.GetData(id);
+            InformationLocalSellerName.Content = locationData.Name;
+            InformationLocalSellerDate.Content = locationData.Time;
+            foreach (var products in locationData.Products)
+            {
+                foreach (var product in products.Value)
+                {
+                    items.Add(new MarkerInformation { ProductType = products.Key.ToString(), ProductCount = products.Value.Count, Product = product });
+                }
+            }
+            ListViewMarkerInformation.ItemsSource = items;
+
+            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(ListViewMarkerInformation.ItemsSource);
+            PropertyGroupDescription groupDescription = new PropertyGroupDescription("ProductType");
+            view.GroupDescriptions.Add(groupDescription);
+        }
+
+        private void CollapseMarkerInformation_Click(object sender, RoutedEventArgs e)
+        {
+            GridMarkerInformation.Visibility = Visibility.Collapsed;
+        }
+
+        private void ButtonCloseMarkerInformation_Click(object sender, RoutedEventArgs e)
+        {
+            GridMarkerInformation.Visibility = Visibility.Collapsed;
+        }
+    }
+
+    public class MarkerInformation
+    {
+        public string ProductType { get; set; }
+        public int ProductCount { get; set; }
+        public string Product { get; set; }
     }
 }
+
