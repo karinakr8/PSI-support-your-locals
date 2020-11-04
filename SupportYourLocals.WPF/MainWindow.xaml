@@ -124,7 +124,8 @@
                         </Grid>
 
                     </Grid>
-                    <Grid Name="GridMarkerInformation"  VerticalAlignment="Top" Margin="5,40,5,0" Background="#e8ffff" Visibility="Visible">
+                    <!-- Grid for displaying marker information-->
+                    <Grid Name="GridMarkerInformation"  VerticalAlignment="Top" Margin="5,40,5,0" Background="#e8ffff" Visibility="Collapsed">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="50"/>
                             <RowDefinition Height="250"/>
@@ -139,7 +140,6 @@
                             <Label Name="InformationLocalSellerDate" MaxWidth="150" Content="Location added (Time)" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontFamily="Yu Gothic UI Semibold" FontSize="13" Foreground="#808080"/>
                         </Grid>
                         <Grid Grid.Row="1">
-                          
                             <ListView Name="ListViewMarkerInformation" HorizontalContentAlignment="Center">
                                 <ListView.View>
                                     <GridView>
@@ -170,15 +170,6 @@
                                         </GroupStyle.ContainerStyle>
                                     </GroupStyle>
                                 </ListView.GroupStyle>
-                                <!--<ListView.GroupStyle>
-                                    <GroupStyle>
-                                        <GroupStyle.HeaderTemplate>
-                                            <DataTemplate>
-                                                <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding Name}"/>
-                                            </DataTemplate>
-                                        </GroupStyle.HeaderTemplate>
-                                    </GroupStyle>
-                                </ListView.GroupStyle>-->
                             </ListView>
                         </Grid>
                         <Grid Grid.Row="3">

@@ -72,7 +72,6 @@ namespace SupportYourLocals.WPF
                 await Task.Delay(2000);
                 await cache.Clean();
             };
-            LoadMarkerInformationWindow("70e4afa12b364696a31d0f49162e1fa3");
         }
 
         private void LoadAddLocalSellerFieldsAndCollections()
@@ -235,6 +234,7 @@ namespace SupportYourLocals.WPF
 
         private void SearchMarketplacesButton_Click(object sender, RoutedEventArgs e)
         {
+            GridMarkerInformation.Visibility = Visibility.Collapsed;
             GridSellersSearch.Visibility = Visibility.Collapsed;
             GridMarketplacesSearch.Visibility = Visibility.Visible;
             SearchSellersButton.FontWeight = FontWeights.Normal;
@@ -433,9 +433,7 @@ namespace SupportYourLocals.WPF
                 foreach (var product in products.Value)
                 {
                     items.Add(new MarkerInformation { ProductType = products.Key.ToString(), ProductCount = products.Value.Count, Product = product });
-                    //ListViewMarkerInformation.Items.Add(new MarkerInformation { ProductType =  products.Key.ToString(), ProductCount = products.Value.Count, Product = product }); ;
                 }
-                
             }
             ListViewMarkerInformation.ItemsSource = items;
 
