@@ -60,6 +60,9 @@ namespace SupportYourLocals.WPF
             // Setup map
             SYLMap = new Map.Map(MainMap);
 
+            // Connect to the marker clicked event
+            SYLMap.MarkerClicked += new Map.Map.MarkerClickedHandler(OnMarkerClicked);
+
             // Clean outdated image cache 2s after launch of program
             Loaded += async (s, e) =>
             {
@@ -427,8 +430,14 @@ namespace SupportYourLocals.WPF
             }
         }
 
+        void OnMarkerClicked(Marker marker)
+        {
+            LoadMarkerInformationWindow(marker.id);
+        }
+
         private void LoadMarkerInformationWindow(string id)
         {
+            GridMarkerInformation.Visibility = Visibility.Visible;
             var items = new List<MarkerInformation>();
 
             var locationData = data.GetData(id);
