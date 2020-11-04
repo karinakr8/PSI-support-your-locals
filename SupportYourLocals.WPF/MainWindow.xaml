@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         Title="MainWindow" Height="530" Width="800" MinHeight="530" MinWidth="700">
-    
+
     <TabControl>
         <!--<materialDesign:PackIcon Name="AddProductButton" Kind="PlusThick" Width="25" Height="25" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#808080"/>
         <materialDesign:PackIcon Name="RemoveProductButton" Kind="Minus" Width="25" Height="25" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#808080"/>-->
@@ -88,15 +88,15 @@
 
                             <!-- Just a definition of this button-->
                             <Button Name="AddLocalSellerRemoveProductButton1" Width="25" Height="25" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#808080" Click="AddLocalSellerRemoveProduct1_Click" Visibility="Collapsed">
-                                 <materialDesign:PackIcon Kind="Minus"/>
+                                <materialDesign:PackIcon Kind="Minus"/>
                             </Button>
-                            
+
                             <Label x:Name="LabelProductType" Content="Product type" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,60,0,0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Width="160" />
                             <!--<TextBox x:Name="TextProduct"  HorizontalContentAlignment="Center" Margin="0,90,0,0 " Height="23" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Strawberries" materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="160" /> -->
                             <ComboBox  x:Name="ComboBoxProductType" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="0,90,0,0" VerticalAlignment="Top" Width="160" Height="22" SelectionChanged="ComboBoxProductType_SelectionChanged"/>
 
                             <Label x:Name="LabelProduct" Content="Product" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,120,0,0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Width="160" />
-                            
+
                             <!-- stack panel for product types scroll viewer-->
                             <Grid VerticalAlignment="Top" Margin="0 140 0 0" Visibility="Visible">
                                 <StackPanel Name="StackPanelWithScrollViewerAddSellers" Height="120" Margin="0 20 0 0">
@@ -127,19 +127,17 @@
                     <!-- Grid for displaying marker information-->
                     <Grid Name="GridMarkerInformation"  VerticalAlignment="Top" Margin="5,40,5,0" Background="#e8ffff" Visibility="Collapsed">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="50"/>
-                            <RowDefinition Height="250"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="280"/>
+                            <RowDefinition Height="40"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
                         <Grid Grid.Row="0">
                             <Label Name="InformationLocalSellerName" MaxWidth="140" Content="Seller Name" HorizontalAlignment="Left" VerticalAlignment="Bottom" FontFamily="Yu Gothic UI Semibold" FontSize="13"/>
-                            <Button Name="CollapseMarkerInformation" Width="25" Height="25" HorizontalAlignment="Center" VerticalAlignment="Top" Background="{x:Null}" Foreground="#808080" BorderBrush="{x:Null}" Click="CollapseMarkerInformation_Click" >
-                                <materialDesign:PackIcon Kind="ExpandMore"/>
-                            </Button>
                             <Label Name="InformationLocalSellerDate" MaxWidth="150" Content="Location added (Time)" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontFamily="Yu Gothic UI Semibold" FontSize="13" Foreground="#808080"/>
                         </Grid>
-                        <Grid Grid.Row="1">
+                        <Grid Grid.Row="1" >
                             <ListView Name="ListViewMarkerInformation" HorizontalContentAlignment="Center">
                                 <ListView.View>
                                     <GridView>
@@ -172,17 +170,17 @@
                                 </ListView.GroupStyle>
                             </ListView>
                         </Grid>
-                        <Grid Grid.Row="3">
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Column="1" Margin="0 30 0 0" >
+                        <Grid Grid.Row="2">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Column="1" Margin="0 0 0 0" >
 
-                                <Button Content="Cannot see it" Height="25" Width="110" Margin="10 0 10 0" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Yu Gothic UI Semibold" FontSize="14"  Foreground="White" Background="#41aea9" BorderBrush="{x:Null}">
+                                <Button Content="Cannot see it" Height="25" Width="110" Margin="10 0 10 0" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontFamily="Yu Gothic UI Semibold" FontSize="14"  Foreground="White" Background="#41aea9" BorderBrush="{x:Null}">
                                     <Button.Resources>
                                         <Style TargetType="Border">
                                             <Setter Property="CornerRadius" Value="10"/>
                                         </Style>
                                     </Button.Resources>
                                 </Button>
-                                <Button Content="Still here" Height="25" Width="110" Margin="10 0 10 0" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Yu Gothic UI Semibold" FontSize="14" Foreground="White" Background="#41aea9" BorderBrush="{x:Null}">
+                                <Button Content="Still here" Height="25" Width="110" Margin="10 0 10 0" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontFamily="Yu Gothic UI Semibold" FontSize="14" Foreground="White" Background="#41aea9" BorderBrush="{x:Null}">
                                     <Button.Resources>
                                         <Style TargetType="Border">
                                             <Setter Property="CornerRadius" Value="10"/>
@@ -190,6 +188,16 @@
                                     </Button.Resources>
                                 </Button>
                             </StackPanel>
+                        </Grid>
+
+                        <Grid Grid.Row="3" Margin="0 10 0 5">
+                            <Button Name="ButtonCloseMarkerInformation" Content="Close" Height="25" Width="110" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Yu Gothic UI Semibold" FontSize="14"  Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}" Click="ButtonCloseMarkerInformation_Click">
+                                <Button.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="10"/>
+                                    </Style>
+                                </Button.Resources>
+                            </Button>
                         </Grid>
                     </Grid>
 
@@ -216,13 +224,13 @@
 
                         <!--Button for adding, updating marketplaces-->
                         <Button Content="Update marketplaces" HorizontalAlignment="Center" Margin="0 340 0 0" VerticalAlignment="Top" Width="160" Background="Transparent" BorderBrush="{x:Null}" Foreground="#808080" Height="19" Click="UpdateMarketplaces_Click"/>
-                    </Grid> 
+                    </Grid>
                 </Grid>
 
                 <!-- Place for a map-->
                 <Grid Grid.Column="2" Grid.Row="2">
                     <map:Map x:Name="MainMap" MouseLeftButtonDown="MapMouseLeftButtonDown" MouseRightButtonDown="MapMouseRightButtonDown" Grid.ColumnSpan="2"/>
-                    
+
                 </Grid>
             </Grid>
         </TabItem>

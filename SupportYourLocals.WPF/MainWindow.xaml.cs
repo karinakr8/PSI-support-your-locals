@@ -446,6 +446,11 @@ namespace SupportYourLocals.WPF
         {
             GridMarkerInformation.Visibility = Visibility.Collapsed;
         }
+
+        private void ButtonCloseMarkerInformation_Click(object sender, RoutedEventArgs e)
+        {
+            GridMarkerInformation.Visibility = Visibility.Collapsed;
+        }
     }
 
     public class MarkerInformation
