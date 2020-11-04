@@ -28,16 +28,18 @@ namespace SupportYourLocals.Data
         public DateTime Time { get; set; }
         public Dictionary<ProductType, List<string> > Products { get; set; }
 
-        public LocationData(Location location, string name, int addedByID, DateTime time, Dictionary<ProductType, List<string>> products)
+        public LocationData(Location location, string name, int addedByID, DateTime time, Dictionary<ProductType, List<string>> products) : this(GenerateId, location, name, addedByID, time, products) { }
+
+        public LocationData(string id, Location location, string name, int addedByID, DateTime time, Dictionary<ProductType, List<string>> products)
         {
-            ID = GenerateId;
+            ID = id;
             Location = location;
             Name = name;
             AddedByID = addedByID;
             Time = time;
             Products = products;
         }
-        public string GenerateId => Guid.NewGuid().ToString("N");
+        public static string GenerateId => Guid.NewGuid().ToString("N");
     }
 
     public interface IDataStorage
