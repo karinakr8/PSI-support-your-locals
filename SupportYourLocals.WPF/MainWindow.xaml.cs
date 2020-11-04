@@ -177,6 +177,7 @@ namespace SupportYourLocals.WPF
         private void LabelAddSeller_Click(object sender, RoutedEventArgs e)
         {
             //Clean up
+            GridMarkerInformation.Visibility = Visibility.Collapsed;
             LoadAddLocalSellerFieldsAndCollections();
             ErrorLabel1.Visibility = Visibility.Collapsed;
             GridSellerAdd.Visibility = Visibility.Visible;
@@ -422,13 +423,25 @@ namespace SupportYourLocals.WPF
 
         private void LoadMarkerInformationWindow(string id)
         {
+            var items = new List<MarkerInformation>();
+
             var locationData = data.GetData(id);
             InformationLocalSellerName.Content = locationData.Name;
-            InformationLocalSellerDate.Content = $"Added: {locationData.Time}";
+            InformationLocalSellerDate.Content = locationData.Time;
             foreach (var products in locationData.Products)
             {
-                ListViewMarkerInformation.Items.Add(new MarkerInformation { ProductType =  products.Key.ToString(), ProductCount = products.Value.Count, Products = "More info on double click" }); ;
+                foreach (var product in products.Value)
+                {
+                    items.Add(new MarkerInformation { ProductType = products.Key.ToString(), ProductCount = products.Value.Count, Product = product });
+                    //ListViewMarkerInformation.Items.Add(new MarkerInformation { ProductType =  products.Key.ToString(), ProductCount = products.Value.Count, Product = product }); ;
+                }
+                
             }
+            ListViewMarkerInformation.ItemsSource = items;
+
+            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(ListViewMarkerInformation.ItemsSource);
+            PropertyGroupDescription groupDescription = new PropertyGroupDescription("ProductType");
+            view.GroupDescriptions.Add(groupDescription);
         }
 
         private void CollapseMarkerInformation_Click(object sender, RoutedEventArgs e)
@@ -441,7 +454,7 @@ namespace SupportYourLocals.WPF
     {
         public string ProductType { get; set; }
         public int ProductCount { get; set; }
-        public string Products { get; set; }
+        public string Product { get; set; }
     }
 }
 

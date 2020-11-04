@@ -132,21 +132,53 @@
                         </Grid.RowDefinitions>
 
                         <Grid Grid.Row="0">
-                            <Label Name="InformationLocalSellerName" Content="hey" HorizontalAlignment="Left" VerticalAlignment="Bottom" FontFamily="Yu Gothic UI Semibold" FontSize="13"/>
+                            <Label Name="InformationLocalSellerName" MaxWidth="140" Content="Seller Name" HorizontalAlignment="Left" VerticalAlignment="Bottom" FontFamily="Yu Gothic UI Semibold" FontSize="13"/>
                             <Button Name="CollapseMarkerInformation" Width="25" Height="25" HorizontalAlignment="Center" VerticalAlignment="Top" Background="{x:Null}" Foreground="#808080" BorderBrush="{x:Null}" Click="CollapseMarkerInformation_Click" >
                                 <materialDesign:PackIcon Kind="ExpandMore"/>
                             </Button>
-                            <Label Name="InformationLocalSellerDate" Content="Hey2" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontFamily="Yu Gothic UI Semibold" FontSize="13" Foreground="#808080"/>
+                            <Label Name="InformationLocalSellerDate" MaxWidth="150" Content="Location added (Time)" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontFamily="Yu Gothic UI Semibold" FontSize="13" Foreground="#808080"/>
                         </Grid>
                         <Grid Grid.Row="1">
+                          
                             <ListView Name="ListViewMarkerInformation" HorizontalContentAlignment="Center">
                                 <ListView.View>
                                     <GridView>
-                                        <GridViewColumn Header="Product Type" Width="140" DisplayMemberBinding="{Binding ProductType}" />
-                                        <GridViewColumn Header="Number of product" Width="140" DisplayMemberBinding="{Binding ProductCount}" />
-                                        <!--<GridViewColumn Header="Products" Width="160" DisplayMemberBinding="{Binding Products}" />-->
+                                        <GridViewColumn Header="Products" Width="255" DisplayMemberBinding="{Binding Product}" />
                                     </GridView>
                                 </ListView.View>
+                                <ListView.GroupStyle>
+                                    <GroupStyle>
+                                        <GroupStyle.ContainerStyle>
+                                            <Style TargetType="{x:Type GroupItem}">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate>
+                                                            <Expander IsExpanded="False">
+                                                                <Expander.Header>
+                                                                    <StackPanel Orientation="Horizontal">
+                                                                        <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="#808080" FontSize="14" VerticalAlignment="Center" />
+                                                                        <TextBlock Text="{Binding ItemCount}" FontSize="14" Foreground="#41aea9" FontWeight="Bold" FontStyle="Italic" Margin="10,0,0,0" VerticalAlignment="Center"  />
+                                                                        <TextBlock Text=" product(s)" FontSize="14" Foreground="#808080" FontStyle="Italic" VerticalAlignment="Center" />
+                                                                    </StackPanel>
+                                                                </Expander.Header>
+                                                                <ItemsPresenter />
+                                                            </Expander>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </GroupStyle.ContainerStyle>
+                                    </GroupStyle>
+                                </ListView.GroupStyle>
+                                <!--<ListView.GroupStyle>
+                                    <GroupStyle>
+                                        <GroupStyle.HeaderTemplate>
+                                            <DataTemplate>
+                                                <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding Name}"/>
+                                            </DataTemplate>
+                                        </GroupStyle.HeaderTemplate>
+                                    </GroupStyle>
+                                </ListView.GroupStyle>-->
                             </ListView>
                         </Grid>
                         <Grid Grid.Row="3">
