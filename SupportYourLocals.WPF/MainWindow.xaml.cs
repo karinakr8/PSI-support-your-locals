@@ -375,6 +375,7 @@ namespace SupportYourLocals.WPF
         {
             var scrollViewer = new ScrollViewer
             {
+                VerticalAlignment = VerticalAlignment.Top,
                 HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
                 HorizontalContentAlignment = HorizontalAlignment.Center,
                 VerticalContentAlignment = VerticalAlignment.Center,
