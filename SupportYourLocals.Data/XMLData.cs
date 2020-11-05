@@ -52,7 +52,7 @@ namespace SupportYourLocals.Data
                     }
                     dictionary.Add(productTypeEnum, productsList);
                 }
-                localSellersDictionary.Add(id, new LocationData(id, location, name, addedById, time, dictionary));
+                localSellersDictionary.Add(id, new LocationData(location, name, addedById, time, dictionary, id));
                 
             }
             return localSellersDictionary;

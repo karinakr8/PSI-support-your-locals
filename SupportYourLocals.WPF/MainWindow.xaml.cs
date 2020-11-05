@@ -507,7 +507,7 @@ namespace SupportYourLocals.WPF
         }
     }
 
-    public class MarkerInformation
+    public struct MarkerInformation
     {
         public string ProductType { get; set; }
         public int ProductCount { get; set; }
