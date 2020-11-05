@@ -405,7 +405,7 @@ namespace SupportYourLocals.WPF
                     // If no search phrase has been given, just show all markers within range
                     if (!searchPhraseGiven)
                     {
-                        SYLMap.AddMarker(loc.Location, loc.ID);
+                        SYLMap.AddMarker(id: loc.ID, position: loc.Location);
                         continue;
                     }
 
