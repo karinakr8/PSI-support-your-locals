@@ -21,7 +21,7 @@ namespace SupportYourLocals.Data
         Other
     }
 
-    public struct LocationData : IComparable, IEquatable<LocationData>
+    public class LocationData : IComparable, IEquatable<LocationData>
     {
         public string ID { get; set; }
         public Location Location { get; set; }
