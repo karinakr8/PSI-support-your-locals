@@ -441,7 +441,9 @@ namespace SupportYourLocals.WPF
             var location = SYLMap.GetMarkerTempLocation();
 
             if (location != null)
+            {
                 return location;
+            }
 
             if (TextBox3Seller.Text.Trim() == "")
             {
@@ -450,7 +452,9 @@ namespace SupportYourLocals.WPF
 
             var address = TextBox3Seller.Text;
             if (TextBox2Seller.Text != "")
+            {
                 address = "{0}, {1}".Format(address, TextBox2Seller.Text);
+            }
 
             return SYLMap.AddressToLocation(address);
         }
@@ -458,7 +462,9 @@ namespace SupportYourLocals.WPF
         private List<string> GetSearchProducts()
         {
             if (TextBox1Seller.Text.Trim() == "")
+            {
                 return null;
+            }
 
             var searchItems = TextBox1Seller.Text.Split(',').ToList();
 
