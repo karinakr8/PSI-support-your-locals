@@ -4,27 +4,43 @@
              xmlns:local="clr-namespace:SupportYourLocals.WPF"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <!--A Style that sets Label's "Search local sellers" Font with an x:Key : Style="{StaticResource FontSetter1}"-->
+        <!--A Style that sets Label's "Search local sellers" Font with an x:Key : Style="{StaticResource FontSetterLabelSegoe}"-->
         <Style
            TargetType="Label"
-           x:Key="FontSetter1">
+           x:Key="FontSetterLabelSegoe">
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="FontFamily" Value="Segoe UI Black"/>
         </Style>
-
-        <!--A Style that sets Label's Font with an x:Key : Style="{StaticResource FontSetter2}"-->
+      
+        <!--A Style that sets Label's Font with an x:Key : Style="{StaticResource FontSetterLabelYuGothic}"-->
         <Style
            TargetType="Label"
-           x:Key="FontSetter2">
+           x:Key="FontSetterLabelYuGothic">
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="FontFamily" Value="Yu Gothic UI Semibold"/>
         </Style>
-
-        <!--A Style that sets Button's Font with an x:Key : Style="{StaticResource FontSetter3}"-->
+      
+        <!--A Style that sets Button's Font with an x:Key : Style="{StaticResource FontSetterButtonYuGothic}"-->
         <Style
            TargetType="Button"
-           x:Key="FontSetter3">
+           x:Key="FontSetterButtonYuGothic">
             <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontFamily" Value="Yu Gothic UI Semibold"/>
+        </Style>
+      
+      <!--A Style that sets Button's Font with an x:Key : Style="{StaticResource FontSetterLabelYuGothicSmall}"-->
+        <Style
+           TargetType="Label"
+           x:Key="FontSetterLabelYuGothicSmall">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontFamily" Value="Yu Gothic UI Semibold"/>
+        </Style>
+      
+        <!--A Style that sets Button's Font with an x:Key : Style="{StaticResource FontSetterButtonYuGothicMedium}"-->
+        <Style
+           TargetType="Button"
+           x:Key="FontSetterButtonYuGothicMedium">
+            <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontFamily" Value="Yu Gothic UI Semibold"/>
         </Style>
 
