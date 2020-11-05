@@ -67,7 +67,7 @@
                         <Label Style="{StaticResource FontSetter2}" x:Name="Label4Seller" Content="Radius from adress location (km)" HorizontalContentAlignment="Center" Margin="0 240 0 0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
 
                         <Slider x:Name="Slider1Seller"  VerticalAlignment="Top" HorizontalContentAlignment="Center" Margin="0 280 0 0" Height="22" Width="160" TickFrequency="10" Value="1" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="0" SmallChange="1" LargeChange="1"/>
-                        <Button x:Name="Button1Seller" Content="Find" HorizontalContentAlignment="Center" Margin="0 330 0 0" VerticalAlignment="Top" Width="160" FontFamily="Yu Gothic UI Semibold" FontSize="16" Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}" Click="FindLocation_Click">
+                        <Button Style="{StaticResource FontSetter3}" x:Name="Button1Seller" Content="Find" HorizontalContentAlignment="Center" Margin="0 330 0 0" VerticalAlignment="Top" Width="160" Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}" Click="FindLocation_Click">
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="10"/>
@@ -104,7 +104,7 @@
                                 </StackPanel>
                             </Grid>
 
-                            <Button x:Name="ButtonSave" Content="Save" HorizontalContentAlignment="Center" Margin="0,280,0,0" VerticalAlignment="Top" Width="160" FontFamily="Yu Gothic UI Semibold" FontSize="16" Foreground="White" Background="#a6f6f1" Click="ButtonSave_Clicked" BorderBrush="{x:Null}">
+                            <Button Style="{StaticResource FontSetter3}" x:Name="ButtonSave" Content="Save" HorizontalContentAlignment="Center" Margin="0,280,0,0" VerticalAlignment="Top" Width="160" Foreground="White" Background="#a6f6f1" Click="ButtonSave_Clicked" BorderBrush="{x:Null}">
                                 <Button.Resources>
                                     <Style TargetType="Border">
                                         <Setter Property="CornerRadius" Value="10"/>
@@ -112,7 +112,7 @@
                                 </Button.Resources>
                             </Button>
 
-                            <Button x:Name="ButtonCancel" Content="Cancel" HorizontalContentAlignment="Center" Margin="0,320,0,0" VerticalAlignment="Top" Width="160" FontFamily="Yu Gothic UI Semibold" FontSize="16" Foreground="White" Background="#a6f6f1" Click="ButtonCancel_Clicked" BorderBrush="{x:Null}">
+                            <Button Style="{StaticResource FontSetter3}" x:Name="ButtonCancel" Content="Cancel" HorizontalContentAlignment="Center" Margin="0,320,0,0" VerticalAlignment="Top" Width="160" Foreground="White" Background="#a6f6f1" Click="ButtonCancel_Clicked" BorderBrush="{x:Null}">
                                 <Button.Resources>
                                     <Style TargetType="Border">
                                         <Setter Property="CornerRadius" Value="10"/>
@@ -214,7 +214,7 @@
                         <Label Style="{StaticResource FontSetter2}" Content="Type of goods" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 195 0 0" Height="32"/>
                         <ComboBox HorizontalAlignment="Center" Margin="0 230 0 0" VerticalAlignment="Top" Width="160" Height="22"/>
 
-                        <Button Content="Find" HorizontalAlignment="Center" Margin="0 295 0 0" VerticalAlignment="Top" Width="160" FontFamily="Yu Gothic UI Semibold" FontSize="16" Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}" Height="25">
+                        <Button Style="{StaticResource FontSetter3}" Content="Find" HorizontalAlignment="Center" Margin="0 295 0 0" VerticalAlignment="Top" Width="160" Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}" Height="25">
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="10"/>
@@ -273,7 +273,7 @@
                 <!-- Place for a map-->
                 <Grid Grid.Column="2" Grid.Row="2" Background="#e8ffff">
                     <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Height="260"  Width="400">
-                        <Button Content="Find" HorizontalAlignment="Center" Margin="0 140 0 0" VerticalAlignment="Top" Width="160" FontFamily="Yu Gothic UI Semibold" FontSize="16" Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}">
+                        <Button Style="{StaticResource FontSetter3}" Content="Find" HorizontalAlignment="Center" Margin="0 140 0 0" VerticalAlignment="Top" Width="160" Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}">
                             <Button.Resources>
                                 <Style TargetType="{x:Type Border}">
                                     <Setter Property="CornerRadius" Value="10"/>
