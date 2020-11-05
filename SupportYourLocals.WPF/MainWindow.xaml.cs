@@ -33,8 +33,6 @@ namespace SupportYourLocals.WPF
         private readonly Map.Map SYLMap;
         private readonly IDataStorage data = new XMLData();
 
-        private bool userSelectedLocation = false;
-
         // List for StackPanel elements in Main StackPanel
         List<List<StackPanel>> listOfStackPanelListsAddProduct = new List<List<StackPanel>>();
         // List for "+" buttons in scrollviewer AddLocalSeller
@@ -73,8 +71,9 @@ namespace SupportYourLocals.WPF
 
         private void LoadAddLocalSellerFieldsAndCollections()
         {
-            var productTypes = Enum.GetValues(typeof(ProductType));
+            SYLMap.RemoveMarkerTemp();
 
+            var productTypes = Enum.GetValues(typeof(ProductType));
 
             foreach (Enum productType in productTypes)
             {
@@ -146,15 +145,15 @@ namespace SupportYourLocals.WPF
                 SYLMap.Center = MainMap.ViewToLocation(e.GetPosition(MainMap));
                 SYLMap.AddMarkerTemp(SYLMap.Center);
 
-                if (GridSellerAdd.Visibility == Visibility.Visible)
-                {
-                    userSelectedLocation = true;
-                }
-                else
+                if (GridSellerAdd.Visibility != Visibility.Visible)
                 {
                     var address = SYLMap.LocationToAddressSplit(SYLMap.Center);
                     TextBox2Seller.Text = address.Item2;
                     TextBox3Seller.Text = address.Item1;
+                }
+                else
+                {
+                    ErrorLabel1.Visibility = Visibility.Collapsed;
                 }
             }
         }
@@ -162,7 +161,6 @@ namespace SupportYourLocals.WPF
         private void MapMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             SYLMap.RemoveMarkerTemp();
-            userSelectedLocation = false;
         }
 
         private void LabelAddSeller_Click(object sender, RoutedEventArgs e)
@@ -176,45 +174,34 @@ namespace SupportYourLocals.WPF
 
         private void ButtonSave_Clicked(object sender, RoutedEventArgs e)
         {
-            var productTypes = Enum.GetValues(typeof(ProductType));
-
-            if (userSelectedLocation)
-            {
-                string productType = ComboBoxProductType.Text;
-
-                var dictionaryListString = ConvertDictionaryListTextBoxToDictionaryListString(dictionaryOfTextBoxListAddProduct);
-                userSelectedLocation = false;
-
-                data.AddData(new LocationData(MainMap.TargetCenter, AddLocalSellerNameTextBox.Text, 10, DateTime.Now, dictionaryListString));
-                data.SaveData();
-                GridSellerAdd.Visibility = Visibility.Collapsed;
-                SYLMap.RemoveMarkerTemp();
-
-                // Clear everything for the next usages of "Add local seller"
-                ClearAddLocalSellerInputFieldsAndUserInterface();
-                ClearAddLocalSellerCollections();
-            }
-            else
+            if (SYLMap.GetMarkerTempLocation() == null)
             {
                 ErrorLabel1.Visibility = Visibility.Visible;
+                return;
             }
 
+            var dictionaryListString = ConvertDictionaryListTextBoxToDictionaryListString(dictionaryOfTextBoxListAddProduct);
+
+            data.AddData(new LocationData(SYLMap.GetMarkerTempLocation(), AddLocalSellerNameTextBox.Text, 10, DateTime.Now, dictionaryListString));
+            data.SaveData();
+
+            GridSellerAdd.Visibility = Visibility.Collapsed;
+            SYLMap.RemoveMarkerTemp();
+
+            // Clear everything for the next usages of "Add local seller"
+            ClearAddLocalSellerInputFieldsAndUserInterface();
+            ClearAddLocalSellerCollections();
         }
 
         private void ButtonCancel_Clicked(object sender, RoutedEventArgs e)
         {
             GridSellerAdd.Visibility = Visibility.Collapsed;
 
-            if (userSelectedLocation)
-            {
-                SYLMap.RemoveMarkerTemp();
-                userSelectedLocation = false;
-            }
+            SYLMap.RemoveMarkerTemp();
 
             // Clean up Add local seller window
             ClearAddLocalSellerInputFieldsAndUserInterface();
             ClearAddLocalSellerCollections();
-
         }
 
         private void SearchMarketplacesButton_Click(object sender, RoutedEventArgs e)
@@ -369,6 +356,7 @@ namespace SupportYourLocals.WPF
             };
             return scrollViewer;
         }
+
         private Dictionary<ProductType, List<string>> ConvertDictionaryListTextBoxToDictionaryListString(Dictionary<ProductType, List<TextBox>> dictionary)
         {
             var dictionaryListString = new Dictionary<ProductType, List<string>>();
@@ -431,7 +419,6 @@ namespace SupportYourLocals.WPF
                             break;
                         }
                     }
-                    
                 }
             }
         }
