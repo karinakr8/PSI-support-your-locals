@@ -166,6 +166,7 @@ namespace SupportYourLocals.WPF
         private void LabelAddSeller_Click(object sender, RoutedEventArgs e)
         {
             //Clean up
+            ClearSearchSellerWindow();
             GridMarkerInformation.Visibility = Visibility.Collapsed;
             LoadAddLocalSellerFieldsAndCollections();
             ErrorLabel1.Visibility = Visibility.Collapsed;
@@ -381,6 +382,8 @@ namespace SupportYourLocals.WPF
 
         private void FindLocation_Click(object sender, RoutedEventArgs e)
         {
+            TextBox1Seller.Clear();
+
             var location = GetUserLocation();
 
             if (location == null)
@@ -504,6 +507,13 @@ namespace SupportYourLocals.WPF
         private void ButtonCloseMarkerInformation_Click(object sender, RoutedEventArgs e)
         {
             GridMarkerInformation.Visibility = Visibility.Collapsed;
+        }
+
+        private void ClearSearchSellerWindow()
+        {
+            TextBox1Seller.Clear();
+            TextBox2Seller.Clear();
+            TextBox3Seller.Clear();
         }
     }
 
