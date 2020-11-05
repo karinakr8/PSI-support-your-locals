@@ -6,5 +6,10 @@
         {
             return string.Format(value, args);
         }
+
+        public static int Compare(this string value, string arg)
+        {
+            return string.Compare(value, arg);
+        }
     }
 }
