@@ -39,7 +39,7 @@
 
 
                     </StackPanel>
-                    <Label Style="{StaticResource FontSetter1}" Content="Search local sellers" Foreground="White" Grid.ColumnSpan="2" Margin="0,0,0,0.4"/>
+                    <Label Style="{StaticResource FontSetterLabelSegoe}" Content="Search local sellers" Foreground="White" Grid.ColumnSpan="2" Margin="0,0,0,0.4"/>
                 </Grid>
                 <!-- User input for the search-->
                 <Grid Grid.Row="1" >
@@ -54,20 +54,20 @@
                     </Grid>
                     <!-- Seach local sellers grid-->
                     <Grid x:Name="GridSellersSearch" HorizontalAlignment="Left" Grid.ColumnSpan="2" Margin="0,40,0,0" Width="300" Background="#e8ffff" Visibility="Visible">
-                        <Label Style="{StaticResource FontSetter2}" x:Name="Label1Seller" Content="Search phrase" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0" Width="160" />
+                        <Label Style="{StaticResource FontSetterLabelYuGothic}" x:Name="Label1Seller" Content="Search phrase" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0" Width="160" />
                         <TextBox x:Name="TextBox1Seller"  HorizontalContentAlignment="Center" Margin="0 45 0 0 " Height="23" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Strawberries" materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="160" />
 
-                        <Label Style="{StaticResource FontSetter2}" x:Name="Label2Seller" Content="City" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 90 0 0" Width="160"/>
+                        <Label Style="{StaticResource FontSetterLabelYuGothic}" x:Name="Label2Seller" Content="City" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 90 0 0" Width="160"/>
                         <TextBox x:Name="TextBox2Seller" HorizontalContentAlignment="Center" Margin="0 125 0 0" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="160" />
 
-                        <Label Style="{StaticResource FontSetter2}" x:Name="Label3Seller" Content="Adress" HorizontalContentAlignment="Center" Margin="0 160 0 0" VerticalAlignment="Top" Width="160"/>
+                        <Label Style="{StaticResource FontSetterLabelYuGothic}" x:Name="Label3Seller" Content="Adress" HorizontalContentAlignment="Center" Margin="0 160 0 0" VerticalAlignment="Top" Width="160"/>
 
                         <TextBox x:Name="TextBox3Seller" HorizontalContentAlignment="Center" Margin="0 195 0 0" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="160" />
 
-                        <Label Style="{StaticResource FontSetter2}" x:Name="Label4Seller" Content="Radius from adress location (km)" HorizontalContentAlignment="Center" Margin="0 240 0 0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+                        <Label Style="{StaticResource FontSetterLabelYuGothic}" x:Name="Label4Seller" Content="Radius from adress location (km)" HorizontalContentAlignment="Center" Margin="0 240 0 0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
 
                         <Slider x:Name="Slider1Seller"  VerticalAlignment="Top" HorizontalContentAlignment="Center" Margin="0 280 0 0" Height="22" Width="160" TickFrequency="10" Value="1" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="0" SmallChange="1" LargeChange="1"/>
-                        <Button Style="{StaticResource FontSetter3}" x:Name="Button1Seller" Content="Find" HorizontalContentAlignment="Center" Margin="0 330 0 0" VerticalAlignment="Top" Width="160" Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}" Click="FindLocation_Click">
+                        <Button Style="{StaticResource FontSetterButtonYuGothic}" x:Name="Button1Seller" Content="Find" HorizontalContentAlignment="Center" Margin="0 330 0 0" VerticalAlignment="Top" Width="160" Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}" Click="FindLocation_Click">
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="10"/>
@@ -79,9 +79,9 @@
                         <!-- User input for adding a local seller-->
                         <Grid x:Name="GridSellerAdd" HorizontalAlignment="Right" Grid.ColumnSpan="2" Margin="0,0,0,0" Width="300" Background="#e8ffff" Visibility="Collapsed">
                             <!-- Change this label into something else-->
-                            <Label x:Name="LabelAddLocalSeller" Content="Double click on a map to pin a local seller's location" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,0,0,0" FontFamily="Yu Gothic UI Semibold" Foreground="#808080" FontSize="12" Width="300" />
+                            <Label Style="{StaticResource FontSetterLabelYuGothicSmall}" x:Name="LabelAddLocalSeller" Content="Double click on a map to pin a local seller's location" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,0,0,0" Foreground="#808080" Width="300" />
 
-                            <Label Style="{StaticResource FontSetter2}" Name="AddLocalSellerName" Content="Name" HorizontalContentAlignment="Center" Margin="0 15 0 0" VerticalAlignment="Top" Width="160"/>
+                            <Label Style="{StaticResource FontSetterLabelYuGothic}" Name="AddLocalSellerName" Content="Name" HorizontalContentAlignment="Center" Margin="0 15 0 0" VerticalAlignment="Top" Width="160"/>
 
                             <TextBox Name="AddLocalSellerNameTextBox"  HorizontalContentAlignment="Center" Margin="0 45 0 0" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="160" />
 
@@ -91,20 +91,20 @@
                                 <materialDesign:PackIcon Kind="Minus"/>
                             </Button>
 
-                            <Label Style="{StaticResource FontSetter2}" x:Name="LabelProductType" Content="Product type" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,60,0,0" Width="160" />
+                            <Label Style="{StaticResource FontSetterLabelYuGothic}" x:Name="LabelProductType" Content="Product type" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,60,0,0" Width="160" />
                             <!--<TextBox x:Name="TextProduct"  HorizontalContentAlignment="Center" Margin="0,90,0,0 " Height="23" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Strawberries" materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="160" /> -->
                             <ComboBox  x:Name="ComboBoxProductType" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="0,90,0,0" VerticalAlignment="Top" Width="160" Height="22" SelectionChanged="ComboBoxProductType_SelectionChanged"/>
 
-                            <Label Style="{StaticResource FontSetter2}" x:Name="LabelProduct" Content="Product" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,120,0,0" Width="160" />
+                            <Label Style="{StaticResource FontSetterLabelYuGothic}" x:Name="LabelProduct" Content="Product" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,120,0,0" Width="160" />
 
                             <!-- stack panel for product types scroll viewer-->
                             <Grid VerticalAlignment="Top" Margin="0 140 0 0" Visibility="Visible">
                                 <StackPanel Name="StackPanelWithScrollViewerAddSellers" Height="120" Margin="0 20 0 0">
-                                    <Label Name="LabelForScrollViewerAddLocalSeller" Content="Choose a product type" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,0" FontFamily="Yu Gothic UI Semibold" Foreground="Red" FontSize="12" Width="300" Visibility="Visible" />
+                                    <Label Style="{StaticResource FontSetterLabelYuGothicSmall}" Name="LabelForScrollViewerAddLocalSeller" Content="Choose a product type" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,0" Foreground="Red" Width="300" Visibility="Visible" />
                                 </StackPanel>
                             </Grid>
 
-                            <Button Style="{StaticResource FontSetter3}" x:Name="ButtonSave" Content="Save" HorizontalContentAlignment="Center" Margin="0,280,0,0" VerticalAlignment="Top" Width="160" Foreground="White" Background="#a6f6f1" Click="ButtonSave_Clicked" BorderBrush="{x:Null}">
+                            <Button Style="{StaticResource FontSetterButtonYuGothic}" x:Name="ButtonSave" Content="Save" HorizontalContentAlignment="Center" Margin="0,280,0,0" VerticalAlignment="Top" Width="160" Foreground="White" Background="#a6f6f1" Click="ButtonSave_Clicked" BorderBrush="{x:Null}">
                                 <Button.Resources>
                                     <Style TargetType="Border">
                                         <Setter Property="CornerRadius" Value="10"/>
@@ -112,7 +112,7 @@
                                 </Button.Resources>
                             </Button>
 
-                            <Button Style="{StaticResource FontSetter3}" x:Name="ButtonCancel" Content="Cancel" HorizontalContentAlignment="Center" Margin="0,320,0,0" VerticalAlignment="Top" Width="160" Foreground="White" Background="#a6f6f1" Click="ButtonCancel_Clicked" BorderBrush="{x:Null}">
+                            <Button Style="{StaticResource FontSetterButtonYuGothic}" x:Name="ButtonCancel" Content="Cancel" HorizontalContentAlignment="Center" Margin="0,320,0,0" VerticalAlignment="Top" Width="160" Foreground="White" Background="#a6f6f1" Click="ButtonCancel_Clicked" BorderBrush="{x:Null}">
                                 <Button.Resources>
                                     <Style TargetType="Border">
                                         <Setter Property="CornerRadius" Value="10"/>
@@ -120,7 +120,7 @@
                                 </Button.Resources>
                             </Button>
 
-                            <Label x:Name="ErrorLabel1" Content="Select current place on a map" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,220,0,0" FontFamily="Yu Gothic UI Semibold" Background="#FF451D" Foreground="white" FontSize="12" Width="300" Visibility="Collapsed"  />
+                            <Label Style="{StaticResource FontSetterLabelYuGothicSmall}" x:Name="ErrorLabel1" Content="Select current place on a map" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,220,0,0" Background="#FF451D" Foreground="white" Width="300" Visibility="Collapsed"  />
                         </Grid>
 
                     </Grid>
@@ -134,8 +134,8 @@
                         </Grid.RowDefinitions>
 
                         <Grid Grid.Row="0">
-                            <Label Name="InformationLocalSellerName" MaxWidth="140" Content="Seller Name" HorizontalAlignment="Left" VerticalAlignment="Bottom" FontFamily="Yu Gothic UI Semibold" FontSize="13"/>
-                            <Label Name="InformationLocalSellerDate" MaxWidth="150" Content="Location added (Time)" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontFamily="Yu Gothic UI Semibold" FontSize="13" Foreground="#808080"/>
+                            <Label Style="{StaticResource FontSetterLabelYuGothicSmall}" Name="InformationLocalSellerName" MaxWidth="140" Content="Seller Name" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
+                            <Label Style="{StaticResource FontSetterLabelYuGothicSmall}" Name="InformationLocalSellerDate" MaxWidth="150" Content="Location added (Time)" HorizontalAlignment="Right" VerticalAlignment="Bottom" Foreground="#808080"/>
                         </Grid>
                         <Grid Grid.Row="1" >
                             <ListView Name="ListViewMarkerInformation" HorizontalContentAlignment="Center">
@@ -173,14 +173,14 @@
                         <Grid Grid.Row="2">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Column="1" Margin="0 0 0 0" >
 
-                                <Button Content="Cannot see it" Height="25" Width="110" Margin="10 0 10 0" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontFamily="Yu Gothic UI Semibold" FontSize="14"  Foreground="White" Background="#41aea9" BorderBrush="{x:Null}">
+                                <Button Style="{StaticResource FontSetterButtonYuGothicMedium}" Content="Cannot see it" Height="25" Width="110" Margin="10 0 10 0" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="White" Background="#41aea9" BorderBrush="{x:Null}">
                                     <Button.Resources>
                                         <Style TargetType="Border">
                                             <Setter Property="CornerRadius" Value="10"/>
                                         </Style>
                                     </Button.Resources>
                                 </Button>
-                                <Button Content="Still here" Height="25" Width="110" Margin="10 0 10 0" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontFamily="Yu Gothic UI Semibold" FontSize="14" Foreground="White" Background="#41aea9" BorderBrush="{x:Null}">
+                                <Button Style="{StaticResource FontSetterButtonYuGothicMedium}" Content="Still here" Height="25" Width="110" Margin="10 0 10 0" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="White" Background="#41aea9" BorderBrush="{x:Null}">
                                     <Button.Resources>
                                         <Style TargetType="Border">
                                             <Setter Property="CornerRadius" Value="10"/>
@@ -191,7 +191,7 @@
                         </Grid>
 
                         <Grid Grid.Row="3" Margin="0 10 0 5">
-                            <Button Name="ButtonCloseMarkerInformation" Content="Close" Height="25" Width="110" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Yu Gothic UI Semibold" FontSize="14"  Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}" Click="ButtonCloseMarkerInformation_Click">
+                            <Button Style="{StaticResource FontSetterButtonYuGothicMedium}" Name="ButtonCloseMarkerInformation" Content="Close" Height="25" Width="110" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}" Click="ButtonCloseMarkerInformation_Click">
                                 <Button.Resources>
                                     <Style TargetType="Border">
                                         <Setter Property="CornerRadius" Value="10"/>
@@ -204,17 +204,17 @@
                     <!-- Search marketplaces grid-->
                     <Grid x:Name="GridMarketplacesSearch" HorizontalAlignment="Left" Margin="0,40,0,0" Width="300" Background="#e8ffff" Visibility="Collapsed">
 
-                        <Label Style="{StaticResource FontSetter2}" Content="City" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 10 0 0" Height="32" Width="160"/>
+                        <Label Style="{StaticResource FontSetterLabelYuGothic}" Content="City" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 10 0 0" Height="32" Width="160"/>
                         <TextBox HorizontalAlignment="Center" Height="23"  Margin="0 45 0 0"  materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="160" />
 
-                        <Label Style="{StaticResource FontSetter2}" Content="Marketplace" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 90 0 0" Height="32"/>
+                        <Label Style="{StaticResource FontSetterLabelYuGothic}" Content="Marketplace" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 90 0 0" Height="32"/>
                         <ComboBox HorizontalAlignment="Center" Height="23"  VerticalAlignment="Top" Width="160" Margin="0 125 0 0"/>
                         <Label HorizontalAlignment="Center" HorizontalContentAlignment="Center" Content="Or" Margin="0 160 0 0" VerticalAlignment="Top" Foreground="#C0C0C0" Width="160" Height="26"/>
 
-                        <Label Style="{StaticResource FontSetter2}" Content="Type of goods" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 195 0 0" Height="32"/>
+                        <Label Style="{StaticResource FontSetterLabelYuGothic}" Content="Type of goods" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 195 0 0" Height="32"/>
                         <ComboBox HorizontalAlignment="Center" Margin="0 230 0 0" VerticalAlignment="Top" Width="160" Height="22"/>
 
-                        <Button Style="{StaticResource FontSetter3}" Content="Find" HorizontalAlignment="Center" Margin="0 295 0 0" VerticalAlignment="Top" Width="160" Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}" Height="25">
+                        <Button Style="{StaticResource FontSetterButtonYuGothic}" Content="Find" HorizontalAlignment="Center" Margin="0 295 0 0" VerticalAlignment="Top" Width="160" Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}" Height="25">
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="10"/>
@@ -256,7 +256,7 @@
                         </Button>
 
                     </StackPanel>
-                    <Label Style="{StaticResource FontSetter1}" Content="Search local sellers" Foreground="White"/>
+                    <Label Style="{StaticResource FontSetterLabelSegoe}" Content="Search local sellers" Foreground="White"/>
                 </Grid>
                 <!-- User input for the search-->
                 <Grid Grid.Row="1" >
@@ -273,15 +273,15 @@
                 <!-- Place for a map-->
                 <Grid Grid.Column="2" Grid.Row="2" Background="#e8ffff">
                     <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Height="260"  Width="400">
-                        <Button Style="{StaticResource FontSetter3}" Content="Find" HorizontalAlignment="Center" Margin="0 140 0 0" VerticalAlignment="Top" Width="160" Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}">
+                        <Button Style="{StaticResource FontSetterButtonYuGothic}" Content="Find" HorizontalAlignment="Center" Margin="0 140 0 0" VerticalAlignment="Top" Width="160" Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}">
                             <Button.Resources>
                                 <Style TargetType="{x:Type Border}">
                                     <Setter Property="CornerRadius" Value="10"/>
                                 </Style>
                             </Button.Resources>
                         </Button>
-                        <Label Style="{StaticResource FontSetter2}" Content="Password" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0 70 0 0"/>
-                        <Label Style="{StaticResource FontSetter2}" Content="Username" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0 10 0 0 "/>
+                        <Label Style="{StaticResource FontSetterLabelYuGothic}" Content="Password" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0 70 0 0"/>
+                        <Label Style="{StaticResource FontSetterLabelYuGothic}" Content="Username" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0 10 0 0 "/>
                         <TextBox HorizontalAlignment="Center" Height="23" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Strawberries" materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="160" Margin="120,40,120,0" />
                         <PasswordBox HorizontalAlignment="Center" Margin="120,100,120,0" VerticalAlignment="Top" Width="160"/>
                         <Button Content="Not a user? Register now"  HorizontalAlignment="Center" Margin="0 180 0 0" VerticalAlignment="Top" Width="160" Background="Transparent" BorderBrush="{x:Null}" Foreground="#808080"/>
