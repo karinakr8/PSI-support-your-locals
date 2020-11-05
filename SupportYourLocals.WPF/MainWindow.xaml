@@ -62,7 +62,7 @@
 
                         <Label x:Name="Label3Seller" Content="Adress" HorizontalContentAlignment="Center" Margin="0 160 0 0" VerticalAlignment="Top" FontFamily="Yu Gothic UI Semibold" FontSize="16" Width="160"/>
 
-                        <TextBox x:Name="TextBox3Seller" HorizontalContentAlignment="Center" Margin="0 195 0 0" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="160" />
+                        <TextBox x:Name="TextBox3Seller" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="0 195 0 0" Height="50" TextWrapping="Wrap" VerticalAlignment="Top" Width="160" />
 
                         <Label x:Name="Label4Seller" Content="Radius from adress location (km)" HorizontalContentAlignment="Center" Margin="0 240 0 0" VerticalAlignment="Top"  FontFamily="Yu Gothic UI Semibold" FontSize="16" Grid.ColumnSpan="2"/>
 

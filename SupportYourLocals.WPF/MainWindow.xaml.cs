@@ -20,6 +20,7 @@ using SupportYourLocals.Data;
 using MaterialDesignThemes.Wpf;
 using System.Runtime.CompilerServices;
 using SupportYourLocals.ExtensionMethods;
+using System.Text.RegularExpressions;
 
 namespace SupportYourLocals.WPF
 {
@@ -72,6 +73,7 @@ namespace SupportYourLocals.WPF
         private void LoadAddLocalSellerFieldsAndCollections()
         {
             SYLMap.RemoveMarkerTemp();
+            SYLMap.RemoveAllMarkers();
 
             var productTypes = Enum.GetValues(typeof(ProductType));
 
@@ -183,7 +185,7 @@ namespace SupportYourLocals.WPF
 
             var dictionaryListString = ConvertDictionaryListTextBoxToDictionaryListString(dictionaryOfTextBoxListAddProduct);
 
-            data.AddData(new LocationData(SYLMap.GetMarkerTempLocation(), AddLocalSellerNameTextBox.Text, 10, DateTime.Now, dictionaryListString));
+            data.AddData(new LocationData(SYLMap.GetMarkerTempLocation(), AddLocalSellerNameTextBox.Text.Trim(), 10, DateTime.Now, dictionaryListString));
             data.SaveData();
 
             GridSellerAdd.Visibility = Visibility.Collapsed;
@@ -371,7 +373,7 @@ namespace SupportYourLocals.WPF
                     {
                         if (elementOfList != null)
                         {
-                            listString.Add(elementOfList.Text);
+                            listString.Add(elementOfList.Text.Trim());
                         }
                     }
                     dictionaryListString.Add(elementTextBox.Key, listString);
@@ -382,9 +384,7 @@ namespace SupportYourLocals.WPF
 
         private void FindLocation_Click(object sender, RoutedEventArgs e)
         {
-            TextBox1Seller.Clear();
-
-            var location = GetUserLocation();
+            var location = GetUserLocation(TextBox1Seller.Text.Trim());
 
             if (location == null)
             {
@@ -424,10 +424,23 @@ namespace SupportYourLocals.WPF
                     }
                 }
             }
+            if (searchPhraseGiven)
+            {
+                DisplayInformationMessage("Local sellers in the radius were loaded by your search phrase");
+            }
+            else
+            {
+                DisplayInformationMessage("All local sellers in radius were loaded");
+            }
         }
 
-        private Location GetUserLocation()
+        private Location GetUserLocation(string searchPhrase)
         {
+            if(!CheckSearchSellerInput(searchPhrase, TextBox2Seller.Text.Trim(), TextBox3Seller.Text.Trim()))
+            {
+                return null;
+            }
+            
             var location = SYLMap.GetMarkerTempLocation();
 
             if (location != null)
@@ -514,6 +527,41 @@ namespace SupportYourLocals.WPF
             TextBox1Seller.Clear();
             TextBox2Seller.Clear();
             TextBox3Seller.Clear();
+        }
+        private bool CheckSearchSellerInput(string searchPhrase, string city, string adress)
+        {
+            bool matches = true;
+            string errorMessage = "";
+            Regex regexSearchPhrase = new Regex(@"^[a-zA-ZĄ-ž0-9-,. ]*$");
+            Regex regexLocation = new Regex(@"^[a-zA-ZĄ-ž0-9-,. ].{1,}$");
+            //Regex regexSearchPhrase = new Regex(@"^[a-zA-Z0-9,.- ]*$");
+            if (!regexSearchPhrase.IsMatch(searchPhrase))
+            {
+                errorMessage += "\"Search phrase\" ";
+            }
+            if (!regexLocation.IsMatch(city))
+            {
+                errorMessage += "\"City\" ";
+            }
+            if (!regexLocation.IsMatch(adress))
+            {
+                errorMessage += "\"Adress\" ";
+            }
+            if(errorMessage.Length > 0)
+            {
+                matches = false;
+            }
+            if (!matches)
+            {
+                MessageBox.Show("Invalid input in field(s): " + errorMessage, "Invalid input",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            return matches;
+        }
+        private void DisplayInformationMessage(string message)
+        {
+            MessageBox.Show(message, "Information",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 
