@@ -393,26 +393,15 @@ namespace SupportYourLocals.WPF
 
         private void FindLocation_Click(object sender, RoutedEventArgs e)
         {
-            var location = SYLMap.GetMarkerTempLocation();
-
-            if (location == null)
-            {
-                if (TextBox3Seller.Text.Trim() == "")
-                {
-                    return; // Show error that address box is empty
-                }
-
-                var address = TextBox3Seller.Text;
-                if (TextBox2Seller.Text != "")
-                    address = "{0}, {1}".Format(address, TextBox2Seller.Text);
-
-                location = SYLMap.AddressToLocation(address);
-            }
+            var location = GetUserLocation();
 
             if (location == null)
             {
                 return; // Show some kinda error message
             }
+
+            var searchItems = GetSearchProducts();
+            bool searchPhraseGiven = searchItems != null;
 
             SYLMap.RemoveAllMarkers();
 
@@ -425,9 +414,66 @@ namespace SupportYourLocals.WPF
             {
                 if (SYLMap.GetDistance(location, loc.Location) < radius * 1000)
                 {
-                    SYLMap.AddMarker(loc.Location, loc.ID);
+                    // If no search phrase has been given, just show all markers within range
+                    if (!searchPhraseGiven)
+                    {
+                        SYLMap.AddMarker(loc.Location, loc.ID);
+                        continue;
+                    }
+
+                    // Go over all product lists and see if there are any matching products
+                    foreach (var productList in loc.Products.Values)
+                    {
+                        var intersection = productList.Intersect(searchItems);
+                        if (intersection.Count() > 0)
+                        {
+                            SYLMap.AddMarker(loc.Location, loc.ID);
+                            break;
+                        }
+                    }
+                    
                 }
             }
+        }
+
+        private Location GetUserLocation()
+        {
+            var location = SYLMap.GetMarkerTempLocation();
+
+            if (location != null)
+                return location;
+
+            if (TextBox3Seller.Text.Trim() == "")
+            {
+                return null; // Show error that address box is empty
+            }
+
+            var address = TextBox3Seller.Text;
+            if (TextBox2Seller.Text != "")
+                address = "{0}, {1}".Format(address, TextBox2Seller.Text);
+
+            return SYLMap.AddressToLocation(address);
+        }
+
+        private List<string> GetSearchProducts()
+        {
+            if (TextBox1Seller.Text.Trim() == "")
+                return null;
+
+            var searchItems = TextBox1Seller.Text.Split(',').ToList();
+
+            // Cleanup the search item list
+            for (int i = 0; i < searchItems.Count; i++)
+            {
+                searchItems[i] = searchItems[i].Trim();
+                if (searchItems[i] == "")
+                {
+                    searchItems.RemoveAt(i);
+                    i--;
+                }
+            }
+
+            return searchItems;
         }
 
         void OnMarkerClicked(Marker marker)
