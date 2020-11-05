@@ -39,7 +39,7 @@
 
 
                     </StackPanel>
-                    <Label Content="Search local sellers" FontFamily="Segoe UI Black" FontSize="16" Foreground="White" Grid.ColumnSpan="2" Margin="0,0,0,0.4"/>
+                    <Label Style="{StaticResource FontSetter1}" Content="Search local sellers" Foreground="White" Grid.ColumnSpan="2" Margin="0,0,0,0.4"/>
                 </Grid>
                 <!-- User input for the search-->
                 <Grid Grid.Row="1" >
@@ -256,7 +256,7 @@
                         </Button>
 
                     </StackPanel>
-                    <Label Content="Search local sellers" FontFamily="Segoe UI Black" FontSize="16" Foreground="White"/>
+                    <Label Style="{StaticResource FontSetter1}" Content="Search local sellers" Foreground="White"/>
                 </Grid>
                 <!-- User input for the search-->
                 <Grid Grid.Row="1" >

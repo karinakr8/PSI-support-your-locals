@@ -4,6 +4,13 @@
              xmlns:local="clr-namespace:SupportYourLocals.WPF"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
+        <!--A Style that sets Label "Search local sellers" Font with an x:Key : Style="{StaticResource FontSetter1}"-->
+        <Style
+           TargetType="Label"
+           x:Key="FontSetter1">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontFamily" Value="Segoe UI Black"/>
+        </Style>
         
     </Application.Resources>
 </Application>
