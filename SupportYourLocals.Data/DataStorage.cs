@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using MapControl;
+using SupportYourLocals.ExtensionMethods;
 
 namespace SupportYourLocals.Data
 {
@@ -19,7 +21,7 @@ namespace SupportYourLocals.Data
         Other
     }
 
-    public class LocationData
+    public class LocationData : IComparable, IEquatable<LocationData>
     {
         public string ID { get; set; }
         public Location Location { get; set; }
@@ -28,18 +30,49 @@ namespace SupportYourLocals.Data
         public DateTime Time { get; set; }
         public Dictionary<ProductType, List<string> > Products { get; set; }
 
-        public LocationData(Location location, string name, int addedByID, DateTime time, Dictionary<ProductType, List<string>> products) : this(GenerateId, location, name, addedByID, time, products) { }
-
-        public LocationData(string id, Location location, string name, int addedByID, DateTime time, Dictionary<ProductType, List<string>> products)
+        public LocationData(Location location, string name, int addedByID, DateTime time, Dictionary<ProductType, List<string>> products, string id = null)
         {
-            ID = id;
+            ID = id ?? GenerateId;
             Location = location;
             Name = name;
             AddedByID = addedByID;
             Time = time;
             Products = products;
         }
+
         public static string GenerateId => Guid.NewGuid().ToString("N");
+
+        public int CompareTo(object obj)
+        {
+            return Name.Compare(((LocationData)obj).Name);
+        }
+
+        public bool Equals (LocationData obj)
+        {
+            bool productsEqual = true;
+            // See if the products dictionaries are equal
+            foreach (var key in Products.Keys)
+            {
+                if (!obj.Products.ContainsKey(key))
+                {
+                    productsEqual = false;
+                    break;
+                }
+
+                if (Products[key].Except(obj.Products[key]).Count() > 0)
+                {
+                    productsEqual = false;
+                    break;
+                }
+            }
+
+            return ID == obj.ID &&
+                   Location == obj.Location &&
+                   Name == obj.Name &&
+                   AddedByID == obj.AddedByID &&
+                   Time == obj.Time &&
+                   productsEqual;
+        }
     }
 
     public interface IDataStorage
