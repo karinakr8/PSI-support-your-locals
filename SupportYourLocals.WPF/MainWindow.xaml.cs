@@ -20,6 +20,7 @@ using SupportYourLocals.Data;
 using MaterialDesignThemes.Wpf;
 using System.Runtime.CompilerServices;
 using SupportYourLocals.ExtensionMethods;
+using System.Text.RegularExpressions;
 
 namespace SupportYourLocals.WPF
 {
@@ -72,6 +73,7 @@ namespace SupportYourLocals.WPF
         private void LoadAddLocalSellerFieldsAndCollections()
         {
             SYLMap.RemoveMarkerTemp();
+            SYLMap.RemoveAllMarkers();
 
             var productTypes = Enum.GetValues(typeof(ProductType));
 
@@ -166,6 +168,7 @@ namespace SupportYourLocals.WPF
         private void LabelAddSeller_Click(object sender, RoutedEventArgs e)
         {
             //Clean up
+            ClearSearchSellerWindow();
             GridMarkerInformation.Visibility = Visibility.Collapsed;
             LoadAddLocalSellerFieldsAndCollections();
             ErrorLabel1.Visibility = Visibility.Collapsed;
@@ -176,13 +179,18 @@ namespace SupportYourLocals.WPF
         {
             if (SYLMap.GetMarkerTempLocation() == null)
             {
-                ErrorLabel1.Visibility = Visibility.Visible;
+                DisplayErrorMessage("Select current place on a map");
                 return;
             }
 
             var dictionaryListString = ConvertDictionaryListTextBoxToDictionaryListString(dictionaryOfTextBoxListAddProduct);
 
-            data.AddData(new LocationData(SYLMap.GetMarkerTempLocation(), AddLocalSellerNameTextBox.Text, 10, DateTime.Now, dictionaryListString));
+            if (!CheckAddSellerInput(AddLocalSellerNameTextBox.Text.Trim(), dictionaryListString))
+            {
+                return;
+            }
+
+            data.AddData(new LocationData(SYLMap.GetMarkerTempLocation(), AddLocalSellerNameTextBox.Text.Trim(), 10, DateTime.Now, dictionaryListString));
             data.SaveData();
 
             GridSellerAdd.Visibility = Visibility.Collapsed;
@@ -227,14 +235,28 @@ namespace SupportYourLocals.WPF
 
         private void AddLocalSellerAddProduct1_Click(object sender, RoutedEventArgs e)
         {
+            Button buttonSender = sender as Button;
+            var productType = ComboBoxProductType.SelectedItem.ToString();
+            var index = ComboBoxProductType.SelectedIndex;
+            var productTypesEnum = (ProductType)Enum.Parse(typeof(ProductType), ComboBoxProductType.SelectedValue.ToString());
+            int i = 0;
+            foreach (var stackPanelMain in listOfStackPanelListsAddProduct[index])
+            {
+                if (stackPanelMain.Children.Contains(buttonSender))
+                {
+                    if(!CheckProduct((dictionaryOfTextBoxListAddProduct[productTypesEnum])[i].Text.Trim()))
+                    {
+                        return;
+                    }
+                }
+                i++;
+            }
             var stackPanel = CreateStackPanelForProductTypeElements();
             var textBox = CreateTextFieldForProductTypes();
-            var productType = ComboBoxProductType.SelectedItem.ToString();
-            var productTypesEnum = (ProductType)Enum.Parse(typeof(ProductType), ComboBoxProductType.SelectedValue.ToString());
+
             var button = CreateButtonForProductTypes(productType, "―", AddLocalSellerRemoveProduct1_Click, null);
 
             stackPanel.Children.Add(textBox);
-            int index = ComboBoxProductType.SelectedIndex;
             // Remove "+" button from the last line before new line (textbox) is added
             (listOfStackPanelListsAddProduct[index])[^1].Children.Remove(listAddButtons[index]);
             // Add "—" button to the last line before new line is inicialized
@@ -263,10 +285,11 @@ namespace SupportYourLocals.WPF
 
                 if (stackPanel.Children.Contains(button))
                 {
-                    //stackPanel.Visibility = Visibility.Collapsed;
                     (dictionaryOfTextBoxListAddProduct[productTypesEnum]).RemoveAt(i);
                     stackPanel.Children.Clear();
                     stackPanel.Margin = new Thickness(0, 0, 0, 0);
+                    listOfStackPanelListsAddProduct[index].RemoveAt(i);
+                    return;
                 }
                 i++;
             }
@@ -370,7 +393,7 @@ namespace SupportYourLocals.WPF
                     {
                         if (elementOfList != null)
                         {
-                            listString.Add(elementOfList.Text);
+                            listString.Add(elementOfList.Text.Trim());
                         }
                     }
                     dictionaryListString.Add(elementTextBox.Key, listString);
@@ -381,7 +404,7 @@ namespace SupportYourLocals.WPF
 
         private void FindLocation_Click(object sender, RoutedEventArgs e)
         {
-            var location = GetUserLocation();
+            var location = GetUserLocation(TextBox1Seller.Text.Trim());
 
             if (location == null)
             {
@@ -405,7 +428,7 @@ namespace SupportYourLocals.WPF
                     // If no search phrase has been given, just show all markers within range
                     if (!searchPhraseGiven)
                     {
-                        SYLMap.AddMarker(loc.Location, loc.ID);
+                        SYLMap.AddMarker(id: loc.ID, position: loc.Location);
                         continue;
                     }
 
@@ -421,10 +444,23 @@ namespace SupportYourLocals.WPF
                     }
                 }
             }
+            if (searchPhraseGiven)
+            {
+                DisplayInformationMessage("Local sellers in the radius were loaded by your search phrase");
+            }
+            else
+            {
+                DisplayInformationMessage("All local sellers in radius were loaded");
+            }
         }
 
-        private Location GetUserLocation()
+        private Location GetUserLocation(string searchPhrase)
         {
+            if(!CheckSearchSellerInput(searchPhrase, TextBox2Seller.Text.Trim(), TextBox3Seller.Text.Trim()))
+            {
+                return null;
+            }
+            
             var location = SYLMap.GetMarkerTempLocation();
 
             if (location != null)
@@ -504,6 +540,113 @@ namespace SupportYourLocals.WPF
         private void ButtonCloseMarkerInformation_Click(object sender, RoutedEventArgs e)
         {
             GridMarkerInformation.Visibility = Visibility.Collapsed;
+        }
+
+        private void ClearSearchSellerWindow()
+        {
+            TextBox1Seller.Clear();
+            TextBox2Seller.Clear();
+            TextBox3Seller.Clear();
+        }
+        private bool CheckSearchSellerInput(string searchPhrase, string city, string adress)
+        {
+            Regex regexSearchPhrase = new Regex(@"^[a-zA-ZĄ-ž0-9-,. ]*$");
+            Regex regexLocation = new Regex(@"^[a-zA-ZĄ-ž0-9-,. ].{1,}$");
+            string errorMessage = "";
+            if (!regexSearchPhrase.IsMatch(searchPhrase))
+            {
+                errorMessage += "\"Search phrase\" ";
+            }
+            if (!regexLocation.IsMatch(city))
+            {
+                errorMessage += "\"City\" ";
+            }
+            if (!regexLocation.IsMatch(adress))
+            {
+                errorMessage += "\"Adress\" ";
+            }
+            if(errorMessage.Length > 0)
+            {
+                MessageBox.Show("Invalid input in field(s): " + errorMessage, "Invalid input",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+            return true;
+        }
+        private bool CheckAddSellerInput(string name, Dictionary<ProductType, List<string> > dictionaryProducts)
+        {
+            Regex regexSellerName = new Regex(@"^$|^[a-zA-ZĄ-ž0-9-,. ].{0,16}$");
+            string errorMessage = "";
+            foreach (var products in dictionaryProducts.Values)
+            {
+                if (!regexSellerName.IsMatch(name))
+                {
+                    if(name.Length > 16)
+                    {
+                        errorMessage += "\"Invalid name length (must be less than 16 characters)\" ";
+                    }
+                    else
+                    {
+                        errorMessage += "\"Invalid name\"";
+                    }
+                    
+                }
+                if(ComboBoxProductType.SelectedIndex < 0)
+                {
+                    errorMessage += "\"Select product type\" ";
+                }
+                if (!CheckAddSellerProducts(products))
+                {
+                    errorMessage += "\"Invalid product(s)\" ";
+                }
+                if (errorMessage.Length > 0)
+                {
+                    MessageBox.Show("Input error: " + errorMessage, "Invalid input",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private bool CheckAddSellerProducts(List<string> products)
+        {
+            Regex regexProduct = new Regex(@"^[a-zA-ZĄ-ž0-9-. ]*$");
+            foreach (var product in products)
+            {
+                if (!regexProduct.IsMatch(product))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        private bool CheckProduct(string product)
+        {
+            Regex regexProduct = new Regex(@"^[a-zA-ZĄ-ž0-9-. ]+$");
+            if (!regexProduct.IsMatch(product))
+            {
+                if(product.Length > 0)
+                {
+                    DisplayErrorMessage("Invalid action. Incorrect product characters");
+                }
+                else
+                {
+                    DisplayErrorMessage("Invalid action. Fill this textfield first");
+                }
+                return false;
+            }
+            return true;
+        }
+        private void DisplayInformationMessage(string message)
+        {
+            MessageBox.Show(message, "Information",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        private void DisplayErrorMessage(string message)
+        {
+            MessageBox.Show(message, "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
