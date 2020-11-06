@@ -179,11 +179,16 @@ namespace SupportYourLocals.WPF
         {
             if (SYLMap.GetMarkerTempLocation() == null)
             {
-                ErrorLabel1.Visibility = Visibility.Visible;
+                DisplayErrorMessage("Select current place on a map");
                 return;
             }
 
             var dictionaryListString = ConvertDictionaryListTextBoxToDictionaryListString(dictionaryOfTextBoxListAddProduct);
+
+            if (!CheckAddSellerInput(AddLocalSellerNameTextBox.Text.Trim(), dictionaryListString))
+            {
+                return;
+            }
 
             data.AddData(new LocationData(SYLMap.GetMarkerTempLocation(), AddLocalSellerNameTextBox.Text.Trim(), 10, DateTime.Now, dictionaryListString));
             data.SaveData();
@@ -230,14 +235,28 @@ namespace SupportYourLocals.WPF
 
         private void AddLocalSellerAddProduct1_Click(object sender, RoutedEventArgs e)
         {
+            Button buttonSender = sender as Button;
+            var productType = ComboBoxProductType.SelectedItem.ToString();
+            var index = ComboBoxProductType.SelectedIndex;
+            var productTypesEnum = (ProductType)Enum.Parse(typeof(ProductType), ComboBoxProductType.SelectedValue.ToString());
+            int i = 0;
+            foreach (var stackPanelMain in listOfStackPanelListsAddProduct[index])
+            {
+                if (stackPanelMain.Children.Contains(buttonSender))
+                {
+                    if(!CheckProduct((dictionaryOfTextBoxListAddProduct[productTypesEnum])[i].Text.Trim()))
+                    {
+                        return;
+                    }
+                }
+                i++;
+            }
             var stackPanel = CreateStackPanelForProductTypeElements();
             var textBox = CreateTextFieldForProductTypes();
-            var productType = ComboBoxProductType.SelectedItem.ToString();
-            var productTypesEnum = (ProductType)Enum.Parse(typeof(ProductType), ComboBoxProductType.SelectedValue.ToString());
+
             var button = CreateButtonForProductTypes(productType, "―", AddLocalSellerRemoveProduct1_Click, null);
 
             stackPanel.Children.Add(textBox);
-            int index = ComboBoxProductType.SelectedIndex;
             // Remove "+" button from the last line before new line (textbox) is added
             (listOfStackPanelListsAddProduct[index])[^1].Children.Remove(listAddButtons[index]);
             // Add "—" button to the last line before new line is inicialized
@@ -266,10 +285,11 @@ namespace SupportYourLocals.WPF
 
                 if (stackPanel.Children.Contains(button))
                 {
-                    //stackPanel.Visibility = Visibility.Collapsed;
                     (dictionaryOfTextBoxListAddProduct[productTypesEnum]).RemoveAt(i);
                     stackPanel.Children.Clear();
                     stackPanel.Margin = new Thickness(0, 0, 0, 0);
+                    listOfStackPanelListsAddProduct[index].RemoveAt(i);
+                    return;
                 }
                 i++;
             }
@@ -530,11 +550,9 @@ namespace SupportYourLocals.WPF
         }
         private bool CheckSearchSellerInput(string searchPhrase, string city, string adress)
         {
-            bool matches = true;
-            string errorMessage = "";
             Regex regexSearchPhrase = new Regex(@"^[a-zA-ZĄ-ž0-9-,. ]*$");
             Regex regexLocation = new Regex(@"^[a-zA-ZĄ-ž0-9-,. ].{1,}$");
-            //Regex regexSearchPhrase = new Regex(@"^[a-zA-Z0-9,.- ]*$");
+            string errorMessage = "";
             if (!regexSearchPhrase.IsMatch(searchPhrase))
             {
                 errorMessage += "\"Search phrase\" ";
@@ -549,19 +567,86 @@ namespace SupportYourLocals.WPF
             }
             if(errorMessage.Length > 0)
             {
-                matches = false;
-            }
-            if (!matches)
-            {
                 MessageBox.Show("Invalid input in field(s): " + errorMessage, "Invalid input",
                     MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
             }
-            return matches;
+            return true;
+        }
+        private bool CheckAddSellerInput(string name, Dictionary<ProductType, List<string> > dictionaryProducts)
+        {
+            Regex regexSellerName = new Regex(@"^$|^[a-zA-ZĄ-ž0-9-,. ].{0,16}$");
+            string errorMessage = "";
+            foreach (var products in dictionaryProducts.Values)
+            {
+                if (!regexSellerName.IsMatch(name))
+                {
+                    if(name.Length > 16)
+                    {
+                        errorMessage += "\"Invalid name length (must be less than 16 characters)\" ";
+                    }
+                    else
+                    {
+                        errorMessage += "\"Invalid name\"";
+                    }
+                    
+                }
+                if(ComboBoxProductType.SelectedIndex < 0)
+                {
+                    errorMessage += "\"Select product type\" ";
+                }
+                if (!CheckAddSellerProducts(products))
+                {
+                    errorMessage += "\"Invalid product(s)\" ";
+                }
+                if (errorMessage.Length > 0)
+                {
+                    MessageBox.Show("Input error: " + errorMessage, "Invalid input",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private bool CheckAddSellerProducts(List<string> products)
+        {
+            Regex regexProduct = new Regex(@"^[a-zA-ZĄ-ž0-9-. ]*$");
+            foreach (var product in products)
+            {
+                if (!regexProduct.IsMatch(product))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        private bool CheckProduct(string product)
+        {
+            Regex regexProduct = new Regex(@"^[a-zA-ZĄ-ž0-9-. ]+$");
+            if (!regexProduct.IsMatch(product))
+            {
+                if(product.Length > 0)
+                {
+                    DisplayErrorMessage("Invalid action. Incorrect product characters");
+                }
+                else
+                {
+                    DisplayErrorMessage("Invalid action. Fill this textfield first");
+                }
+                return false;
+            }
+            return true;
         }
         private void DisplayInformationMessage(string message)
         {
             MessageBox.Show(message, "Information",
                     MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        private void DisplayErrorMessage(string message)
+        {
+            MessageBox.Show(message, "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
