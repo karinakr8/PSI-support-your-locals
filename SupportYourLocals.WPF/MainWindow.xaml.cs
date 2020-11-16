@@ -149,6 +149,7 @@ namespace SupportYourLocals.WPF
 
                 if (GridSellerAdd.Visibility != Visibility.Visible)
                 {
+                    SYLMap.DrawRadiusOnTempMarker(Slider1Seller.Value * 1000.0);
                     var address = SYLMap.LocationToAddressSplit(SYLMap.Center);
                     TextBox2Seller.Text = address.Item2;
                     TextBox3Seller.Text = address.Item1;
@@ -418,6 +419,7 @@ namespace SupportYourLocals.WPF
 
             SYLMap.AddMarkerTemp(location);
             SYLMap.Center = location;
+            SYLMap.DrawRadiusOnTempMarker(Slider1Seller.Value * 1000.0);
 
             double radius = Slider1Seller.Value;
             var locations = data.GetAllData();
@@ -647,6 +649,11 @@ namespace SupportYourLocals.WPF
         {
             MessageBox.Show(message, "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private void Slider1Seller_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            SYLMap?.DrawRadiusOnTempMarker(e.NewValue * 1000.0);
         }
     }
 
