@@ -202,19 +202,34 @@
                     </Grid>
 
                     <!-- Search marketplaces grid-->
-                    <Grid x:Name="GridMarketplacesSearch" HorizontalAlignment="Left" Margin="0,40,0,0" Width="300" Background="#e8ffff" Visibility="Collapsed">
+                    <Grid x:Name="GridMarketplacesSearch" HorizontalAlignment="Left" Margin="0,40,0,0" Width="300" Background="#e8ffff" Visibility="Visible">
 
                         <Label Content="City" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 10 0 0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Height="32" Width="160"/>
-                        <TextBox HorizontalAlignment="Center" Height="23"  Margin="0 45 0 0"  materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="160" />
+                        
+                        <Label Content="Double click on a map" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,35,0,0" FontFamily="Yu Gothic UI Semibold" Foreground="#808080" FontSize="12" Width="300" />
+                        <TextBox Name="MarketplaceCityTextField" HorizontalContentAlignment="Center" Margin="0 70 0 0"  Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="160" Background="{x:Null}" IsReadOnly="True"/>
 
-                        <Label Content="Marketplace" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 90 0 0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Height="32"/>
-                        <ComboBox HorizontalAlignment="Center" Height="23"  VerticalAlignment="Top" Width="160" Margin="0 125 0 0"/>
-                        <Label HorizontalAlignment="Center" HorizontalContentAlignment="Center" Content="Or" Margin="0 160 0 0" VerticalAlignment="Top" Foreground="#C0C0C0" Width="160" Height="26"/>
+                        <StackPanel Height="30" Margin="0 100 0 0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top">
+                            <Label Content="Filter by products" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 0 0 0" FontSize="14" Height="32" Width="160"/>
+                            <CheckBox Name="FilterByProductsCheckBox" Margin="0 0 0 0 " HorizontalContentAlignment="Center" VerticalAlignment="Center" Checked="FilterByProductsCheckBox_Checked" Unchecked="FilterByProductsCheckBox_Unchecked"/>
 
-                        <Label Content="Type of goods" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 195 0 0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Height="32"/>
-                        <ComboBox HorizontalAlignment="Center" Margin="0 230 0 0" VerticalAlignment="Top" Width="160" Height="22"/>
+                        </StackPanel>
+                        <StackPanel Height="30" Margin="0 130 0 0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top">
+                            <Label Content="Filter by open time" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 0 0 0" FontSize="14" Height="32" Width="160"/>
+                            <CheckBox Name="FilterByOpenTimeCheckBox" Margin="0 0 0 0 " HorizontalContentAlignment="Center" VerticalAlignment="Center" Checked="FilterByOpenTimeCheckBox_Checked" Unchecked="FilterByOpenTimeCheckBox_Unchecked"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical" Margin="0 170 0 0">
+                            <StackPanel Name="FilterByProductsStackPanel" VerticalAlignment="Top" HorizontalAlignment="Center" Orientation="Vertical" Visibility="Collapsed">
+                                <Label Content="Products" HorizontalContentAlignment="Center" VerticalAlignment="Top" FontFamily="Yu Gothic UI Semibold" FontSize="16" Height="32" Width="160"/>
+                                <TextBox Name="MarketplaceSearchProductsTextField"  HorizontalContentAlignment="Center" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="160" />
+                            </StackPanel>
+                            <StackPanel Name="FilterByOpenTimeStackPanel" VerticalAlignment="Top" HorizontalAlignment="Center" Orientation="Vertical" Visibility="Collapsed">
+                                <Label Content="Open time" HorizontalContentAlignment="Center" VerticalAlignment="Top" FontFamily="Yu Gothic UI Semibold" FontSize="16" Height="32" Width="160"/>
+                                <TextBox Name="MarketplaceSearchOpenTimeTextField"  HorizontalContentAlignment="Center" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="160" />
+                            </StackPanel>
+                        </StackPanel>
 
-                        <Button Content="Find" HorizontalAlignment="Center" Margin="0 295 0 0" VerticalAlignment="Top" Width="160" FontFamily="Yu Gothic UI Semibold" FontSize="16" Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}" Height="25">
+                        <Button Content="Find" HorizontalAlignment="Center" Margin="0 300 0 0" VerticalAlignment="Top" Width="160" FontFamily="Yu Gothic UI Semibold" FontSize="16" Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}" Height="25">
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="10"/>

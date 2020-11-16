@@ -648,6 +648,25 @@ namespace SupportYourLocals.WPF
             MessageBox.Show(message, "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
         }
+
+        private void FilterByOpenTimeCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            FilterByOpenTimeStackPanel.Visibility = Visibility.Visible;
+        }
+        private void FilterByOpenTimeCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            MarketplaceSearchOpenTimeTextField.Clear();
+            FilterByOpenTimeStackPanel.Visibility = Visibility.Collapsed;
+        }
+        private void FilterByProductsCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            FilterByProductsStackPanel.Visibility = Visibility.Visible;
+        }
+        private void FilterByProductsCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            MarketplaceSearchProductsTextField.Clear();
+            FilterByProductsStackPanel.Visibility = Visibility.Collapsed;
+        }
     }
 
     public struct MarkerInformation
