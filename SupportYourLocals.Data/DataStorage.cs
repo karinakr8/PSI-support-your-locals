@@ -21,7 +21,7 @@ namespace SupportYourLocals.Data
         Other
     }
 
-    public class LocationData : IComparable, IEquatable<LocationData>
+    public class LocationData : IComparable<LocationData>, IEquatable<LocationData>
     {
         public string ID { get; set; }
         public Location Location { get; set; }
@@ -42,9 +42,9 @@ namespace SupportYourLocals.Data
 
         public static string GenerateId => Guid.NewGuid().ToString("N");
 
-        public int CompareTo(object obj)
+        public int CompareTo(LocationData obj)
         {
-            return Name.Compare(((LocationData)obj).Name);
+            return Name.Compare(obj.Name);
         }
 
         public bool Equals (LocationData obj)
