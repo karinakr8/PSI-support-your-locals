@@ -68,6 +68,11 @@ namespace SupportYourLocals.WPF
                 await Task.Delay(2000);
                 await cache.Clean();
             };
+
+            ComboBoxMarketplaceDistrict.Items.Add("Item1");
+            ComboBoxMarketplaceDistrict.Items.Add("Item2");
+            ComboBoxMarketplaceDistrict.Items.Add("Item3");
+            ComboBoxMarketplaceLocation.Items.Add(new String[] { "Item1", "Item2", "Item3" });
         }
 
         private void LoadAddLocalSellerFieldsAndCollections()
@@ -150,8 +155,17 @@ namespace SupportYourLocals.WPF
                 if (GridSellerAdd.Visibility != Visibility.Visible)
                 {
                     var address = SYLMap.LocationToAddressSplit(SYLMap.Center);
-                    TextBox2Seller.Text = address.Item2;
-                    TextBox3Seller.Text = address.Item1;
+                    if(GridSellersSearch.Visibility == Visibility.Visible)
+                    {
+                        TextBox2Seller.Text = address.Item2;
+                        TextBox3Seller.Text = address.Item1;
+                    }
+                    else if(GridMarketplacesSearch.Visibility == Visibility.Visible && GridMarketplaceInformation.Visibility != Visibility.Visible)
+                    {
+                        ComboBoxMarketplaceDistrict.Text = address.Item1;
+                        ComboBoxMarketplaceLocation.Text = address.Item2;
+                        //MarketplaceCityTextField.Text = address.Item2;
+                    }
                 }
                 else
                 {
@@ -214,8 +228,12 @@ namespace SupportYourLocals.WPF
 
         private void SearchMarketplacesButton_Click(object sender, RoutedEventArgs e)
         {
+            GridSellerAdd.Visibility = Visibility.Collapsed;
+            ClearAddLocalSellerInputFieldsAndUserInterface();
+            ClearAddLocalSellerCollections();
             GridMarkerInformation.Visibility = Visibility.Collapsed;
             GridSellersSearch.Visibility = Visibility.Collapsed;
+            GridMarketplaceInformation.Visibility = Visibility.Collapsed;
             GridMarketplacesSearch.Visibility = Visibility.Visible;
             SearchSellersButton.FontWeight = FontWeights.Normal;
             SearchMarketplacesButton.FontWeight = FontWeights.Bold;
@@ -227,6 +245,7 @@ namespace SupportYourLocals.WPF
         {
             GridSellersSearch.Visibility = Visibility.Visible;
             GridMarketplacesSearch.Visibility = Visibility.Collapsed;
+            GridMarketplaceInformation.Visibility = Visibility.Collapsed;
             SearchMarketplacesButton.FontWeight = FontWeights.Normal;
             SearchSellersButton.FontWeight = FontWeights.Bold;
             SearchMarketplacesButton.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#808080"));
@@ -539,7 +558,7 @@ namespace SupportYourLocals.WPF
 
         private void ButtonCloseMarkerInformation_Click(object sender, RoutedEventArgs e)
         {
-            GridMarkerInformation.Visibility = Visibility.Collapsed;
+            GridMarketplaceInformation.Visibility = Visibility.Collapsed;
         }
 
         private void ClearSearchSellerWindow()
@@ -655,7 +674,7 @@ namespace SupportYourLocals.WPF
         }
         private void FilterByOpenTimeCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            MarketplaceSearchOpenTimeTextField.Clear();
+            TextBoxMarketplaceSearchOpenTime.Clear();
             FilterByOpenTimeStackPanel.Visibility = Visibility.Collapsed;
         }
         private void FilterByProductsCheckBox_Checked(object sender, RoutedEventArgs e)
@@ -664,8 +683,26 @@ namespace SupportYourLocals.WPF
         }
         private void FilterByProductsCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            MarketplaceSearchProductsTextField.Clear();
+            TextBoxMarketplaceSearchProducts.Clear();
             FilterByProductsStackPanel.Visibility = Visibility.Collapsed;
+        }
+
+        private void ButtonFindMarketplaces_Click(object sender, RoutedEventArgs e)
+        {
+            ClearFindMarketplaceFields();
+            GridMarketplaceInformation.Visibility = Visibility.Visible;
+
+        }
+        private void ClearFindMarketplaceFields()
+        {
+            ComboBoxMarketplaceDistrict.Items.Clear();
+            ComboBoxMarketplaceLocation.Items.Clear();
+            ComboBoxMarketplaceDistrict.Text = "";
+            ComboBoxMarketplaceLocation.Text = "";
+            TextBoxMarketplaceSearchOpenTime.Clear();
+            TextBoxMarketplaceSearchProducts.Clear();
+            CheckBoxFilterByOpenTime.IsChecked = false;
+            CheckBoxFilterByProducts.IsChecked = false;
         }
     }
 
