@@ -63,8 +63,11 @@
                         <TextBox x:Name="TextBox3Seller" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="0 185 0 0" Height="50" TextWrapping="Wrap" VerticalAlignment="Top" Width="160" />
 
                         <Label x:Name="Label4Seller" Content="Radius from adress location (km)" HorizontalContentAlignment="Center" Margin="0 240 0 0" VerticalAlignment="Top"  FontFamily="Yu Gothic UI Semibold" FontSize="16" Grid.ColumnSpan="2"/>
+                        <StackPanel Orientation="Horizontal" Margin="0 280 0 0" HorizontalAlignment="Center">
+                            <Slider x:Name="Slider1Seller"  VerticalAlignment="Top" HorizontalContentAlignment="Center" Height="22" Width="160" TickFrequency="10" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="2" SmallChange="1" LargeChange="1" ValueChanged="Slider1Seller_ValueChanged"/>
+                            <TextBox x:Name="TextBoxSliderValue" Margin="5 0 0 0" HorizontalContentAlignment="Center" Height="23" VerticalAlignment="Top" Width="34" IsReadOnly="True"/>
 
-                        <Slider x:Name="Slider1Seller"  VerticalAlignment="Top" HorizontalContentAlignment="Center" Margin="0 280 0 0" Height="22" Width="160" TickFrequency="10" Value="1" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="2" SmallChange="1" LargeChange="1"/>
+                        </StackPanel>
                         <Button x:Name="Button1Seller" Content="Find" HorizontalContentAlignment="Center" Margin="0 330 0 0" VerticalAlignment="Top" Width="160" FontFamily="Yu Gothic UI Semibold" FontSize="16" Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}" Click="FindLocation_Click">
                             <Button.Resources>
                                 <Style TargetType="Border">

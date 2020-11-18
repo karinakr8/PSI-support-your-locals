@@ -69,6 +69,8 @@ namespace SupportYourLocals.WPF
                 await cache.Clean();
             };
 
+            Slider1Seller.Value = 1;
+
             ComboBoxMarketplaceDistrict.Items.Add("Item1");
             ComboBoxMarketplaceDistrict.Items.Add("Item2");
             ComboBoxMarketplaceDistrict.Items.Add("Item3");
@@ -703,6 +705,10 @@ namespace SupportYourLocals.WPF
             TextBoxMarketplaceSearchProducts.Clear();
             CheckBoxFilterByOpenTime.IsChecked = false;
             CheckBoxFilterByProducts.IsChecked = false;
+        }
+        private void Slider1Seller_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            TextBoxSliderValue.Text = Slider1Seller.Value.ToString("F2");
         }
     }
 
