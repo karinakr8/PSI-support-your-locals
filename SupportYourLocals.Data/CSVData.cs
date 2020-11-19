@@ -13,6 +13,25 @@ namespace SupportYourLocals.Data
         private static string filePath = @"./Data.csv";
         private static int personsID = 1000;
         private static int saltSize = 10;
+        public void SaveRegisterData(String password, String username)
+        {
+            StringBuilder csv = new StringBuilder();
+
+            if (!File.Exists(filePath))
+            {
+                csv.AppendLine("Username, Password, ID");
+            }
+
+            String salt = CreateSalt(saltSize);
+
+            //String hashedPassword = BitConverter.ToString(GenerateHash(password, salt)).Replace("-", "");
+
+            var newLine = "{0},{1},{2},{3}".Format(username, GenerateHash(password, salt), salt, personsID);
+
+            csv.AppendLine(newLine);
+
+            File.AppendAllText(filePath, csv.ToString());
+        }
 
         public String CreateSalt(int size)
         {
