@@ -10,10 +10,11 @@ using System.Xml.Linq;
 
 namespace SupportYourLocals.Data
 {
-    public class XMLData : IDataStorage
+    public class XMLData : ISellerStorage, IMarketStorage
     {
         private const string filePath = @"./LocalSellersData.xml";
         readonly Dictionary<string, SellerData> dictionaryLocationDataById;
+        // TODO: Add a lock object once we start working on files asynchronously
 
         public XMLData()
         {
@@ -97,16 +98,29 @@ namespace SupportYourLocals.Data
                 root.Add(productTypeBranch);
             }
         }
-        public void AddSellerData(SellerData data) => dictionaryLocationDataById.Add(data.ID, data);
+        SellerData IDataStorage<SellerData>.GetData(string id) => dictionaryLocationDataById[id];
 
-        public List<SellerData> GetAllSellerData() => dictionaryLocationDataById.Select(d => d.Value).ToList();
+        List<SellerData> IDataStorage<SellerData>.GetAllData() => dictionaryLocationDataById.Select(d => d.Value).ToList();
 
-        public SellerData GetSellerData(string id) => dictionaryLocationDataById[id];
+        int IDataStorage<SellerData>.GetDataCount() => dictionaryLocationDataById.Count;
+        
+        void IDataStorage<SellerData>.AddData(SellerData data) => dictionaryLocationDataById.Add(data.ID, data);
 
-        public int GetSellerDataCount() => dictionaryLocationDataById.Count;
+        void IDataStorage<SellerData>.UpdateData(SellerData data) => dictionaryLocationDataById[data.ID] = data;
 
-        public void RemoveSellerData(string id) => dictionaryLocationDataById.Remove(id);
+        void IDataStorage<SellerData>.RemoveData(string id) => dictionaryLocationDataById.Remove(id);
 
-        public void UpdateSellerData(SellerData data) => dictionaryLocationDataById[data.ID] = data;
+
+        MarketplaceData IDataStorage<MarketplaceData>.GetData(string id) => throw new NotImplementedException();
+
+        List<MarketplaceData> IDataStorage<MarketplaceData>.GetAllData() => throw new NotImplementedException();
+
+        int IDataStorage<MarketplaceData>.GetDataCount() => throw new NotImplementedException();
+
+        void IDataStorage<MarketplaceData>.AddData(MarketplaceData data) => throw new NotImplementedException();
+
+        void IDataStorage<MarketplaceData>.UpdateData(MarketplaceData data) => throw new NotImplementedException();
+
+        void IDataStorage<MarketplaceData>.RemoveData(string id) => throw new NotImplementedException();
     }
 }

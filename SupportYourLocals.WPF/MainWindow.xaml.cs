@@ -32,7 +32,9 @@ namespace SupportYourLocals.WPF
         private int AddProductLineNumber = 2;
 
         private readonly Map.Map SYLMap;
-        private readonly IDataStorage data = new XMLData();
+
+        private readonly ISellerStorage sellerData = new XMLData();
+        private readonly IMarketStorage marketplaceData = new XMLData();
 
         // List for StackPanel elements in Main StackPanel
         List<List<StackPanel>> listOfStackPanelListsAddProduct = new List<List<StackPanel>>();
@@ -191,8 +193,8 @@ namespace SupportYourLocals.WPF
                 return;
             }
 
-            data.AddSellerData(new SellerData(SYLMap.GetMarkerTempLocation(), AddLocalSellerNameTextBox.Text.Trim(), 10, DateTime.Now, dictionaryListString));
-            data.SaveData();
+            sellerData.AddData(new SellerData(SYLMap.GetMarkerTempLocation(), AddLocalSellerNameTextBox.Text.Trim(), 10, DateTime.Now, dictionaryListString));
+            sellerData.SaveData();
 
             GridSellerAdd.Visibility = Visibility.Collapsed;
             SYLMap.RemoveMarkerTemp();
@@ -422,7 +424,7 @@ namespace SupportYourLocals.WPF
             SYLMap.DrawRadiusOnTempMarker(Slider1Seller.Value * 1000.0);
 
             double radius = Slider1Seller.Value;
-            var locations = data.GetAllSellerData();
+            var locations = sellerData.GetAllData();
             foreach (var loc in locations)
             {
                 if (SYLMap.GetDistance(location, loc.Location) < radius * 1000)
@@ -517,7 +519,7 @@ namespace SupportYourLocals.WPF
             GridMarkerInformation.Visibility = Visibility.Visible;
             var items = new List<MarkerInformation>();
 
-            var locationData = data.GetSellerData(id);
+            var locationData = sellerData.GetData(id);
             InformationLocalSellerName.Content = locationData.Name;
             InformationLocalSellerDate.Content = locationData.Time;
             foreach (var products in locationData.Products)
