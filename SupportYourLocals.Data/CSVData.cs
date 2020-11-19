@@ -32,6 +32,13 @@ namespace SupportYourLocals.Data
 
             File.AppendAllText(filePath, csv.ToString());
         }
+        public bool CompareHash(string attemptedPassword, byte[] hash, string salt)
+        {
+            string base64Hash = Convert.ToBase64String(hash);
+            string base64AttemptedHash = Convert.ToBase64String(GenerateHash(attemptedPassword, salt));
+
+            return base64Hash == base64AttemptedHash;
+        }
 
         public String CreateSalt(int size)
         {
