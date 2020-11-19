@@ -12,66 +12,23 @@ namespace SupportYourLocals.Data
     {
         private static string filePath = @"./Data.csv";
         private static int personsID = 1000;
+        private static int saltSize = 10;
 
-        public static void SaveData(String product, Location position)
+        public String CreateSalt(int size)
         {
-            var csv = new StringBuilder();
-
-            personsID = GetPersonsID(personsID);
-
-            var newLine = "{0},{1},{2}".Format(product, position, personsID);
-
-            csv.AppendLine(newLine);
-
-            File.AppendAllText(filePath, csv.ToString());
+            var rng = new System.Security.Cryptography.RNGCryptoServiceProvider();
+            var buff = new byte[size];
+            rng.GetBytes(buff);
+            return Convert.ToBase64String(buff);
         }
 
-        public static int GetPersonsID(int personsID)
+        public byte[] GenerateHash(String password, String salt)
         {
-            // Checking person's ID
-            List<double> personID = new List<double>();
-            using (TextFieldParser csvParser = new TextFieldParser(filePath))
-            {
-                csvParser.CommentTokens = new[] { "#" };
-                csvParser.SetDelimiters(new[] { "," });
-                csvParser.HasFieldsEnclosedInQuotes = true;
+            byte[] bytes = System.Text.Encoding.UTF8.GetBytes(password + salt);
+            System.Security.Cryptography.SHA256Managed sha256hashstring = new System.Security.Cryptography.SHA256Managed();
+            byte[] hash = sha256hashstring.ComputeHash(bytes);
 
-                // Skip the row with the column names
-                csvParser.ReadLine();
-
-                while (!csvParser.EndOfData)
-                {
-                    // Read current line fields, pointer moves to the next line.
-                    string[] fields = csvParser.ReadFields();
-                    personID.Add(double.Parse(fields[3]));
-                }
-            }
-
-            // Setting person's ID
-            personsID += personID.Count;
-            return personsID;
-        }
-
-        public static void SetMarkers(List<double> listXCoord, List<double> listYCoord, List<int> listPersonsID)
-        {
-            using (TextFieldParser csvParser = new TextFieldParser(filePath))
-            {
-                csvParser.CommentTokens = new[] { "#" };
-                csvParser.SetDelimiters(new[] { "," });
-                csvParser.HasFieldsEnclosedInQuotes = true;
-
-                // Skip the row with the column names
-                csvParser.ReadLine();
-
-                while (!csvParser.EndOfData)
-                {
-                    // Saving data to a list
-                    string[] fields = csvParser.ReadFields();
-                    listXCoord.Add(double.Parse(fields[1]));
-                    listYCoord.Add(double.Parse(fields[2]));
-                    listPersonsID.Add(int.Parse(fields[3]));
-                }
-            }
+            return hash;
         }
     }
 }
