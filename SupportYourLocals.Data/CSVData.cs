@@ -5,6 +5,7 @@ using System.Text;
 using MapControl;
 using Microsoft.VisualBasic.FileIO;
 using SupportYourLocals.ExtensionMethods;
+using System.Security.Cryptography;
 
 namespace SupportYourLocals.Data
 {

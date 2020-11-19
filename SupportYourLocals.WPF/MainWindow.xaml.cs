@@ -34,6 +34,8 @@ namespace SupportYourLocals.WPF
         private readonly Map.Map SYLMap;
         private readonly IDataStorage data = new XMLData();
 
+        CSVData csvData = new CSVData();
+
         // List for StackPanel elements in Main StackPanel
         List<List<StackPanel>> listOfStackPanelListsAddProduct = new List<List<StackPanel>>();
         // List for "+" buttons in scrollviewer AddLocalSeller
@@ -647,6 +649,19 @@ namespace SupportYourLocals.WPF
         {
             MessageBox.Show(message, "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private void LoginButton_Clicked(object sender, RoutedEventArgs e)
+        {
+            if (csvData.CheckLoginData(PasswordBox.Password, UsernameTextBox.Text))
+            {
+                //getID, setID,
+            }
+        }
+
+        private bool CheckPassword(string password)
+        {
+            return true;
         }
     }
 
