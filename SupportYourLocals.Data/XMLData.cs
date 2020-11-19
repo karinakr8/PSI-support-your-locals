@@ -13,22 +13,22 @@ namespace SupportYourLocals.Data
     public class XMLData : IDataStorage
     {
         private const string filePath = @"./LocalSellersData.xml";
-        readonly Dictionary<string, LocationData> dictionaryLocationDataById;
+        readonly Dictionary<string, SellerData> dictionaryLocationDataById;
 
         public XMLData()
         {
             dictionaryLocationDataById = LoadData();
         }
 
-        private Dictionary<string, LocationData> LoadData()
+        private Dictionary<string, SellerData> LoadData()
         {
             if (!File.Exists(filePath))
             {
-                return new Dictionary<string, LocationData>();
+                return new Dictionary<string, SellerData>();
             }
 
             XDocument doc = XDocument.Load(filePath);
-            var localSellersDictionary = new Dictionary<string, LocationData>();
+            var localSellersDictionary = new Dictionary<string, SellerData>();
             var groupElements = from elements in doc.Descendants().Elements("LocalSeller") select elements;
 
             foreach(XElement element in groupElements)
@@ -52,7 +52,7 @@ namespace SupportYourLocals.Data
                     }
                     dictionary.Add(productTypeEnum, productsList);
                 }
-                localSellersDictionary.Add(id, new LocationData(products: dictionary, addedByID: addedById, name: name, id: id, location: location, time: time));
+                localSellersDictionary.Add(id, new SellerData(products: dictionary, addedByID: addedById, name: name, id: id, location: location, time: time));
             }
             return localSellersDictionary;
         }
@@ -74,7 +74,7 @@ namespace SupportYourLocals.Data
             doc.Save(filePath);
         }
 
-        private void AddProductTypesToXml(LocationData data, XElement root)
+        private void AddProductTypesToXml(SellerData data, XElement root)
         {
             foreach (var productType in data.Products)
             {
@@ -97,16 +97,16 @@ namespace SupportYourLocals.Data
                 root.Add(productTypeBranch);
             }
         }
-        public void AddData(LocationData data) => dictionaryLocationDataById.Add(data.ID, data);
+        public void AddSellerData(SellerData data) => dictionaryLocationDataById.Add(data.ID, data);
 
-        public List<LocationData> GetAllData() => dictionaryLocationDataById.Select(d => d.Value).ToList();
+        public List<SellerData> GetAllSellerData() => dictionaryLocationDataById.Select(d => d.Value).ToList();
 
-        public LocationData GetData(string id) => dictionaryLocationDataById[id];
+        public SellerData GetSellerData(string id) => dictionaryLocationDataById[id];
 
-        public int GetDataCount() => dictionaryLocationDataById.Count;
+        public int GetSellerDataCount() => dictionaryLocationDataById.Count;
 
-        public void RemoveData(string id) => dictionaryLocationDataById.Remove(id);
+        public void RemoveSellerData(string id) => dictionaryLocationDataById.Remove(id);
 
-        public void UpdateData(LocationData data) => dictionaryLocationDataById[data.ID] = data;
+        public void UpdateSellerData(SellerData data) => dictionaryLocationDataById[data.ID] = data;
     }
 }
