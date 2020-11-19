@@ -271,9 +271,9 @@
 
 
                 <!-- Place for a map-->
-                <Grid Grid.Column="2" Grid.Row="2" Background="#e8ffff">
+                <Grid Name="GridLogin" Grid.Column="2" Grid.Row="2" Background="#e8ffff" Visibility="Visible">
                     <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Height="260"  Width="400">
-                        <Button Content="Find" HorizontalAlignment="Center" Margin="0 140 0 0" VerticalAlignment="Top" Width="160" FontFamily="Yu Gothic UI Semibold" FontSize="16" Foreground="White" Background="#a6f6f1" Click="LoginButton_Clicked" BorderBrush="{x:Null}">
+                        <Button Name="LoginButton" Content="Login" HorizontalAlignment="Center" Margin="0 140 0 0" VerticalAlignment="Top" Width="160" FontFamily="Yu Gothic UI Semibold" FontSize="16" Foreground="White" Background="#a6f6f1" Click="LoginButton_Clicked" BorderBrush="{x:Null}">
                             <Button.Resources>
                                 <Style TargetType="{x:Type Border}">
                                     <Setter Property="CornerRadius" Value="10"/>
@@ -284,13 +284,32 @@
                         <Label Content="Username" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0 10 0 0 " FontFamily="Yu Gothic UI Semibold" FontSize="16"/>
                         <TextBox Name="UsernameTextBox" HorizontalAlignment="Center" Height="23" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Strawberries" materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="160" Margin="120,40,120,0" />
                         <PasswordBox Name="PasswordBox" HorizontalAlignment="Center" Margin="120,100,120,0" VerticalAlignment="Top" Width="160"/>
-                        <Button Content="Not a user? Register now"  HorizontalAlignment="Center" Margin="0 180 0 0" VerticalAlignment="Top" Width="160" Background="Transparent" BorderBrush="{x:Null}" Foreground="#808080"/>
+                        <Button Name="NewUser" Content="Not a user? Register now"  HorizontalAlignment="Center" Margin="0 180 0 0" VerticalAlignment="Top" Width="160" Background="Transparent" BorderBrush="{x:Null}" Click="NewUser_Clicked" Foreground="#808080"/>
 
                     </Grid>
 
                 </Grid>
 
-
+                <Grid Name="GridRegistration" Grid.Column="2" Grid.Row="2" Background="#e8ffff" Visibility="Collapsed">
+                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Height="260"  Width="400">
+                        <Button Name="RegisterButton" Content="Register" HorizontalAlignment="Center" Margin="0 200 0 0" VerticalAlignment="Top" Width="160" FontFamily="Yu Gothic UI Semibold" FontSize="16" Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}">
+                            <Button.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+                        <Label Content="Confirm password" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0 130 0 0" FontFamily="Yu Gothic UI Semibold" FontSize="16"/>
+                        <Label Content="Password" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0 70 0 0" FontFamily="Yu Gothic UI Semibold" FontSize="16"/>
+                        <Label Content="Username" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0 10 0 0 " FontFamily="Yu Gothic UI Semibold" FontSize="16"/>
+                        <TextBox Name="UsernameTextBoxR" HorizontalAlignment="Center" Height="23" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Strawberries" materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="160" Margin="120,40,120,0" />
+                        <PasswordBox Name="PasswordBoxR" HorizontalAlignment="Center" Margin="120,100,120,0" VerticalAlignment="Top" Width="160"/>
+                        <PasswordBox Name="ConfirmPasswordBoxR" HorizontalAlignment="Center" Margin="120,160,120,0" VerticalAlignment="Top" Width="160"/>
+                        <Button Name="User" Content="Already a user? Login now"  HorizontalAlignment="Center" Margin="0 240 0 0" VerticalAlignment="Top" Width="160" Background="Transparent" BorderBrush="{x:Null}" Click="User_Clicked" Foreground="#808080"/>
+                    
+                    </Grid>
+                    
+                </Grid>
 
             </Grid>
         </TabItem>

@@ -663,6 +663,18 @@ namespace SupportYourLocals.WPF
         {
             return true;
         }
+
+        private void NewUser_Clicked(object sender, RoutedEventArgs e)
+        {
+            GridLogin.Visibility = Visibility.Collapsed;
+            GridRegistration.Visibility = Visibility.Visible;
+        }
+
+        private void User_Clicked(object sender, RoutedEventArgs e)
+        {
+            GridLogin.Visibility = Visibility.Visible;
+            GridRegistration.Visibility = Visibility.Collapsed;
+        }
     }
 
     public struct MarkerInformation
