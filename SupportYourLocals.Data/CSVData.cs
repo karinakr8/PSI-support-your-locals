@@ -13,6 +13,46 @@ namespace SupportYourLocals.Data
         private static string filePath = @"./Data.csv";
         private static int personsID = 1000;
         private static int saltSize = 10;
+        public bool CheckLoginData(String password, String username)
+        {
+            if (!File.Exists(filePath))
+            {
+                return false;
+            }
+            else
+            {
+                using (TextFieldParser csvParser = new TextFieldParser(filePath))
+                {
+                    csvParser.CommentTokens = new[] { "#" };
+                    csvParser.SetDelimiters(new[] { "," });
+                    csvParser.HasFieldsEnclosedInQuotes = true;
+
+                    // Skip the row with the column names
+                    csvParser.ReadLine();
+
+                    while (!csvParser.EndOfData)
+                    {
+                        // Read current line fields, pointer moves to the next line.
+                        string[] fields = csvParser.ReadFields();
+
+                        if (username == fields[0])
+                        {
+                            String salt = fields[2];
+                            if (CompareHash(password, Encoding.ASCII.GetBytes(fields[1]), salt))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                }
+            }
+        }
+
+        public bool CheckRegisterData(String password, String username)
+        {
+            return false;
+        }
         public void SaveRegisterData(String password, String username)
         {
             StringBuilder csv = new StringBuilder();
