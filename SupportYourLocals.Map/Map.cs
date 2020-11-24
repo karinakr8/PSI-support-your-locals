@@ -13,6 +13,7 @@ namespace SupportYourLocals.Map
     {
         private readonly MapControl.Map WPFMap;
         private readonly Marker tempMarker;
+        private readonly RadiusCircle searchRadius;
 
         public Location Center
         {
@@ -53,6 +54,8 @@ namespace SupportYourLocals.Map
 
             tempMarker = new Marker2();
             tempMarker.MouseDown += new MouseButtonEventHandler(OnMarkerClick);
+
+            searchRadius = new RadiusCircle(WPFMap.Center, 0.0);
         }
 
         public delegate void MarkerClickedHandler (Marker marker);
@@ -73,13 +76,18 @@ namespace SupportYourLocals.Map
         {
             tempMarker.Location = position;
             if (!WPFMap.Children.Contains(tempMarker))
+            {
                 WPFMap.Children.Add(tempMarker);
+            }
         }
 
         public void RemoveMarkerTemp ()
         {
             if (WPFMap.Children.Contains(tempMarker))
+            {
+                RemoveRadiusOnTempMarker();
                 WPFMap.Children.Remove(tempMarker);
+            }
         }
 
         public Location GetMarkerTempLocation ()
@@ -171,8 +179,10 @@ namespace SupportYourLocals.Map
                 city = result.Address.City;
 
             int index = result.DisplayName.IndexOf(city);
+            if (index > 2)
+                index -= 2;
             // Return the address part without the trailing ", " and the city/district
-            return new Tuple<string, string> (result.DisplayName.Substring(0, index - 2), city);
+            return new Tuple<string, string> (result.DisplayName.Substring(0, index), city);
         }
 
         public double GetDistance(double longitude, double latitude, double longitude2, double latitude2)
@@ -189,6 +199,29 @@ namespace SupportYourLocals.Map
         public double GetDistance(Location location1, Location location2)
         {
             return GetDistance(location1.Longitude, location1.Latitude, location2.Longitude, location2.Latitude);
+        }
+
+        public void DrawRadiusOnTempMarker(double radius)
+        {
+            if (WPFMap.Children.OfType<Marker2>().Count() == 0)
+            {
+                return;
+            }
+
+            searchRadius.Radius = radius;
+            searchRadius.Location = GetMarkerTempLocation();
+            if (!WPFMap.Children.Contains(searchRadius))
+            {
+                WPFMap.Children.Add(searchRadius);
+            }
+        }
+
+        public void RemoveRadiusOnTempMarker()
+        {
+            if (WPFMap.Children.Contains(searchRadius))
+            {
+                WPFMap.Children.Remove(searchRadius);
+            }
         }
 
         private void OnMarkerClick (object sender, MouseButtonEventArgs e)
