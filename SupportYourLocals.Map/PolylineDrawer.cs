@@ -31,7 +31,7 @@ namespace SupportYourLocals.Map
 
         public LocationCollection GetPolyline()
         {
-            if (Polylines.Count != 0)
+            if (Polylines.Count == 0)
             {
                 return null;
             }
@@ -65,6 +65,9 @@ namespace SupportYourLocals.Map
             }
 
             Polylines[0].Locations.Add(location);
+            var polyline = Polylines[0];
+            Polylines.Remove(polyline);
+            Polylines.Add(polyline);
         }
 
         public void RemoveLastLocationFromPolyline()
@@ -74,7 +77,15 @@ namespace SupportYourLocals.Map
                 return;
             }
 
+            if (Polylines[0].Locations.Count == 0)
+            {
+                return;
+            }    
+
             Polylines[0].Locations.RemoveAt(Polylines[0].Locations.Count - 1);
+            var polyline = Polylines[0];
+            Polylines.Remove(polyline);
+            Polylines.Add(polyline);
         }
 
         public void UpdateLastPolylineLocation(Location location)

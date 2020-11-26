@@ -32,6 +32,7 @@ namespace SupportYourLocals.WPF
         private int AddProductLineNumber = 2;
 
         private readonly Map.Map SYLMap;
+        private MarketBoundaryDrawingTool boundaryDrawer;
 
         private readonly ISellerStorage sellerData = new XMLData();
         private readonly IMarketStorage marketplaceData = new XMLData();
@@ -138,13 +139,40 @@ namespace SupportYourLocals.WPF
 
         private void UpdateMarketplaces_Click(object sender, RoutedEventArgs e)
         {
+            boundaryDrawer = new MarketBoundaryDrawingTool((PolylineDrawer)DataContext);
         }
 
         private void MapMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (e.ClickCount == 1)
+            {
+                if (boundaryDrawer == null)
+                {
+                    return;
+                }
+
+                boundaryDrawer.AddPoint(MainMap.ViewToLocation(e.GetPosition(MainMap)));
+
+                return;
+            }
+
             //Double tap on a map
             if (e.ClickCount == 2)
             {
+                // Currently drawing a boundary
+                if (boundaryDrawer != null)
+                {
+                    boundaryDrawer.AddPoint(MainMap.ViewToLocation(e.GetPosition(MainMap)));
+                    var boundary = boundaryDrawer.GetBoundary();
+                    // Save the boundary
+
+                    boundaryDrawer.FinishDrawing();
+                    boundaryDrawer = null;
+
+                    SYLMap.DrawBoundary(boundary);
+                    return;
+                }
+
                 SYLMap.Center = MainMap.ViewToLocation(e.GetPosition(MainMap));
                 SYLMap.AddMarkerTemp(SYLMap.Center);
 
@@ -164,8 +192,26 @@ namespace SupportYourLocals.WPF
 
         private void MapMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            SYLMap.RemoveMarkerTemp();
+            if (boundaryDrawer != null)
+            {
+                boundaryDrawer.UndoPoint();
+            }
+            else
+            {
+                SYLMap.RemoveMarkerTemp();
+            }
         }
+
+        private void MapMouseMove(object sender, MouseEventArgs e)
+        {
+            if (boundaryDrawer == null)
+            {
+                return;
+            }
+
+            boundaryDrawer.UpdateLastPoint(MainMap.ViewToLocation(e.GetPosition(MainMap)));
+        }
+
 
         private void LabelAddSeller_Click(object sender, RoutedEventArgs e)
         {

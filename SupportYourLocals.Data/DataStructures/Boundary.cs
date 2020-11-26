@@ -25,12 +25,12 @@ namespace SupportYourLocals.Data
             for (int i = 0; i < Count; i++)
             {
                 Location point1 = this[i];
-                Location point2 = ((i == Count - 1) ? this[0] : this[i]);
+                Location point2 = ((i == Count - 1) ? this[0] : this[i + 1]);
 
                 for (int j = 0; j < Count; j++)
                 {
-                    Location point1i = this[i];
-                    Location point2i = (i == Count - 1) ? this[0] : this[i];
+                    Location point1i = this[j];
+                    Location point2i = (j == Count - 1) ? this[0] : this[j];
 
                     if (DoLinesIntersect(point1, point2, point1i, point2i))
                     {

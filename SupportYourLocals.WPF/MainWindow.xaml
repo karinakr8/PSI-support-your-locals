@@ -12,7 +12,7 @@
 
     <Window.Resources>
         <DataTemplate x:Key="PolylineItemTemplate">
-            <map:MapPolyline Locations="{Binding Locations}" Stroke="Red" StrokeThickness="3"/>
+            <map:MapPolyline Locations="{Binding Locations}" Stroke="Red" StrokeThickness="3" MouseLeftButtonDown="MapMouseLeftButtonDown" MouseRightButtonDown="MapMouseRightButtonDown"/>
         </DataTemplate>
     </Window.Resources>
 
@@ -240,7 +240,7 @@
 
                 <!-- Place for a map-->
                 <Grid Grid.Column="2" Grid.Row="2">
-                    <map:Map x:Name="MainMap" MouseLeftButtonDown="MapMouseLeftButtonDown" MouseRightButtonDown="MapMouseRightButtonDown" Grid.ColumnSpan="2">
+                    <map:Map x:Name="MainMap" MouseLeftButtonDown="MapMouseLeftButtonDown" MouseRightButtonDown="MapMouseRightButtonDown" MouseMove="MapMouseMove" Grid.ColumnSpan="2">
                         <map:MapItemsControl ItemsSource="{Binding Polylines}" ItemTemplate="{StaticResource PolylineItemTemplate}"/>
                     </map:Map>
                 </Grid>
