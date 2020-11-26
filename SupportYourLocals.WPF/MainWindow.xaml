@@ -7,7 +7,18 @@
         xmlns:map="clr-namespace:MapControl;assembly=MapControl.WPF"
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:vm="clr-namespace:SupportYourLocals.Map;assembly=SupportYourLocals.Map"
         Title="MainWindow" Height="530" Width="800" MinHeight="530" MinWidth="700">
+
+    <Window.Resources>
+        <DataTemplate x:Key="PolylineItemTemplate">
+            <map:MapPolyline Locations="{Binding Locations}" Stroke="Red" StrokeThickness="3"/>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Window.DataContext>
+        <vm:PolylineDrawer/>
+    </Window.DataContext>
 
     <TabControl>
         <!--<materialDesign:PackIcon Name="AddProductButton" Kind="PlusThick" Width="25" Height="25" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#808080"/>
@@ -229,8 +240,9 @@
 
                 <!-- Place for a map-->
                 <Grid Grid.Column="2" Grid.Row="2">
-                    <map:Map x:Name="MainMap" MouseLeftButtonDown="MapMouseLeftButtonDown" MouseRightButtonDown="MapMouseRightButtonDown" Grid.ColumnSpan="2"/>
-
+                    <map:Map x:Name="MainMap" MouseLeftButtonDown="MapMouseLeftButtonDown" MouseRightButtonDown="MapMouseRightButtonDown" Grid.ColumnSpan="2">
+                        <map:MapItemsControl ItemsSource="{Binding Polylines}" ItemTemplate="{StaticResource PolylineItemTemplate}"/>
+                    </map:Map>
                 </Grid>
             </Grid>
         </TabItem>
