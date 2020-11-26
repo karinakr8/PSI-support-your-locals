@@ -10,25 +10,26 @@ using System.Xml.Linq;
 
 namespace SupportYourLocals.Data
 {
-    public class XMLData : IDataStorage
+    public class XMLData : ISellerStorage, IMarketStorage
     {
         private const string filePath = @"./LocalSellersData.xml";
-        readonly Dictionary<string, LocationData> dictionaryLocationDataById;
+        readonly Dictionary<string, SellerData> dictionaryLocationDataById;
+        // TODO: Add a lock object once we start working on files asynchronously
 
         public XMLData()
         {
             dictionaryLocationDataById = LoadData();
         }
 
-        private Dictionary<string, LocationData> LoadData()
+        private Dictionary<string, SellerData> LoadData()
         {
             if (!File.Exists(filePath))
             {
-                return new Dictionary<string, LocationData>();
+                return new Dictionary<string, SellerData>();
             }
 
             XDocument doc = XDocument.Load(filePath);
-            var localSellersDictionary = new Dictionary<string, LocationData>();
+            var localSellersDictionary = new Dictionary<string, SellerData>();
             var groupElements = from elements in doc.Descendants().Elements("LocalSeller") select elements;
 
             foreach(XElement element in groupElements)
@@ -52,7 +53,7 @@ namespace SupportYourLocals.Data
                     }
                     dictionary.Add(productTypeEnum, productsList);
                 }
-                localSellersDictionary.Add(id, new LocationData(products: dictionary, addedByID: addedById, name: name, id: id, location: location, time: time));
+                localSellersDictionary.Add(id, new SellerData(products: dictionary, addedByID: addedById, name: name, id: id, location: location, time: time));
             }
             return localSellersDictionary;
         }
@@ -74,7 +75,7 @@ namespace SupportYourLocals.Data
             doc.Save(filePath);
         }
 
-        private void AddProductTypesToXml(LocationData data, XElement root)
+        private void AddProductTypesToXml(SellerData data, XElement root)
         {
             foreach (var productType in data.Products)
             {
@@ -97,16 +98,29 @@ namespace SupportYourLocals.Data
                 root.Add(productTypeBranch);
             }
         }
-        public void AddData(LocationData data) => dictionaryLocationDataById.Add(data.ID, data);
+        SellerData IDataStorage<SellerData>.GetData(string id) => dictionaryLocationDataById[id];
 
-        public List<LocationData> GetAllData() => dictionaryLocationDataById.Select(d => d.Value).ToList();
+        List<SellerData> IDataStorage<SellerData>.GetAllData() => dictionaryLocationDataById.Select(d => d.Value).ToList();
 
-        public LocationData GetData(string id) => dictionaryLocationDataById[id];
+        int IDataStorage<SellerData>.GetDataCount() => dictionaryLocationDataById.Count;
+        
+        void IDataStorage<SellerData>.AddData(SellerData data) => dictionaryLocationDataById.Add(data.ID, data);
 
-        public int GetDataCount() => dictionaryLocationDataById.Count;
+        void IDataStorage<SellerData>.UpdateData(SellerData data) => dictionaryLocationDataById[data.ID] = data;
 
-        public void RemoveData(string id) => dictionaryLocationDataById.Remove(id);
+        void IDataStorage<SellerData>.RemoveData(string id) => dictionaryLocationDataById.Remove(id);
 
-        public void UpdateData(LocationData data) => dictionaryLocationDataById[data.ID] = data;
+
+        MarketplaceData IDataStorage<MarketplaceData>.GetData(string id) => throw new NotImplementedException();
+
+        List<MarketplaceData> IDataStorage<MarketplaceData>.GetAllData() => throw new NotImplementedException();
+
+        int IDataStorage<MarketplaceData>.GetDataCount() => throw new NotImplementedException();
+
+        void IDataStorage<MarketplaceData>.AddData(MarketplaceData data) => throw new NotImplementedException();
+
+        void IDataStorage<MarketplaceData>.UpdateData(MarketplaceData data) => throw new NotImplementedException();
+
+        void IDataStorage<MarketplaceData>.RemoveData(string id) => throw new NotImplementedException();
     }
 }
