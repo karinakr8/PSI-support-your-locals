@@ -29,7 +29,7 @@
                         <ColumnDefinition Width="707*"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="1" Margin="0,0,0,0.4" >
-                        <Button Width="25" Height="25" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White">
+                        <Button Click="AccountButton0_Click" Width="25" Height="25" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White">
                             <materialDesign:PackIcon Kind="Account"/>
                         </Button>
 
@@ -229,7 +229,17 @@
                 <Grid Grid.Column="2" Grid.Row="2">
                     <map:Map x:Name="MainMap" MouseLeftButtonDown="MapMouseLeftButtonDown" MouseRightButtonDown="MapMouseRightButtonDown" Margin="3,0,-3,0"/>
 
-                </Grid>
+                    <Grid Name="GridUserData0" HorizontalAlignment="Right" VerticalAlignment="Top" Height="70"  Width="150" Background="#41aea9" Visibility="Collapsed" Margin="0,0,20,0">
+                        <Label Name="ShowUsernameLabel0" Content="" FontFamily="Segoe UI Black" FontSize="14" Foreground="White" Margin="0,0,0,30"/>
+                        <Label Name="ShowUserIDLabel0" Content="" FontFamily="Segoe UI Black" FontSize="14" Foreground="White" Margin="0,18,0,20"/>
+                        <Button Name="ShowLogoutButton0" Click="ShowLogoutButton0_Click" Content="Logout" FontFamily="Segoe UI Black" FontSize="14" Foreground="White" Background="#41aea9" Margin="0,45,0,0"/>
+                    </Grid>
+
+                    <Grid Name="GridUserDataToLogin0" HorizontalAlignment="Right" VerticalAlignment="Top" Height="30"  Width="90" Background="#41aea9" Visibility="Collapsed" Margin="0,0,20,0">
+                        <Button Name="ShowLoginButton0" Click="ShowLoginButton0_Click" Content="Login" FontFamily="Segoe UI Black" FontSize="14" Foreground="White" Background="#41aea9"/>
+                    </Grid>
+
+                    </Grid>
 
             </Grid>
 
