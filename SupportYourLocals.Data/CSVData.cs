@@ -9,19 +9,28 @@ using System.Security.Cryptography;
 
 namespace SupportYourLocals.Data
 {
-    public class CSVData
+    public class CSVData : IUserStorage
     {
-        private static string filePath = @"./Data.csv";
-        private static int personsID = 1000;
-        private static int saltSize = 10;
-        public bool CheckLoginData(String password, String username)
+        private static string filePath = @"./UserData.csv";
+
+        readonly List<UserData> listUserData = new List<UserData>();
+
+        public CSVData ()
         {
+            listUserData = LoadData();
+        }
+
+        private List<UserData> LoadData()
+        {
+            StringBuilder csv = new StringBuilder();
+
             if (!File.Exists(filePath))
             {
-                return false;
+                return new List<UserData>();                
             }
             else
             {
+                var userDataList = new List<UserData>();
                 using (TextFieldParser csvParser = new TextFieldParser(filePath))
                 {
                     csvParser.CommentTokens = new[] { "#" };
@@ -33,69 +42,58 @@ namespace SupportYourLocals.Data
 
                     while (!csvParser.EndOfData)
                     {
-                        // Read current line fields, pointer moves to the next line.
                         string[] fields = csvParser.ReadFields();
 
-                        if (username == fields[0])
-                        {
-                            String salt = fields[2];
-                            if (CompareHash(password, Encoding.ASCII.GetBytes(fields[1]), salt))
-                            {
-                                return true;
-                            }
-                        }
+                        var username = fields[0]; 
+                        var passwordHash = fields[1]; 
+                        var salt = fields[2]; 
+                        var id = int.Parse(fields[3]);
+
+                        userDataList.Add(new UserData(username, passwordHash, salt, id));
                     }
-                    return false;
                 }
-            }
+                return userDataList;
+            }            
         }
 
-        public bool CheckRegisterData(String password, String username)
-        {
-            return false;
-        }
-        public void SaveRegisterData(String password, String username)
+        public void SaveData()
         {
             StringBuilder csv = new StringBuilder();
 
             if (!File.Exists(filePath))
             {
-                csv.AppendLine("Username, Password, ID");
+                csv.AppendLine("Username, Hashed password, Salt, ID");
             }
 
-            String salt = CreateSalt(saltSize);
-
-            //String hashedPassword = BitConverter.ToString(GenerateHash(password, salt)).Replace("-", "");
-
-            var newLine = "{0},{1},{2},{3}".Format(username, GenerateHash(password, salt), salt, personsID);
-
-            csv.AppendLine(newLine);
+            foreach (var user in listUserData)
+            {
+                var newLine = "{0},{1},{2},{3}".Format(user.Username, user.PasswordHash, user.Salt, user.ID);
+                csv.AppendLine(newLine);
+            }
 
             File.AppendAllText(filePath, csv.ToString());
-        }
-        public bool CompareHash(string attemptedPassword, byte[] hash, string salt)
+        }        
+
+        public UserData GetData(string username)
         {
-            string base64Hash = Convert.ToBase64String(hash);
-            string base64AttemptedHash = Convert.ToBase64String(GenerateHash(attemptedPassword, salt));
-
-            return base64Hash == base64AttemptedHash;
+            foreach(var userData in listUserData)
+            {
+                if(username.Equals(userData.Username))
+                {
+                    return userData;
+                }    
+            }
+            return new UserData("","","",0);
         }
 
-        public String CreateSalt(int size)
-        {
-            var rng = new System.Security.Cryptography.RNGCryptoServiceProvider();
-            var buff = new byte[size];
-            rng.GetBytes(buff);
-            return Convert.ToBase64String(buff);
-        }
+        public int GetDataCount() => listUserData.Count;
 
-        public byte[] GenerateHash(String password, String salt)
-        {
-            byte[] bytes = System.Text.Encoding.UTF8.GetBytes(password + salt);
-            System.Security.Cryptography.SHA256Managed sha256hashstring = new System.Security.Cryptography.SHA256Managed();
-            byte[] hash = sha256hashstring.ComputeHash(bytes);
+        public void AddData(UserData data) => listUserData.Add(data);
 
-            return hash;
-        }
+        public void UpdateData(UserData data) => throw new NotImplementedException();
+
+        public void RemoveData(string id) => throw new NotImplementedException();
+
+        public List<UserData> GetAllData() => listUserData;
     }
 }

@@ -21,6 +21,7 @@ using MaterialDesignThemes.Wpf;
 using System.Runtime.CompilerServices;
 using SupportYourLocals.ExtensionMethods;
 using System.Text.RegularExpressions;
+using System.Security.Cryptography;
 
 namespace SupportYourLocals.WPF
 {
@@ -37,6 +38,8 @@ namespace SupportYourLocals.WPF
         private readonly IMarketStorage marketplaceData = new XMLData();
 
         CSVData csvData = new CSVData();
+
+        private static int saltSize = 10;
 
         // List for StackPanel elements in Main StackPanel
         List<List<StackPanel>> listOfStackPanelListsAddProduct = new List<List<StackPanel>>();
@@ -657,19 +660,164 @@ namespace SupportYourLocals.WPF
 
         private void LoginButton_Clicked(object sender, RoutedEventArgs e)
         {
-            if (csvData.CheckLoginData(PasswordBox.Password, UsernameTextBox.Text))
+            LabelEmptyFieldsError.Visibility = Visibility.Collapsed;
+            LabelUsernameError.Visibility = Visibility.Collapsed;
+            LabelPasswordError.Visibility = Visibility.Collapsed;
+
+            if(UsernameTextBox.Text.Length == 0 || PasswordBox.Password.Length == 0)
             {
-                //getID, setID,
+                LabelEmptyFieldsError.Visibility = Visibility.Visible;
             }
+            else if(csvData.GetData(UsernameTextBox.Text).Username == "")
+            {
+                LabelUsernameError.Visibility = Visibility.Visible;
+            }
+            else if(!CheckLoginData(PasswordBox.Password, UsernameTextBox.Text))
+            {
+                LabelPasswordError.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                string username = UsernameTextBox.Text;
+                int userID = csvData.GetData(username).ID;
+
+                ShowUserIDLabel.Content = "Your ID: " + userID;
+                ShowUsernameLabel.Content = username;
+
+                GridLogin.Visibility = Visibility.Collapsed; 
+                GridRegistration.Visibility = Visibility.Collapsed;
+            }
+
+            GridUserData.Visibility = Visibility.Collapsed;
+            GridUserDataToLogin.Visibility = Visibility.Collapsed;
         }
 
-        private bool CheckPassword(string password)
+        private void RegisterButton_Clicked(object sender, RoutedEventArgs e)
         {
+            var password = PasswordBoxR.Password;
+            var username = UsernameTextBoxR.Text;
+
+            LabelForUsedUsernameError.Visibility = Visibility.Collapsed;
+            LabelForInvalidUsernameError.Visibility = Visibility.Collapsed;
+            LabelForPasswordError.Visibility = Visibility.Collapsed;
+            LabelForConfirmPasswordError.Visibility = Visibility.Collapsed;
+            LabelForEmptyFieldsError.Visibility = Visibility.Collapsed;
+
+            if (CheckRegisterData(password, username))
+            {
+                string salt = CreateSalt(saltSize);
+                csvData.AddData(new UserData(username, GenerateHash(password, salt), salt, GenerateUserID()));
+                csvData.SaveData();
+
+                UsernameTextBoxR.Text = "";
+                PasswordBoxR.Password = "";
+                ConfirmPasswordBoxR.Password = "";
+
+                User.Visibility = Visibility.Collapsed;
+                LoginWhenRegistered.Visibility = Visibility.Visible;
+            }
+
+            GridUserData.Visibility = Visibility.Collapsed;
+            GridUserDataToLogin.Visibility = Visibility.Collapsed;
+        }
+
+        private void LoginWhenRegistered_Clicked(object sender, RoutedEventArgs e)
+        {
+            GridLogin.Visibility = Visibility.Visible;
+            GridRegistration.Visibility = Visibility.Collapsed;
+        }
+
+        private int GenerateUserID()
+        {
+            Random rnd = new Random();
+            int randomID = rnd.Next(1000, 9999);
+
+            if (Duplicates(randomID))
+            {
+                return GenerateUserID();
+            }
+            return randomID;
+        }
+
+        public bool Duplicates(int randomID)
+        {
+            foreach (var userID in csvData.GetAllData())
+            {
+                if (randomID.Equals(userID.ID))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool CheckRegisterData(string password, string username)
+        {
+            if(password.Length == 0 || username.Length == 0 || ConfirmPasswordBoxR.Password.Length == 0)
+            {
+                LabelForEmptyFieldsError.Visibility = Visibility.Visible;
+                return false;
+            }
+            else if (csvData.GetData(UsernameTextBox.Text).Username != "")
+            {
+                LabelForUsedUsernameError.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                if(!CheckUsernameRegex(username))
+                {
+                    LabelForInvalidUsernameError.Visibility = Visibility.Visible;
+                }
+                else // if username is correct
+                {
+                    if(!CheckPasswordLength(password))
+                    {
+                        LabelForPasswordError.Visibility = Visibility.Visible;
+                    }
+                    else if(CheckConfirmPassword(PasswordBoxR.Password, ConfirmPasswordBoxR.Password)) // if password is correct
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private bool CheckPasswordLength(String password)
+        {
+            if (password.Length >= 6)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private bool CheckUsernameRegex(String username)
+        {
+            Regex regexUsername = new Regex(@"^[a-zA-ZĄ-ž0-9-. ]+$");
+
+            if (!regexUsername.IsMatch(username))
+            {
+                return false;
+            }
             return true;
+        }
+
+        private bool CheckConfirmPassword(string password, string confirmPassword)
+        {
+            if (password == confirmPassword)
+            {
+                return true;
+            }
+
+            LabelForConfirmPasswordError.Visibility = Visibility.Visible;
+            return false;
         }
 
         private void NewUser_Clicked(object sender, RoutedEventArgs e)
         {
+            User.Visibility = Visibility.Visible;
+            LoginWhenRegistered.Visibility = Visibility.Collapsed;
             GridLogin.Visibility = Visibility.Collapsed;
             GridRegistration.Visibility = Visibility.Visible;
         }
@@ -678,6 +826,95 @@ namespace SupportYourLocals.WPF
         {
             GridLogin.Visibility = Visibility.Visible;
             GridRegistration.Visibility = Visibility.Collapsed;
+        }
+
+        public bool CheckLoginData(String password, String username)
+        {
+            if (csvData.GetData(username).Username == username)
+            {
+                if (CompareHash(password, csvData.GetData(username).PasswordHash, csvData.GetData(username).Salt))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool CompareHash(string attemptedPassword, string base64Hash, string salt)
+        {
+            string base64AttemptedHash = GenerateHash(attemptedPassword, salt);
+            return base64Hash == base64AttemptedHash;
+        }
+
+        private string CreateSalt(int size)
+        {
+            var rng = new RNGCryptoServiceProvider();
+            var buff = new byte[size];
+            rng.GetBytes(buff);
+
+            return Convert.ToBase64String(buff);
+        }
+
+        private string GenerateHash(string password, string salt)
+        {
+            var bytes = Encoding.UTF8.GetBytes(password + salt);
+            SHA256Managed sha256hashstring = new SHA256Managed();
+            var hash = sha256hashstring.ComputeHash(bytes);
+
+            return Convert.ToBase64String(hash).Replace("-", "").ToLower();
+        }
+
+        private void ShowLogoutButton_Click(object sender, RoutedEventArgs e)
+        {
+            GridLogin.Visibility = Visibility.Visible;
+            UsernameTextBox.Text = "";
+            PasswordBox.Password = "";
+
+            UsernameTextBoxR.Text = "";
+            PasswordBoxR.Password = "";
+            ConfirmPasswordBoxR.Password = "";
+
+            ShowUsernameLabel.Content = "";
+            ShowUserIDLabel.Content = "";
+            GridUserData.Visibility = Visibility.Collapsed;
+
+            GridUserData.Visibility = Visibility.Collapsed;
+            GridUserDataToLogin.Visibility = Visibility.Collapsed;
+        }
+        private void ShowLoginButton_Clicked(object sender, RoutedEventArgs e)
+        {
+            LoginHeader.Visibility = Visibility.Visible;
+            GridLogin.Visibility = Visibility.Visible;
+            GridRegistration.Visibility = Visibility.Collapsed;
+
+            GridUserData.Visibility = Visibility.Collapsed;
+            GridUserDataToLogin.Visibility = Visibility.Collapsed;
+        }
+
+        private void AccountButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(!ShowUserIDLabel.Content.Equals(""))
+            {
+                if(GridUserData.Visibility == Visibility.Visible)
+                {
+                    GridUserData.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    GridUserData.Visibility = Visibility.Visible;
+                }                
+            }
+            else
+            {
+                if (GridUserDataToLogin.Visibility == Visibility.Visible)
+                {
+                    GridUserDataToLogin.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    GridUserDataToLogin.Visibility = Visibility.Visible;
+                }
+            }            
         }
 
         private void Slider1Seller_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
