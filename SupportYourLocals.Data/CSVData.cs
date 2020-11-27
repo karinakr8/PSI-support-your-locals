@@ -54,10 +54,7 @@ namespace SupportYourLocals.Data
         {
             StringBuilder csv = new StringBuilder();
 
-            if (!File.Exists(filePath))
-            {
-                csv.AppendLine("Username, Hashed password, Salt, ID");
-            }
+            csv.AppendLine("Username, Hashed password, Salt, ID");
 
             foreach (var user in dictionaryUserData.Values)
             {

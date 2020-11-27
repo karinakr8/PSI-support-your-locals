@@ -671,13 +671,14 @@ namespace SupportYourLocals.WPF
 
             foreach (var name in users)
             {
-                usernameExists = name.Username == UsernameTextBox.Text;
-                if (usernameExists)
+                var checkUsernameExists = (name.Username == UsernameTextBox.Text);
+                if (checkUsernameExists)
                 {
                     userID = name.ID;
                     pswHash = name.PasswordHash;
                     pswSalt = name.Salt;
-                    username = name.Username;                    
+                    username = name.Username;
+                    usernameExists = true;
                 }
             }
 
@@ -724,13 +725,15 @@ namespace SupportYourLocals.WPF
             {
                 userLoginData.AddData(new UserData(username));
                 userLoginData.SaveData();
+                
+                var users = userLoginData.GetAllData();
+                string userID = users[users.Count - 1].ID;
 
-                UsernameTextBoxR.Text = "";
-                PasswordBoxR.Password = "";
-                ConfirmPasswordBoxR.Password = "";
+                ShowUserIDLabel.Content = "Your ID: " + userID;
+                ShowUsernameLabel.Content = username;
 
-                User.Visibility = Visibility.Collapsed;
-                LoginWhenRegistered.Visibility = Visibility.Visible;
+                GridLogin.Visibility = Visibility.Collapsed;
+                GridRegistration.Visibility = Visibility.Collapsed;
             }
 
             GridUserData.Visibility = Visibility.Collapsed;
@@ -795,10 +798,7 @@ namespace SupportYourLocals.WPF
             return false;
         }
 
-        private bool CheckPasswordLength(String password)
-        {
-            return password.Length >= 6;
-        }
+        private bool CheckPasswordLength(String password) => password.Length >= 6;
 
         private bool CheckUsernameRegex(String username)
         {
@@ -824,8 +824,6 @@ namespace SupportYourLocals.WPF
 
         private void NewUser_Clicked(object sender, RoutedEventArgs e)
         {
-            User.Visibility = Visibility.Visible;
-            LoginWhenRegistered.Visibility = Visibility.Collapsed;
             GridLogin.Visibility = Visibility.Collapsed;
             GridRegistration.Visibility = Visibility.Visible;
         }
