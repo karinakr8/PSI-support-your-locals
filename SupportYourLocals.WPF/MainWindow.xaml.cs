@@ -39,6 +39,8 @@ namespace SupportYourLocals.WPF
 
         CSVData csvData = new CSVData();
 
+        Password psw = new Password();
+
         private static int saltSize = 10;
 
         // List for StackPanel elements in Main StackPanel
@@ -705,8 +707,8 @@ namespace SupportYourLocals.WPF
 
             if (CheckRegisterData(password, username))
             {
-                string salt = CreateSalt(saltSize);
-                csvData.AddData(new UserData(username, GenerateHash(password, salt), salt, GenerateUserID()));
+                string salt = psw.CreateSalt(saltSize);
+                csvData.AddData(new UserData(username, psw.GenerateHash(password, salt), salt, GenerateUserID()));
                 csvData.SaveData();
 
                 UsernameTextBoxR.Text = "";
@@ -832,36 +834,12 @@ namespace SupportYourLocals.WPF
         {
             if (csvData.GetData(username).Username == username)
             {
-                if (CompareHash(password, csvData.GetData(username).PasswordHash, csvData.GetData(username).Salt))
+                if (psw.CompareHash(password, csvData.GetData(username).PasswordHash, csvData.GetData(username).Salt))
                 {
                     return true;
                 }
             }
             return false;
-        }
-
-        private bool CompareHash(string attemptedPassword, string base64Hash, string salt)
-        {
-            string base64AttemptedHash = GenerateHash(attemptedPassword, salt);
-            return base64Hash == base64AttemptedHash;
-        }
-
-        private string CreateSalt(int size)
-        {
-            var rng = new RNGCryptoServiceProvider();
-            var buff = new byte[size];
-            rng.GetBytes(buff);
-
-            return Convert.ToBase64String(buff);
-        }
-
-        private string GenerateHash(string password, string salt)
-        {
-            var bytes = Encoding.UTF8.GetBytes(password + salt);
-            SHA256Managed sha256hashstring = new SHA256Managed();
-            var hash = sha256hashstring.ComputeHash(bytes);
-
-            return Convert.ToBase64String(hash).Replace("-", "").ToLower();
         }
 
         private void ShowLogoutButton_Click(object sender, RoutedEventArgs e)
