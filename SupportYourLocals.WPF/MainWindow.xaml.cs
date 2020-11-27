@@ -682,9 +682,7 @@ namespace SupportYourLocals.WPF
                 int userID = csvData.GetData(username).ID;
 
                 ShowUserIDLabel.Content = "Your ID: " + userID;
-                ShowUserIDLabel0.Content = "Your ID: " + userID;
                 ShowUsernameLabel.Content = username;
-                ShowUsernameLabel0.Content = username;
 
                 GridLogin.Visibility = Visibility.Collapsed; 
                 GridRegistration.Visibility = Visibility.Collapsed;
@@ -891,37 +889,6 @@ namespace SupportYourLocals.WPF
 
             GridUserData.Visibility = Visibility.Collapsed;
             GridUserDataToLogin.Visibility = Visibility.Collapsed;
-
-            GridUserData0.Visibility = Visibility.Collapsed;
-        }
-
-        private void ShowLogoutButton0_Click(object sender, RoutedEventArgs e)
-        {
-            GridLogin.Visibility = Visibility.Visible;
-            UsernameTextBox.Text = "";
-            PasswordBox.Password = "";
-
-            UsernameTextBoxR.Text = "";
-            PasswordBoxR.Password = "";
-            ConfirmPasswordBoxR.Password = "";
-
-            ShowUsernameLabel.Content = "";
-            ShowUserIDLabel.Content = "";
-            GridUserData0.Visibility = Visibility.Collapsed;
-
-            GridUserData.Visibility = Visibility.Collapsed;
-        }
-        private void ShowLoginButton0_Click(object sender, RoutedEventArgs e)
-        {
-            LoginHeader.Visibility = Visibility.Visible;
-            GridLogin.Visibility = Visibility.Visible;
-            GridRegistration.Visibility = Visibility.Collapsed;
-
-            GridUserData0.Visibility = Visibility.Collapsed;
-            GridUserDataToLogin0.Visibility = Visibility.Collapsed;
-
-            TabControl MyTabControl = new TabControl();
-            Dispatcher.BeginInvoke((Action)(() => MyTabControl.SelectedIndex = 1));
         }
 
         private void AccountButton_Click(object sender, RoutedEventArgs e)
@@ -948,32 +915,6 @@ namespace SupportYourLocals.WPF
                     GridUserDataToLogin.Visibility = Visibility.Visible;
                 }
             }            
-        }
-
-        private void AccountButton0_Click(object sender, RoutedEventArgs e)
-        {
-            if (!ShowUserIDLabel0.Content.Equals(""))
-            {
-                if (GridUserData0.Visibility == Visibility.Visible)
-                {
-                    GridUserData0.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    GridUserData0.Visibility = Visibility.Visible;
-                }
-            }
-            else
-            {
-                if (GridUserDataToLogin0.Visibility == Visibility.Visible)
-                {
-                    GridUserDataToLogin0.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    GridUserDataToLogin0.Visibility = Visibility.Visible;
-                }
-            }
         }
 
         private void Slider1Seller_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
