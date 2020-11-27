@@ -37,11 +37,7 @@ namespace SupportYourLocals.WPF
         private readonly ISellerStorage sellerData = new XMLData();
         private readonly IMarketStorage marketplaceData = new XMLData();
 
-        CSVData csvData = new CSVData();
-
-        Password psw = new Password();
-
-        private static int saltSize = 10;
+        private readonly IUserStorage userLoginData = new CSVData();
 
         // List for StackPanel elements in Main StackPanel
         List<List<StackPanel>> listOfStackPanelListsAddProduct = new List<List<StackPanel>>();
@@ -666,23 +662,42 @@ namespace SupportYourLocals.WPF
             LabelUsernameError.Visibility = Visibility.Collapsed;
             LabelPasswordError.Visibility = Visibility.Collapsed;
 
-            if(UsernameTextBox.Text.Length == 0 || PasswordBox.Password.Length == 0)
+            var users = userLoginData.GetAllData();
+            var usernameExists = false;
+            string pswHash = null;
+            string pswSalt = null;
+            string username = null;
+            string userID = null;            
+
+            foreach (var name in users)
+            {
+                usernameExists = name.Username == UsernameTextBox.Text;
+                if (usernameExists)
+                {
+                    userID = name.ID;
+                    pswHash = name.PasswordHash;
+                    pswSalt = name.Salt;
+                    username = name.Username;                    
+                }
+            }
+
+            UserData registeredUser = new UserData(username, pswHash, pswSalt, userID);
+            UserData offlineUser = new UserData(UsernameTextBox.Text, null, pswSalt, userID);
+
+            if (UsernameTextBox.Text.Length == 0 || PasswordBox.Password.Length == 0)
             {
                 LabelEmptyFieldsError.Visibility = Visibility.Visible;
             }
-            else if(csvData.GetData(UsernameTextBox.Text).Username == "")
+            else if (!usernameExists)
             {
                 LabelUsernameError.Visibility = Visibility.Visible;
             }
-            else if(!CheckLoginData(PasswordBox.Password, UsernameTextBox.Text))
+            else if(registeredUser.PasswordHash != offlineUser.PasswordHash)
             {
                 LabelPasswordError.Visibility = Visibility.Visible;
             }
             else
             {
-                string username = UsernameTextBox.Text;
-                int userID = csvData.GetData(username).ID;
-
                 ShowUserIDLabel.Content = "Your ID: " + userID;
                 ShowUsernameLabel.Content = username;
 
@@ -707,9 +722,8 @@ namespace SupportYourLocals.WPF
 
             if (CheckRegisterData(password, username))
             {
-                string salt = psw.CreateSalt(saltSize);
-                csvData.AddData(new UserData(username, psw.GenerateHash(password, salt), salt, GenerateUserID()));
-                csvData.SaveData();
+                userLoginData.AddData(new UserData(username));
+                userLoginData.SaveData();
 
                 UsernameTextBoxR.Text = "";
                 PasswordBoxR.Password = "";
@@ -729,21 +743,9 @@ namespace SupportYourLocals.WPF
             GridRegistration.Visibility = Visibility.Collapsed;
         }
 
-        private int GenerateUserID()
-        {
-            Random rnd = new Random();
-            int randomID = rnd.Next(1000, 9999);
-
-            if (Duplicates(randomID))
-            {
-                return GenerateUserID();
-            }
-            return randomID;
-        }
-
         public bool Duplicates(int randomID)
         {
-            foreach (var userID in csvData.GetAllData())
+            foreach (var userID in userLoginData.GetAllData())
             {
                 if (randomID.Equals(userID.ID))
                 {
@@ -755,12 +757,20 @@ namespace SupportYourLocals.WPF
 
         public bool CheckRegisterData(string password, string username)
         {
-            if(password.Length == 0 || username.Length == 0 || ConfirmPasswordBoxR.Password.Length == 0)
+            var users = userLoginData.GetAllData();
+            var usernameExists = false;
+
+            foreach (var name in users)
+            {
+                usernameExists = (name.Username == username);
+            }
+
+            if (password.Length == 0 || username.Length == 0 || ConfirmPasswordBoxR.Password.Length == 0)
             {
                 LabelForEmptyFieldsError.Visibility = Visibility.Visible;
                 return false;
             }
-            else if (csvData.GetData(UsernameTextBox.Text).Username != "")
+            else if (usernameExists)
             {
                 LabelForUsedUsernameError.Visibility = Visibility.Visible;
             }
@@ -787,11 +797,7 @@ namespace SupportYourLocals.WPF
 
         private bool CheckPasswordLength(String password)
         {
-            if (password.Length >= 6)
-            {
-                return true;
-            }
-            return false;
+            return password.Length >= 6;
         }
 
         private bool CheckUsernameRegex(String username)
@@ -828,19 +834,7 @@ namespace SupportYourLocals.WPF
         {
             GridLogin.Visibility = Visibility.Visible;
             GridRegistration.Visibility = Visibility.Collapsed;
-        }
-
-        public bool CheckLoginData(String password, String username)
-        {
-            if (csvData.GetData(username).Username == username)
-            {
-                if (psw.CompareHash(password, csvData.GetData(username).PasswordHash, csvData.GetData(username).Salt))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+        }        
 
         private void ShowLogoutButton_Click(object sender, RoutedEventArgs e)
         {

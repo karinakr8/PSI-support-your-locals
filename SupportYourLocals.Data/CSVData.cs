@@ -5,54 +5,49 @@ using System.Text;
 using Microsoft.VisualBasic.FileIO;
 using SupportYourLocals.ExtensionMethods;
 using System.Security.Cryptography;
+using System.Linq;
 
 namespace SupportYourLocals.Data
 {
     public class CSVData : IUserStorage
     {
-        private static string filePath = @"./UserData.csv";
-
-        readonly List<UserData> listUserData = new List<UserData>();
+        private const string filePath = @"./UserData.csv";
+        readonly Dictionary<string, UserData> dictionaryUserData;
 
         public CSVData ()
         {
-            listUserData = LoadData();
+            dictionaryUserData = LoadData();
         }
 
-        private List<UserData> LoadData()
+        private Dictionary<string, UserData> LoadData()
         {
-            StringBuilder csv = new StringBuilder();
-
             if (!File.Exists(filePath))
             {
-                return new List<UserData>();                
+                return new Dictionary<string, UserData>();
             }
-            else
+            var userDataList = new Dictionary<string, UserData>();
+            using (TextFieldParser csvParser = new TextFieldParser(filePath))
             {
-                var userDataList = new List<UserData>();
-                using (TextFieldParser csvParser = new TextFieldParser(filePath))
+                csvParser.CommentTokens = new[] { "#" };
+                csvParser.SetDelimiters(new[] { "," });
+                csvParser.HasFieldsEnclosedInQuotes = true;
+
+                // Skip the row with the column names
+                csvParser.ReadLine();
+
+                while (!csvParser.EndOfData)
                 {
-                    csvParser.CommentTokens = new[] { "#" };
-                    csvParser.SetDelimiters(new[] { "," });
-                    csvParser.HasFieldsEnclosedInQuotes = true;
+                    string[] fields = csvParser.ReadFields();
 
-                    // Skip the row with the column names
-                    csvParser.ReadLine();
+                    var username = fields[0];
+                    var passwordHash = fields[1];
+                    var salt = fields[2];
+                    var id = fields[3];
 
-                    while (!csvParser.EndOfData)
-                    {
-                        string[] fields = csvParser.ReadFields();
-
-                        var username = fields[0]; 
-                        var passwordHash = fields[1]; 
-                        var salt = fields[2]; 
-                        var id = int.Parse(fields[3]);
-
-                        userDataList.Add(new UserData(username, passwordHash, salt, id));
-                    }
+                    userDataList.Add(id, new UserData(username, passwordHash, salt, id));
                 }
-                return userDataList;
-            }            
+            }
+            return userDataList; 
         }
 
         public void SaveData()
@@ -64,35 +59,25 @@ namespace SupportYourLocals.Data
                 csv.AppendLine("Username, Hashed password, Salt, ID");
             }
 
-            foreach (var user in listUserData)
+            foreach (var user in dictionaryUserData.Values)
             {
                 var newLine = "{0},{1},{2},{3}".Format(user.Username, user.PasswordHash, user.Salt, user.ID);
                 csv.AppendLine(newLine);
             }
 
-            File.AppendAllText(filePath, csv.ToString());
-        }        
-
-        public UserData GetData(string username)
-        {
-            foreach(var userData in listUserData)
-            {
-                if(username.Equals(userData.Username))
-                {
-                    return userData;
-                }    
-            }
-            return new UserData("","","",0);
+            File.WriteAllText(filePath, csv.ToString());
         }
 
-        public int GetDataCount() => listUserData.Count;
+        UserData IDataStorage<UserData>.GetData(string id) => dictionaryUserData[id];
 
-        public void AddData(UserData data) => listUserData.Add(data);
+        int IDataStorage<UserData>.GetDataCount() => dictionaryUserData.Count;
 
-        public void UpdateData(UserData data) => throw new NotImplementedException();
+        void IDataStorage<UserData>.AddData(UserData data) => dictionaryUserData.Add(data.ID.ToString(), data);
 
-        public void RemoveData(string id) => throw new NotImplementedException();
+        void IDataStorage<UserData>.UpdateData(UserData data) => dictionaryUserData[data.ID.ToString()] = data;
 
-        public List<UserData> GetAllData() => listUserData;
+        void IDataStorage<UserData>.RemoveData(string id) => dictionaryUserData.Remove(id);
+
+        List<UserData> IDataStorage<UserData>.GetAllData() => dictionaryUserData.Select(d => d.Value).ToList();
     }
 }
