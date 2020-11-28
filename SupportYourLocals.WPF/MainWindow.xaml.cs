@@ -1,27 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using MapControl;
 using SupportYourLocals.Map;
-using Microsoft.VisualBasic.FileIO;
-using System.IO;
 using SupportYourLocals.Data;
-using MaterialDesignThemes.Wpf;
-using System.Runtime.CompilerServices;
 using SupportYourLocals.ExtensionMethods;
 using System.Text.RegularExpressions;
-using System.Security.Cryptography;
 
 namespace SupportYourLocals.WPF
 {
@@ -665,27 +655,20 @@ namespace SupportYourLocals.WPF
             var users = userLoginData.GetAllData();
             var usernameExists = false;
             string pswHash = null;
-            string pswSalt = null;
-            string username = null;
-            string userID = null;            
+            string offlineUserHash = null;
+            string username = UsernameTextBox.Text;            
 
             foreach (var name in users)
-            {
-                var checkUsernameExists = (name.Username == UsernameTextBox.Text);
-                if (checkUsernameExists)
+            {                
+                if (name.Username == username)
                 {
-                    userID = name.ID;
                     pswHash = name.PasswordHash;
-                    pswSalt = name.Salt;
-                    username = name.Username;
                     usernameExists = true;
+                    offlineUserHash = UserData.GenerateHash(PasswordBox.Password, name.Salt);
                 }
             }
 
-            UserData registeredUser = new UserData(username, pswHash, pswSalt, userID);
-            UserData offlineUser = new UserData(UsernameTextBox.Text, null, pswSalt, userID);
-
-            if (UsernameTextBox.Text.Length == 0 || PasswordBox.Password.Length == 0)
+            if (username.Length == 0 || PasswordBox.Password.Length == 0)
             {
                 LabelEmptyFieldsError.Visibility = Visibility.Visible;
             }
@@ -693,13 +676,12 @@ namespace SupportYourLocals.WPF
             {
                 LabelUsernameError.Visibility = Visibility.Visible;
             }
-            else if(registeredUser.PasswordHash != offlineUser.PasswordHash)
+            else if(pswHash != offlineUserHash)
             {
                 LabelPasswordError.Visibility = Visibility.Visible;
             }
             else
             {
-                ShowUserIDLabel.Content = "Your ID: " + userID;
                 ShowUsernameLabel.Content = username;
 
                 GridLogin.Visibility = Visibility.Collapsed; 
@@ -723,13 +705,9 @@ namespace SupportYourLocals.WPF
 
             if (CheckRegisterData(password, username))
             {
-                userLoginData.AddData(new UserData(username));
+                userLoginData.AddData(new UserData(username, password));
                 userLoginData.SaveData();
-                
-                var users = userLoginData.GetAllData();
-                string userID = users[users.Count - 1].ID;
 
-                ShowUserIDLabel.Content = "Your ID: " + userID;
                 ShowUsernameLabel.Content = username;
 
                 GridLogin.Visibility = Visibility.Collapsed;
@@ -746,18 +724,6 @@ namespace SupportYourLocals.WPF
             GridRegistration.Visibility = Visibility.Collapsed;
         }
 
-        public bool Duplicates(int randomID)
-        {
-            foreach (var userID in userLoginData.GetAllData())
-            {
-                if (randomID.Equals(userID.ID))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         public bool CheckRegisterData(string password, string username)
         {
             var users = userLoginData.GetAllData();
@@ -765,7 +731,10 @@ namespace SupportYourLocals.WPF
 
             foreach (var name in users)
             {
-                usernameExists = (name.Username == username);
+                if (name.Username == username)
+                {
+                    usernameExists = true;
+                }
             }
 
             if (password.Length == 0 || username.Length == 0 || ConfirmPasswordBoxR.Password.Length == 0)
@@ -789,18 +758,22 @@ namespace SupportYourLocals.WPF
                     {
                         LabelForPasswordError.Visibility = Visibility.Visible;
                     }
-                    else if(CheckConfirmPassword(PasswordBoxR.Password, ConfirmPasswordBoxR.Password)) // if password is correct
+                    else if(PasswordBoxR.Password == ConfirmPasswordBoxR.Password) // if password is correct
                     {
                         return true;
+                    }
+                    else
+                    {
+                        LabelForConfirmPasswordError.Visibility = Visibility.Visible;
                     }
                 }
             }
             return false;
         }
 
-        private bool CheckPasswordLength(String password) => password.Length >= 6;
+        private bool CheckPasswordLength(string password) => password.Length >= 6;
 
-        private bool CheckUsernameRegex(String username)
+        private bool CheckUsernameRegex(string username)
         {
             Regex regexUsername = new Regex(@"^[a-zA-ZĄ-ž0-9-. ]+$");
 
@@ -809,17 +782,6 @@ namespace SupportYourLocals.WPF
                 return false;
             }
             return true;
-        }
-
-        private bool CheckConfirmPassword(string password, string confirmPassword)
-        {
-            if (password == confirmPassword)
-            {
-                return true;
-            }
-
-            LabelForConfirmPasswordError.Visibility = Visibility.Visible;
-            return false;
         }
 
         private void NewUser_Clicked(object sender, RoutedEventArgs e)
@@ -845,7 +807,6 @@ namespace SupportYourLocals.WPF
             ConfirmPasswordBoxR.Password = "";
 
             ShowUsernameLabel.Content = "";
-            ShowUserIDLabel.Content = "";
             GridUserData.Visibility = Visibility.Collapsed;
 
             GridUserData.Visibility = Visibility.Collapsed;
@@ -863,7 +824,7 @@ namespace SupportYourLocals.WPF
 
         private void AccountButton_Click(object sender, RoutedEventArgs e)
         {
-            if(!ShowUserIDLabel.Content.Equals(""))
+            if(!ShowUsernameLabel.Content.Equals(""))
             {
                 if(GridUserData.Visibility == Visibility.Visible)
                 {

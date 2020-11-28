@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Microsoft.VisualBasic.FileIO;
 using SupportYourLocals.ExtensionMethods;
-using System.Security.Cryptography;
 using System.Linq;
 
 namespace SupportYourLocals.Data
@@ -12,7 +10,7 @@ namespace SupportYourLocals.Data
     public class CSVData : IUserStorage
     {
         private const string filePath = @"./UserData.csv";
-        readonly Dictionary<string, UserData> dictionaryUserData;
+        private readonly Dictionary<string, UserData> dictionaryUserData;
 
         public CSVData ()
         {
@@ -69,9 +67,9 @@ namespace SupportYourLocals.Data
 
         int IDataStorage<UserData>.GetDataCount() => dictionaryUserData.Count;
 
-        void IDataStorage<UserData>.AddData(UserData data) => dictionaryUserData.Add(data.ID.ToString(), data);
+        void IDataStorage<UserData>.AddData(UserData data) => dictionaryUserData.Add(data.ID, data);
 
-        void IDataStorage<UserData>.UpdateData(UserData data) => dictionaryUserData[data.ID.ToString()] = data;
+        void IDataStorage<UserData>.UpdateData(UserData data) => dictionaryUserData[data.ID] = data;
 
         void IDataStorage<UserData>.RemoveData(string id) => dictionaryUserData.Remove(id);
 

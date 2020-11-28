@@ -321,10 +321,9 @@
 
                     </Grid>
 
-                    <Grid Name="GridUserData" HorizontalAlignment="Right" VerticalAlignment="Top" Height="70"  Width="150" Background="#41aea9" Visibility="Collapsed">
-                        <Label Name="ShowUsernameLabel" Content="" FontFamily="Segoe UI Black" FontSize="14" Foreground="White" Margin="0,0,0,30"/>
-                        <Label Name="ShowUserIDLabel" Content="" FontFamily="Segoe UI Black" FontSize="14" Foreground="White" Margin="0,18,0,20"/>
-                        <Button Name="ShowLogoutButton" Click="ShowLogoutButton_Click" Content="Logout" FontFamily="Segoe UI Black" FontSize="14" Foreground="White" Background="#41aea9" Margin="0,45,0,0"/>
+                    <Grid Name="GridUserData" HorizontalAlignment="Right" VerticalAlignment="Top" Height="53"  Width="150" Background="#41aea9" Visibility="Collapsed">
+                        <Label Name="ShowUsernameLabel" Content="" FontFamily="Segoe UI Black" FontSize="14" Foreground="White" Margin="0,0,0,25"/>
+                        <Button Name="ShowLogoutButton" Click="ShowLogoutButton_Click" Content="Logout" FontFamily="Segoe UI Black" FontSize="14" Foreground="White" Background="#41aea9" Margin="0,28,0,0"/>
                     </Grid>
 
                     <Grid Name="GridUserDataToLogin" HorizontalAlignment="Right" VerticalAlignment="Top" Height="30"  Width="93" Background="#41aea9" Visibility="Collapsed">
