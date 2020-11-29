@@ -652,19 +652,19 @@ namespace SupportYourLocals.WPF
             LabelUsernameError.Visibility = Visibility.Collapsed;
             LabelPasswordError.Visibility = Visibility.Collapsed;
 
-            var users = userLoginData.GetAllData();
             var usernameExists = false;
             string pswHash = null;
             string offlineUserHash = null;
             string username = UsernameTextBox.Text;            
 
-            foreach (var name in users)
+            foreach (var user in userLoginData.GetAllData())
             {                
-                if (name.Username == username)
+                if (user.Username == username)
                 {
-                    pswHash = name.PasswordHash;
+                    pswHash = user.PasswordHash;
                     usernameExists = true;
-                    offlineUserHash = UserData.GenerateHash(PasswordBox.Password, name.Salt);
+                    offlineUserHash = UserData.GenerateHash(PasswordBox.Password, user.Salt);
+                    break;
                 }
             }
 
@@ -726,14 +726,14 @@ namespace SupportYourLocals.WPF
 
         public bool CheckRegisterData(string password, string username)
         {
-            var users = userLoginData.GetAllData();
             var usernameExists = false;
 
-            foreach (var name in users)
+            foreach (var user in userLoginData.GetAllData())
             {
-                if (name.Username == username)
+                if (user.Username == username)
                 {
                     usernameExists = true;
+                    break;
                 }
             }
 
