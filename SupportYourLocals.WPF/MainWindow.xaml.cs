@@ -1,24 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using MapControl;
 using SupportYourLocals.Map;
-using Microsoft.VisualBasic.FileIO;
-using System.IO;
 using SupportYourLocals.Data;
-using MaterialDesignThemes.Wpf;
-using System.Runtime.CompilerServices;
 using SupportYourLocals.ExtensionMethods;
 using System.Text.RegularExpressions;
 
@@ -35,6 +26,8 @@ namespace SupportYourLocals.WPF
 
         private readonly ISellerStorage sellerData = new XMLData();
         private readonly IMarketStorage marketplaceData = new XMLData();
+
+        private readonly IUserStorage userLoginData = new CSVData();
 
         // List for StackPanel elements in Main StackPanel
         List<List<StackPanel>> listOfStackPanelListsAddProduct = new List<List<StackPanel>>();
@@ -651,6 +644,208 @@ namespace SupportYourLocals.WPF
         {
             MessageBox.Show(message, "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private void LoginButton_Clicked(object sender, RoutedEventArgs e)
+        {
+            LabelEmptyFieldsError.Visibility = Visibility.Collapsed;
+            LabelUsernameError.Visibility = Visibility.Collapsed;
+            LabelPasswordError.Visibility = Visibility.Collapsed;
+
+            var usernameExists = false;
+            string pswHash = null;
+            string offlineUserHash = null;
+            string username = UsernameTextBox.Text;            
+
+            foreach (var user in userLoginData.GetAllData())
+            {                
+                if (user.Username == username)
+                {
+                    pswHash = user.PasswordHash;
+                    usernameExists = true;
+                    offlineUserHash = UserData.GenerateHash(PasswordBox.Password, user.Salt);
+                    break;
+                }
+            }
+
+            if (username.Length == 0 || PasswordBox.Password.Length == 0)
+            {
+                LabelEmptyFieldsError.Visibility = Visibility.Visible;
+            }
+            else if (!usernameExists)
+            {
+                LabelUsernameError.Visibility = Visibility.Visible;
+            }
+            else if(pswHash != offlineUserHash)
+            {
+                LabelPasswordError.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ShowUsernameLabel.Content = username;
+
+                GridLogin.Visibility = Visibility.Collapsed; 
+                GridRegistration.Visibility = Visibility.Collapsed;
+            }
+
+            GridUserData.Visibility = Visibility.Collapsed;
+            GridUserDataToLogin.Visibility = Visibility.Collapsed;
+        }
+
+        private void RegisterButton_Clicked(object sender, RoutedEventArgs e)
+        {
+            var password = PasswordBoxR.Password;
+            var username = UsernameTextBoxR.Text;
+
+            LabelForUsedUsernameError.Visibility = Visibility.Collapsed;
+            LabelForInvalidUsernameError.Visibility = Visibility.Collapsed;
+            LabelForPasswordError.Visibility = Visibility.Collapsed;
+            LabelForConfirmPasswordError.Visibility = Visibility.Collapsed;
+            LabelForEmptyFieldsError.Visibility = Visibility.Collapsed;
+
+            if (CheckRegisterData(password, username))
+            {
+                userLoginData.AddData(new UserData(username, password));
+                userLoginData.SaveData();
+
+                ShowUsernameLabel.Content = username;
+
+                GridLogin.Visibility = Visibility.Collapsed;
+                GridRegistration.Visibility = Visibility.Collapsed;
+            }
+
+            GridUserData.Visibility = Visibility.Collapsed;
+            GridUserDataToLogin.Visibility = Visibility.Collapsed;
+        }
+
+        private void LoginWhenRegistered_Clicked(object sender, RoutedEventArgs e)
+        {
+            GridLogin.Visibility = Visibility.Visible;
+            GridRegistration.Visibility = Visibility.Collapsed;
+        }
+
+        public bool CheckRegisterData(string password, string username)
+        {
+            var usernameExists = false;
+
+            foreach (var user in userLoginData.GetAllData())
+            {
+                if (user.Username == username)
+                {
+                    usernameExists = true;
+                    break;
+                }
+            }
+
+            if (password.Length == 0 || username.Length == 0 || ConfirmPasswordBoxR.Password.Length == 0)
+            {
+                LabelForEmptyFieldsError.Visibility = Visibility.Visible;
+                return false;
+            }
+            else if (usernameExists)
+            {
+                LabelForUsedUsernameError.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                if(!CheckUsernameRegex(username))
+                {
+                    LabelForInvalidUsernameError.Visibility = Visibility.Visible;
+                }
+                else // if username is correct
+                {
+                    if(!CheckPasswordLength(password))
+                    {
+                        LabelForPasswordError.Visibility = Visibility.Visible;
+                    }
+                    else if(PasswordBoxR.Password == ConfirmPasswordBoxR.Password) // if password is correct
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        LabelForConfirmPasswordError.Visibility = Visibility.Visible;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private bool CheckPasswordLength(string password) => password.Length >= 6;
+
+        private bool CheckUsernameRegex(string username)
+        {
+            Regex regexUsername = new Regex(@"^[a-zA-ZĄ-ž0-9-. ]+$");
+
+            if (!regexUsername.IsMatch(username))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private void NewUser_Clicked(object sender, RoutedEventArgs e)
+        {
+            GridLogin.Visibility = Visibility.Collapsed;
+            GridRegistration.Visibility = Visibility.Visible;
+        }
+
+        private void User_Clicked(object sender, RoutedEventArgs e)
+        {
+            GridLogin.Visibility = Visibility.Visible;
+            GridRegistration.Visibility = Visibility.Collapsed;
+        }        
+
+        private void ShowLogoutButton_Click(object sender, RoutedEventArgs e)
+        {
+            GridLogin.Visibility = Visibility.Visible;
+            UsernameTextBox.Text = "";
+            PasswordBox.Password = "";
+
+            UsernameTextBoxR.Text = "";
+            PasswordBoxR.Password = "";
+            ConfirmPasswordBoxR.Password = "";
+
+            ShowUsernameLabel.Content = "";
+            GridUserData.Visibility = Visibility.Collapsed;
+
+            GridUserData.Visibility = Visibility.Collapsed;
+            GridUserDataToLogin.Visibility = Visibility.Collapsed;
+        }
+        private void ShowLoginButton_Clicked(object sender, RoutedEventArgs e)
+        {
+            LoginHeader.Visibility = Visibility.Visible;
+            GridLogin.Visibility = Visibility.Visible;
+            GridRegistration.Visibility = Visibility.Collapsed;
+
+            GridUserData.Visibility = Visibility.Collapsed;
+            GridUserDataToLogin.Visibility = Visibility.Collapsed;
+        }
+
+        private void AccountButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(!ShowUsernameLabel.Content.Equals(""))
+            {
+                if(GridUserData.Visibility == Visibility.Visible)
+                {
+                    GridUserData.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    GridUserData.Visibility = Visibility.Visible;
+                }                
+            }
+            else
+            {
+                if (GridUserDataToLogin.Visibility == Visibility.Visible)
+                {
+                    GridUserDataToLogin.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    GridUserDataToLogin.Visibility = Visibility.Visible;
+                }
+            }            
         }
 
         private void Slider1Seller_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
