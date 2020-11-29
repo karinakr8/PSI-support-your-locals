@@ -18,4 +18,6 @@ namespace SupportYourLocals.Data
     public interface ISellerStorage : IDataStorage<SellerData> { }
 
     public interface IMarketStorage : IDataStorage<MarketplaceData> { }
+
+    public interface IUserStorage : IDataStorage<UserData> { }
 }
