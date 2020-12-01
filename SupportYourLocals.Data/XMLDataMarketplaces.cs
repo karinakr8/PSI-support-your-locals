@@ -11,7 +11,17 @@ namespace SupportYourLocals.Data
     public class XMLDataMarketplaces : IMarketStorage
     {
         private const string filePath = @"./MarketPlacesData.xml";
-        readonly Dictionary<string, MarketplaceData> dictionaryMarketplaceDataById;
+        public Dictionary<string, MarketplaceData> dictionaryMarketplaceDataById { get; set; }
+
+        public XMLDataMarketplaces()
+        {
+            dictionaryMarketplaceDataById = LoadData();
+        }
+
+        public XMLDataMarketplaces(Dictionary<string, MarketplaceData> dictionaryMarketplaceDataById)
+        {
+            this.dictionaryMarketplaceDataById = dictionaryMarketplaceDataById;
+        }
 
         MarketplaceData IDataStorage<MarketplaceData>.GetData(string id) => dictionaryMarketplaceDataById[id];
 
@@ -32,6 +42,8 @@ namespace SupportYourLocals.Data
             {
                 XElement root = new XElement("Marketplace");
                 root.Add(new XAttribute("ID", data.ID));
+                root.Add(new XAttribute("Location", data.Location));
+                root.Add(new XAttribute("Name", data.Name));
                 AddBoundaryToXml(data, root);
                 AddTimeTableToXml(data, root);
                 doc.Element("Marketplaces").Add(root);
@@ -61,10 +73,13 @@ namespace SupportYourLocals.Data
                 foreach (var day in weekDay.Value)
                 {
                     XElement dayBranch = new XElement("WorkingHours");
-                    dayBranch.Add(new XAttribute("StartTime", day.StartTime));
-                    dayBranch.Add(new XAttribute("EndTime", day.EndTime));
+                    dayBranch.Add(new XAttribute("StartTime", $"{day.StartTime.Hours}:{day.StartTime.Hours}"));
+                    dayBranch.Add(new XAttribute("EndTime", $"{day.EndTime.Hours}:{day.EndTime.Hours}"));
+                    weekDayBranch.Add(dayBranch);
                 }
+                boundaryBranch.Add(weekDayBranch);
             }
+            root.Add(boundaryBranch);
         }
 
         public Dictionary<string, MarketplaceData> LoadData()
@@ -75,55 +90,59 @@ namespace SupportYourLocals.Data
             }
 
             XDocument doc = XDocument.Load(filePath);
-            
             var marketplaceDictionary = new Dictionary<string, MarketplaceData>();
-            var locationList = new List<Location>();
+            
             var groupElements = from elements in doc.Descendants().Elements("Marketplace") select elements;
             foreach (var element in groupElements)
             {
                 var id = element.Attribute("ID").Value;
                 var location = Location.Parse(element.Attribute("Location").Value);
                 var name = element.Attribute("Name").Value;
-                var timeTable = new Week();
-                var weekDictionary = new Dictionary<WeekDays, Day>();
-                var boundaryList = from boundaries in element.Elements("Boundary") select boundaries;
-                foreach (var boundary in boundaryList)
-                {
-                    var locationCellList = from locations in boundary.Elements("Location") select locations;
 
-                    foreach (var locationCell in locationCellList)
-                    {
-                        locationList.Add(Location.Parse(locationCell.Value));
-                    }
-                }
-
-
-
-                var timetableList = from timetables in element.Elements("TimeTable") select timetables;
-                Week week = new Week();
-                foreach (var timetable in timetableList)
-                {
-                    var timePairList = new Day();
-                    WeekDays weekDayName = new WeekDays();
-                    var weekdayList = from weekdays in timetable.Elements("WeekDay") select weekdays;
-                    foreach (var weekday in weekdayList)
-                    {
-                        var timePair = new TimePair();
-                        weekDayName = (WeekDays)Enum.Parse(typeof(WeekDays), weekday.Attribute("Day").Value);
-                        var workingHoursList = from workingHours in weekday.Elements("WorkingHours") select workingHours;
-                        foreach (var workingHoursCell in workingHoursList)
-                        {
-                            timePair.StartTime = new Time(workingHoursCell.Attribute("StartTime").Value);
-                            timePair.EndTime = new Time (workingHoursCell.Attribute("EndTime").Value);
-                        }
-                        timePairList.Add(timePair);
-                    }
-                    week.Add(weekDayName, timePairList);
-                }
-
-                marketplaceDictionary.Add(id, new MarketplaceData(location, name, week, locationList, id));
+                marketplaceDictionary.Add(id, new MarketplaceData(location, name, LoadTimeTable(element), LoadBoundary(element), id));
             }
             return marketplaceDictionary;
+        }
+
+        private List<Location> LoadBoundary(XElement element)
+        {
+            var locationList = new List<Location>();
+            var boundaryList = from boundaries in element.Elements("Boundary") select boundaries;
+            foreach (var boundary in boundaryList)
+            {
+                var locationCellList = from locations in boundary.Elements("Location") select locations;
+
+                foreach (var locationCell in locationCellList)
+                {
+                    locationList.Add(Location.Parse(locationCell.Value));
+                }
+            }
+            return locationList;
+        }
+        private Week LoadTimeTable(XElement element)
+        {
+            var timetableList = from timetables in element.Elements("TimeTable") select timetables;
+            Week week = new Week();
+            foreach (var timetable in timetableList)
+            {
+                var timePairList = new Day();
+                WeekDays weekDayName = new WeekDays();
+                var weekdayList = from weekdays in timetable.Elements("WeekDay") select weekdays;
+                foreach (var weekday in weekdayList)
+                {
+                    var timePair = new TimePair();
+                    weekDayName = (WeekDays)Enum.Parse(typeof(WeekDays), weekday.Attribute("Day").Value);
+                    var workingHoursList = from workingHours in weekday.Elements("WorkingHours") select workingHours;
+                    foreach (var workingHoursCell in workingHoursList)
+                    {
+                        timePair.StartTime = new Time(workingHoursCell.Attribute("StartTime").Value);
+                        timePair.EndTime = new Time(workingHoursCell.Attribute("EndTime").Value);
+                    }
+                    timePairList.Add(timePair);
+                }
+                week.Add(weekDayName, timePairList);
+            }
+            return week;
         }
 
     }

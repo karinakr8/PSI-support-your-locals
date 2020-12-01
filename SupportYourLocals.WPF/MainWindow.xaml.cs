@@ -44,7 +44,6 @@ namespace SupportYourLocals.WPF
         {
             // data = new CSVDataStorage() or smth like that
             InitializeComponent();
-
             ImageLoader.HttpClient.DefaultRequestHeaders.Add("User-Agent", "XAML Map Control Test Application");
 
             // Setup image cache
