@@ -8,15 +8,10 @@ using MapControl;
 
 namespace SupportYourLocals.Data
 {
-    class XMLDataMarketplaces : IMarketStorage
+    public class XMLDataMarketplaces : IMarketStorage
     {
         private const string filePath = @"./MarketPlacesData.xml";
         readonly Dictionary<string, MarketplaceData> dictionaryMarketplaceDataById;
-
-        public XMLDataMarketplaces(Dictionary<string, MarketplaceData> dictionaryMarketplaceDataById)
-        {
-            this.dictionaryMarketplaceDataById = dictionaryMarketplaceDataById;
-        }
 
         MarketplaceData IDataStorage<MarketplaceData>.GetData(string id) => dictionaryMarketplaceDataById[id];
 
