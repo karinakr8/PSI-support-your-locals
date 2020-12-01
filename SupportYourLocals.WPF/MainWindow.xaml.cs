@@ -388,8 +388,10 @@ namespace SupportYourLocals.WPF
                     {
                         if (elementOfList != null)
                         {
-                            listString.Add(elementOfList.Text.Trim());
-                        }
+                            if(elementOfList.Text.Trim() != "")
+                            {
+                                listString.Add(elementOfList.Text.Trim());
+                            }                        }
                     }
                     dictionaryListString.Add(elementTextBox.Key, listString);
                 }

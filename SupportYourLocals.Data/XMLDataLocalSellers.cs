@@ -19,7 +19,6 @@ namespace SupportYourLocals.Data
         public XMLDataLocalSellers()
         {
             dictionaryLocationDataById = LoadData();
-            //dictionaryMarketplaceDataById = LoadData();
         }
 
         Dictionary<string, SellerData> LoadData()
@@ -80,7 +79,11 @@ namespace SupportYourLocals.Data
         {
             foreach (var productType in data.Products)
             {
-                if (productType.Value[0] != "")
+                if(productType.Value.Count == 0)
+                {
+                    continue;
+                }
+                if (productType.Value[0] == "")
                 {
                     continue;
                 }
