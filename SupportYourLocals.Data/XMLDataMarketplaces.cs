@@ -11,7 +11,7 @@ namespace SupportYourLocals.Data
     public class XMLDataMarketplaces : IMarketStorage
     {
         private const string filePath = @"./MarketPlacesData.xml";
-        public Dictionary<string, MarketplaceData> dictionaryMarketplaceDataById { get; set; }
+        readonly Dictionary<string, MarketplaceData> dictionaryMarketplaceDataById;
 
         public XMLDataMarketplaces()
         {
