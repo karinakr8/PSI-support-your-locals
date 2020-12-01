@@ -1,35 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using MapControl;
 using Microsoft.VisualBasic.FileIO;
 using SupportYourLocals.ExtensionMethods;
+using System.Linq;
 
 namespace SupportYourLocals.Data
 {
-    public class CSVData
+    public class CSVData : IUserStorage
     {
-        private static string filePath = @"./Data.csv";
-        private static int personsID = 1000;
+        private const string filePath = @"./UserData.csv";
+        private readonly Dictionary<string, UserData> dictionaryUserData;
 
-        public static void SaveData(String product, Location position)
+        public CSVData ()
         {
-            var csv = new StringBuilder();
-
-            personsID = GetPersonsID(personsID);
-
-            var newLine = "{0},{1},{2}".Format(product, position, personsID);
-
-            csv.AppendLine(newLine);
-
-            File.AppendAllText(filePath, csv.ToString());
+            dictionaryUserData = LoadData();
         }
 
-        public static int GetPersonsID(int personsID)
+        private Dictionary<string, UserData> LoadData()
         {
-            // Checking person's ID
-            List<double> personID = new List<double>();
+            if (!File.Exists(filePath))
+            {
+                return new Dictionary<string, UserData>();
+            }
+            var userDataList = new Dictionary<string, UserData>();
             using (TextFieldParser csvParser = new TextFieldParser(filePath))
             {
                 csvParser.CommentTokens = new[] { "#" };
@@ -41,37 +35,44 @@ namespace SupportYourLocals.Data
 
                 while (!csvParser.EndOfData)
                 {
-                    // Read current line fields, pointer moves to the next line.
                     string[] fields = csvParser.ReadFields();
-                    personID.Add(double.Parse(fields[3]));
+
+                    var username = fields[0];
+                    var passwordHash = fields[1];
+                    var salt = fields[2];
+                    var id = fields[3];
+
+                    userDataList.Add(id, new UserData(username, passwordHash, salt, id));
                 }
             }
-
-            // Setting person's ID
-            personsID += personID.Count;
-            return personsID;
+            return userDataList; 
         }
 
-        public static void SetMarkers(List<double> listXCoord, List<double> listYCoord, List<int> listPersonsID)
+        public void SaveData()
         {
-            using (TextFieldParser csvParser = new TextFieldParser(filePath))
+            StringBuilder csv = new StringBuilder();
+
+            csv.AppendLine("Username, Hashed password, Salt, ID");
+
+            foreach (var user in dictionaryUserData.Values)
             {
-                csvParser.CommentTokens = new[] { "#" };
-                csvParser.SetDelimiters(new[] { "," });
-                csvParser.HasFieldsEnclosedInQuotes = true;
-
-                // Skip the row with the column names
-                csvParser.ReadLine();
-
-                while (!csvParser.EndOfData)
-                {
-                    // Saving data to a list
-                    string[] fields = csvParser.ReadFields();
-                    listXCoord.Add(double.Parse(fields[1]));
-                    listYCoord.Add(double.Parse(fields[2]));
-                    listPersonsID.Add(int.Parse(fields[3]));
-                }
+                var newLine = "{0},{1},{2},{3}".Format(user.Username, user.PasswordHash, user.Salt, user.ID);
+                csv.AppendLine(newLine);
             }
+
+            File.WriteAllText(filePath, csv.ToString());
         }
+
+        UserData IDataStorage<UserData>.GetData(string id) => dictionaryUserData[id];
+
+        int IDataStorage<UserData>.GetDataCount() => dictionaryUserData.Count;
+
+        void IDataStorage<UserData>.AddData(UserData data) => dictionaryUserData.Add(data.ID, data);
+
+        void IDataStorage<UserData>.UpdateData(UserData data) => dictionaryUserData[data.ID] = data;
+
+        void IDataStorage<UserData>.RemoveData(string id) => dictionaryUserData.Remove(id);
+
+        List<UserData> IDataStorage<UserData>.GetAllData() => dictionaryUserData.Select(d => d.Value).ToList();
     }
 }
