@@ -24,8 +24,8 @@ namespace SupportYourLocals.WPF
 
         private readonly Map.Map SYLMap;
 
-        private readonly ISellerStorage sellerData = new XMLData();
-        private readonly IMarketStorage marketplaceData = new XMLData();
+        private readonly ISellerStorage sellerData = new XMLDataLocalSellers();
+        private readonly IMarketStorage marketplaceData = new XMLDataMarketPlaces();
 
         private readonly IUserStorage userLoginData = new CSVData();
 
