@@ -7,7 +7,18 @@
         xmlns:map="clr-namespace:MapControl;assembly=MapControl.WPF"
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:vm="clr-namespace:SupportYourLocals.Map;assembly=SupportYourLocals.Map"
         Title="MainWindow" Height="530" Width="800" MinHeight="530" MinWidth="700">
+
+    <Window.Resources>
+        <DataTemplate x:Key="PolylineItemTemplate">
+            <map:MapPolyline Locations="{Binding Locations}" Stroke="Red" StrokeThickness="3" MouseLeftButtonDown="MapMouseLeftButtonDown" MouseRightButtonDown="MapMouseRightButtonDown"/>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Window.DataContext>
+        <vm:PolylineDrawer/>
+    </Window.DataContext>
 
     <TabControl>
         <!--<materialDesign:PackIcon Name="AddProductButton" Kind="PlusThick" Width="25" Height="25" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#808080"/>
@@ -223,8 +234,9 @@
 
                 <!-- Place for a map-->
                 <Grid Grid.Column="2" Grid.Row="2">
-                    <map:Map x:Name="MainMap" MouseLeftButtonDown="MapMouseLeftButtonDown" MouseRightButtonDown="MapMouseRightButtonDown" Margin="3,0,-3,0"/>
-
+                    <map:Map x:Name="MainMap" MouseLeftButtonDown="MapMouseLeftButtonDown" MouseRightButtonDown="MapMouseRightButtonDown" MouseMove="MapMouseMove" Margin="3,0,-3,0">
+                        <map:MapItemsControl ItemsSource="{Binding Polylines}" ItemTemplate="{StaticResource PolylineItemTemplate}"/>
+                    </map:Map>
                 </Grid>
 
             </Grid>
@@ -312,7 +324,7 @@
                         <PasswordBox Name="ConfirmPasswordBoxR" HorizontalAlignment="Center" Margin="120,160,120,0" VerticalAlignment="Top" Height="23" Width="160"/>
 
                         <Button Name="User" Content="Already a user? Login now"  HorizontalAlignment="Center" Margin="0 240 0 0" VerticalAlignment="Top" Width="160" Background="Transparent" BorderBrush="{x:Null}" Click="User_Clicked" Visibility="Visible" Foreground="#808080"/>
-                        
+
                         <Label Name="LabelForUsedUsernameError" Content="Username is taken" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,57,0,0" FontFamily="Yu Gothic UI Semibold" Foreground="Red" FontSize="12" Width="300" Visibility="Collapsed" />
                         <Label Name="LabelForInvalidUsernameError" Content="Invalid characters used in the username" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,57,0,0" FontFamily="Yu Gothic UI Semibold" Foreground="Red" FontSize="12" Width="300" Visibility="Collapsed" />
                         <Label Name="LabelForPasswordError" Content="Your password must be at least 6 characters long" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,117,0,0" FontFamily="Yu Gothic UI Semibold" Foreground="Red" FontSize="12" Width="300" Visibility="Collapsed" />

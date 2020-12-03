@@ -6,6 +6,8 @@ using System.Windows.Media.Animation;
 using Nominatim.API.Geocoders;
 using Nominatim.API.Models;
 using System;
+using System.Collections.Generic;
+using SupportYourLocals.Data;
 
 namespace SupportYourLocals.Map
 {
@@ -14,6 +16,7 @@ namespace SupportYourLocals.Map
         private readonly MapControl.Map WPFMap;
         private readonly Marker tempMarker;
         private readonly RadiusCircle searchRadius;
+        private readonly PolylineDrawer polylineDrawer;
 
         public Location Center
         {
@@ -27,10 +30,11 @@ namespace SupportYourLocals.Map
             get { return WPFMap.TargetZoomLevel; }
         }
 
-        public Map (MapControl.Map passedMap, Location center = null, double zoom = 14)
+        public Map (MapControl.Map passedMap, PolylineDrawer passedDrawer, Location center = null, double zoom = 14)
         {
             // Can't create a new map, so use the existing one
             WPFMap = passedMap;
+            polylineDrawer = passedDrawer;
 
             WPFMap.ZoomLevel = zoom;
             WPFMap.MaxZoomLevel = 19; // Any closer and the map starts getting blurry
@@ -199,6 +203,18 @@ namespace SupportYourLocals.Map
         public double GetDistance(Location location1, Location location2)
         {
             return GetDistance(location1.Longitude, location1.Latitude, location2.Longitude, location2.Latitude);
+        }
+
+        public void DrawBoundary(Boundary boundary)
+        {
+            var boundaryCopy = new List<Location>(boundary);
+            boundaryCopy.Add(boundaryCopy[0]); // Add the first element to the end to form an enclosed polygon
+            polylineDrawer.DrawPolyline(new LocationCollection(boundaryCopy));
+        }
+
+        public void ClearBoundary()
+        {
+            polylineDrawer.ClearPolyline();
         }
 
         public void DrawRadiusOnTempMarker(double radius)
