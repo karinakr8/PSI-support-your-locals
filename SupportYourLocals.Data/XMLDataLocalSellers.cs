@@ -10,13 +10,13 @@ using System.Xml.Linq;
 
 namespace SupportYourLocals.Data
 {
-    public class XMLData : ISellerStorage, IMarketStorage
+    public class XMLDataLocalSellers : ISellerStorage
     {
         private const string filePath = @"./LocalSellersData.xml";
-        readonly Dictionary<string, SellerData> dictionaryLocationDataById;
+        private readonly Dictionary<string, SellerData> dictionaryLocationDataById;
         // TODO: Add a lock object once we start working on files asynchronously
 
-        public XMLData()
+        public XMLDataLocalSellers()
         {
             dictionaryLocationDataById = LoadData();
         }
@@ -79,6 +79,10 @@ namespace SupportYourLocals.Data
         {
             foreach (var productType in data.Products)
             {
+                if(productType.Value.Count == 0)
+                {
+                    continue;
+                }
                 if (productType.Value[0] == "")
                 {
                     continue;
@@ -109,18 +113,5 @@ namespace SupportYourLocals.Data
         void IDataStorage<SellerData>.UpdateData(SellerData data) => dictionaryLocationDataById[data.ID] = data;
 
         void IDataStorage<SellerData>.RemoveData(string id) => dictionaryLocationDataById.Remove(id);
-
-
-        MarketplaceData IDataStorage<MarketplaceData>.GetData(string id) => throw new NotImplementedException();
-
-        List<MarketplaceData> IDataStorage<MarketplaceData>.GetAllData() => throw new NotImplementedException();
-
-        int IDataStorage<MarketplaceData>.GetDataCount() => throw new NotImplementedException();
-
-        void IDataStorage<MarketplaceData>.AddData(MarketplaceData data) => throw new NotImplementedException();
-
-        void IDataStorage<MarketplaceData>.UpdateData(MarketplaceData data) => throw new NotImplementedException();
-
-        void IDataStorage<MarketplaceData>.RemoveData(string id) => throw new NotImplementedException();
     }
 }

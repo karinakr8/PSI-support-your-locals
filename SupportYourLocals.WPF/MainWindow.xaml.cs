@@ -24,8 +24,8 @@ namespace SupportYourLocals.WPF
 
         private readonly Map.Map SYLMap;
 
-        private readonly ISellerStorage sellerData = new XMLData();
-        private readonly IMarketStorage marketplaceData = new XMLData();
+        private readonly ISellerStorage sellerData = new XMLDataLocalSellers();
+        private readonly IMarketStorage marketplaceData = new XMLDataMarketplaces();
 
         private readonly IUserStorage userLoginData = new CSVData();
 
@@ -44,7 +44,6 @@ namespace SupportYourLocals.WPF
         {
             // data = new CSVDataStorage() or smth like that
             InitializeComponent();
-
             ImageLoader.HttpClient.DefaultRequestHeaders.Add("User-Agent", "XAML Map Control Test Application");
 
             // Setup image cache
@@ -389,8 +388,10 @@ namespace SupportYourLocals.WPF
                     {
                         if (elementOfList != null)
                         {
-                            listString.Add(elementOfList.Text.Trim());
-                        }
+                            if(elementOfList.Text.Trim() != "")
+                            {
+                                listString.Add(elementOfList.Text.Trim());
+                            }                        }
                     }
                     dictionaryListString.Add(elementTextBox.Key, listString);
                 }
