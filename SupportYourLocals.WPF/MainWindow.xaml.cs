@@ -151,6 +151,7 @@ namespace SupportYourLocals.WPF
 
         private void UpdateMarketplaces_Click(object sender, RoutedEventArgs e)
         {
+            GridMarketplacesAdd.Visibility = Visibility.Visible;
         }
 
         private void MapMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -256,6 +257,7 @@ namespace SupportYourLocals.WPF
             GridSellersSearch.Visibility = Visibility.Visible;
             GridMarketplacesSearch.Visibility = Visibility.Collapsed;
             GridMarketplaceInformation.Visibility = Visibility.Collapsed;
+            GridMarketplacesAdd.Visibility = Visibility.Collapsed;
             SearchMarketplacesButton.FontWeight = FontWeights.Normal;
             SearchSellersButton.FontWeight = FontWeights.Bold;
             SearchMarketplacesButton.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#808080"));
@@ -704,9 +706,22 @@ namespace SupportYourLocals.WPF
         private void ButtonFindMarketplaces_Click(object sender, RoutedEventArgs e)
         {
             ClearFindMarketplaceFields();
+            LoadMarketplacesInformationGrid();
             GridMarketplaceInformation.Visibility = Visibility.Visible;
 
         }
+
+        private void LoadMarketplacesInformationGrid()
+        {
+            foreach (var marketplace in marketplaceData.GetAllData())
+            {
+                if(SYLMap.LocationToAddressSplit(marketplace.Location).Item2 == TextBoxNewMarketplaceLocation.Text)
+                {
+                    ComboBoxMarketplacesInInformation.Items.Add(marketplace.Name);
+                }
+            }
+        }
+
         private void ClearFindMarketplaceFields()
         {
             ComboBoxMarketplaceDistrict.Items.Clear();
@@ -928,7 +943,7 @@ namespace SupportYourLocals.WPF
 
         private void ButtonAddNewMarketPlace_Click(object sender, RoutedEventArgs e)
         {
-
+            GridMarketplacesAdd.Visibility = Visibility.Collapsed;
         }
     }
 
