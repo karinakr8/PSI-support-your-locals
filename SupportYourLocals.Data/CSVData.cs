@@ -4,12 +4,13 @@ using System.Text;
 using Microsoft.VisualBasic.FileIO;
 using SupportYourLocals.ExtensionMethods;
 using System.Linq;
+using System.Configuration;
 
 namespace SupportYourLocals.Data
 {
     public class CSVData : IUserStorage
     {
-        private const string filePath = @"./UserData.csv";
+        private readonly string filePath = ConfigurationManager.AppSettings.Get("CSVDataFilePath");
         private readonly Dictionary<string, UserData> dictionaryUserData;
 
         public CSVData ()

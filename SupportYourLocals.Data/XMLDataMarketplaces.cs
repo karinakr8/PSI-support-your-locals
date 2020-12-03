@@ -5,12 +5,13 @@ using System.Linq;
 using System.Xml.Linq;
 using System.IO;
 using MapControl;
+using System.Configuration;
 
 namespace SupportYourLocals.Data
 {
     public class XMLDataMarketplaces : IMarketStorage
     {
-        private const string filePath = @"./MarketPlacesData.xml";
+        private readonly string filePath = ConfigurationManager.AppSettings.Get("XMLDataMarketplacesFilePath");
         private readonly Dictionary<string, MarketplaceData> dictionaryMarketplaceDataById;
 
         public XMLDataMarketplaces()

@@ -1,6 +1,7 @@
 ﻿using MapControl;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -12,7 +13,7 @@ namespace SupportYourLocals.Data
 {
     public class XMLDataLocalSellers : ISellerStorage
     {
-        private const string filePath = @"./LocalSellersData.xml";
+        private readonly string filePath = ConfigurationManager.AppSettings.Get("XMLDataLocalSellersFilePath");
         private readonly Dictionary<string, SellerData> dictionaryLocationDataById;
         // TODO: Add a lock object once we start working on files asynchronously
 
