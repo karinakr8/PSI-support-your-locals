@@ -13,7 +13,7 @@ namespace SupportYourLocals.Data
     public class XMLDataLocalSellers : ISellerStorage
     {
         private const string filePath = @"./LocalSellersData.xml";
-        readonly Dictionary<string, SellerData> dictionaryLocationDataById;
+        private readonly Dictionary<string, SellerData> dictionaryLocationDataById;
         // TODO: Add a lock object once we start working on files asynchronously
 
         public XMLDataLocalSellers()
@@ -21,7 +21,7 @@ namespace SupportYourLocals.Data
             dictionaryLocationDataById = LoadData();
         }
 
-        Dictionary<string, SellerData> LoadData()
+        private Dictionary<string, SellerData> LoadData()
         {
             if (!File.Exists(filePath))
             {

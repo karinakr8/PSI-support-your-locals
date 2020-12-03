@@ -11,16 +11,11 @@ namespace SupportYourLocals.Data
     public class XMLDataMarketplaces : IMarketStorage
     {
         private const string filePath = @"./MarketPlacesData.xml";
-        readonly Dictionary<string, MarketplaceData> dictionaryMarketplaceDataById;
+        private readonly Dictionary<string, MarketplaceData> dictionaryMarketplaceDataById;
 
         public XMLDataMarketplaces()
         {
             dictionaryMarketplaceDataById = LoadData();
-        }
-
-        public XMLDataMarketplaces(Dictionary<string, MarketplaceData> dictionaryMarketplaceDataById)
-        {
-            this.dictionaryMarketplaceDataById = dictionaryMarketplaceDataById;
         }
 
         MarketplaceData IDataStorage<MarketplaceData>.GetData(string id) => dictionaryMarketplaceDataById[id];
@@ -82,7 +77,7 @@ namespace SupportYourLocals.Data
             root.Add(boundaryBranch);
         }
 
-        public Dictionary<string, MarketplaceData> LoadData()
+        private Dictionary<string, MarketplaceData> LoadData()
         {
             if (!File.Exists(filePath))
             {
@@ -119,6 +114,7 @@ namespace SupportYourLocals.Data
             }
             return locationList;
         }
+
         private Week LoadTimeTable(XElement element)
         {
             var timetableList = from timetables in element.Elements("TimeTable") select timetables;
@@ -144,6 +140,5 @@ namespace SupportYourLocals.Data
             }
             return week;
         }
-
     }
 }
