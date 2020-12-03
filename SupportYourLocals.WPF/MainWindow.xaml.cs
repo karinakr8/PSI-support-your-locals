@@ -69,6 +69,8 @@ namespace SupportYourLocals.WPF
             ComboBoxMarketplaceDistrict.Items.Add("Item2");
             ComboBoxMarketplaceDistrict.Items.Add("Item3");
             ComboBoxMarketplaceLocation.Items.Add(new String[] { "Item1", "Item2", "Item3" });
+
+            AddValueToNewMarketPlaceGrid();
         }
 
         private void LoadAddLocalSellerFieldsAndCollections()
@@ -114,6 +116,17 @@ namespace SupportYourLocals.WPF
 
                 StackPanelWithScrollViewerAddSellers.Children.Add(dictionaryOfScrollViewsAddProduct[(ProductType)productType]);
 
+            }
+        }
+
+        private void AddValueToNewMarketPlaceGrid()
+        {
+            var weekDays = Enum.GetValues(typeof(WeekDays));
+
+            foreach (Enum weekDay in weekDays)
+            {
+                // Adding elements to combobox
+                ComboBoxWorkDay.Items.Add(weekDay);
             }
         }
 
@@ -911,6 +924,11 @@ namespace SupportYourLocals.WPF
         {
             TextBoxSliderValue.Text = Slider1Seller.Value.ToString("F2");
             SYLMap?.DrawRadiusOnTempMarker(e.NewValue * 1000.0);
+        }
+
+        private void ButtonAddNewMarketPlace_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 
