@@ -25,8 +25,8 @@ namespace SupportYourLocals.WPF
         private readonly Map.Map SYLMap;
         private MarketBoundaryDrawingTool boundaryDrawer;
 
-        private readonly ISellerStorage sellerData = new XMLData();
-        private readonly IMarketStorage marketplaceData = new XMLData();
+        private readonly ISellerStorage sellerData = new XMLDataLocalSellers();
+        private readonly IMarketStorage marketplaceData = new XMLDataMarketplaces();
 
         private readonly IUserStorage userLoginData = new CSVData();
 
@@ -434,8 +434,10 @@ namespace SupportYourLocals.WPF
                     {
                         if (elementOfList != null)
                         {
-                            listString.Add(elementOfList.Text.Trim());
-                        }
+                            if(elementOfList.Text.Trim() != "")
+                            {
+                                listString.Add(elementOfList.Text.Trim());
+                            }                        }
                     }
                     dictionaryListString.Add(elementTextBox.Key, listString);
                 }
