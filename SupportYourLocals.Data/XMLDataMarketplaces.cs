@@ -49,7 +49,7 @@ namespace SupportYourLocals.Data
         private void AddBoundaryToXml(MarketplaceData data, XElement root)
         {
             XElement boundaryBranch = new XElement("Boundary");
-            foreach (var location in data.Boundary)
+            foreach (var location in data.MarketBoundary)
             {
                 XElement locationBranch = new XElement("Location");
                 locationBranch.Add(content: location);
@@ -94,7 +94,7 @@ namespace SupportYourLocals.Data
                 var location = Location.Parse(element.Attribute("Location").Value);
                 var name = element.Attribute("Name").Value;
 
-                marketplaceDictionary.Add(id, new MarketplaceData(location, name, LoadTimeTable(element), LoadBoundary(element), id));
+                marketplaceDictionary.Add(id, new MarketplaceData(location, name, LoadTimeTable(element), (Boundary)LoadBoundary(element), id));
             }
             return marketplaceDictionary;
         }
