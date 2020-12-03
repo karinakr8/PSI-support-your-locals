@@ -56,7 +56,7 @@ namespace SupportYourLocals.WPF
             TileImageLoader.Cache = cache;
 
             // Setup map
-            SYLMap = new Map.Map(MainMap, (PolylineDrawer) DataContext);
+            SYLMap = new Map.Map(MainMap, (PolygonDrawer) DataContext);
 
             // Connect to the marker clicked event
             SYLMap.MarkerClicked += new Map.Map.MarkerClickedHandler(OnMarkerClicked);
@@ -136,7 +136,7 @@ namespace SupportYourLocals.WPF
 
         private void UpdateMarketplaces_Click(object sender, RoutedEventArgs e)
         {
-            boundaryDrawer = new MarketBoundaryDrawingTool((PolylineDrawer)DataContext);
+            boundaryDrawer = new MarketBoundaryDrawingTool((PolygonDrawer)DataContext);
         }
 
         private void MapMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
