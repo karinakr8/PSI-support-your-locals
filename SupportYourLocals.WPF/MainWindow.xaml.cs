@@ -173,8 +173,9 @@ namespace SupportYourLocals.WPF
                     }
                     else if(GridMarketplacesSearch.Visibility == Visibility.Visible && GridMarketplaceInformation.Visibility != Visibility.Visible)
                     {
-                        ComboBoxMarketplaceDistrict.Text = address.Item1;
-                        ComboBoxMarketplaceLocation.Text = address.Item2;
+
+                        TextBoxMarketplaceDistrict.Text = address.Item1;
+                        TextBoxMarketplaceLocation.Text = address.Item2;
                         //MarketplaceCityTextField.Text = address.Item2;
                     }
                 }
@@ -715,7 +716,7 @@ namespace SupportYourLocals.WPF
         {
             foreach (var marketplace in marketplaceData.GetAllData())
             {
-                if(SYLMap.LocationToAddressSplit(marketplace.Location).Item2 == TextBoxNewMarketplaceLocation.Text)
+                if(SYLMap.LocationToAddressSplit(marketplace.Location).Item2 == TextBoxMarketplaceLocation.Text)
                 {
                     ComboBoxMarketplacesInInformation.Items.Add(marketplace.Name);
                 }
@@ -944,6 +945,16 @@ namespace SupportYourLocals.WPF
         private void ButtonAddNewMarketPlace_Click(object sender, RoutedEventArgs e)
         {
             GridMarketplacesAdd.Visibility = Visibility.Collapsed;
+        }
+
+        private void ComboBoxMarketplaceInformatione_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            /*var marketplaceName = ComboBoxMarketplacesInInformation.Text;
+            var selectedMarketplace = from MarketplaceData where 
+            foreach (var seller in sellerData.GetAllData())
+            {
+                if(SYLMap.GetDistance(seller.Location, marketplaceData.GetAllData()))
+            }*/
         }
     }
 
