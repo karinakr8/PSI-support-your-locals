@@ -40,7 +40,7 @@ namespace SupportYourLocals.Data
                 root.Add(new XAttribute("Location", data.Location));
                 root.Add(new XAttribute("Name", data.Name));
                 AddBoundaryToXml(data, root);
-                AddTimeTableToXml(data, root);
+                //AddTimeTableToXml(data, root);
                 doc.Element("Marketplaces").Add(root);
             }
             doc.Save(filePath);
@@ -48,7 +48,12 @@ namespace SupportYourLocals.Data
 
         private void AddBoundaryToXml(MarketplaceData data, XElement root)
         {
+            if(data.Boundary == null)
+            {
+                return;
+            } 
             XElement boundaryBranch = new XElement("Boundary");
+               
             foreach (var location in data.Boundary)
             {
                 XElement locationBranch = new XElement("Location");
@@ -60,6 +65,10 @@ namespace SupportYourLocals.Data
 
         private void AddTimeTableToXml(MarketplaceData data, XElement root)
         {
+            if(data.Timetable == null)
+            {
+                return;
+            }
             XElement boundaryBranch = new XElement("TimeTable");
             foreach (var weekDay in data.Timetable)
             {
@@ -68,8 +77,8 @@ namespace SupportYourLocals.Data
                 foreach (var day in weekDay.Value)
                 {
                     XElement dayBranch = new XElement("WorkingHours");
-                    dayBranch.Add(new XAttribute("StartTime", $"{day.StartTime.Hours}:{day.StartTime.Hours}"));
-                    dayBranch.Add(new XAttribute("EndTime", $"{day.EndTime.Hours}:{day.EndTime.Hours}"));
+                    dayBranch.Add(new XAttribute("StartTime", $"{day.StartTime.Hours}:{day.StartTime.Minutes}"));
+                    dayBranch.Add(new XAttribute("EndTime", $"{day.EndTime.Hours}:{day.EndTime.Minutes}"));
                     weekDayBranch.Add(dayBranch);
                 }
                 boundaryBranch.Add(weekDayBranch);
