@@ -49,7 +49,7 @@ namespace SupportYourLocals.Data
 
         private void AddBoundaryToXml(MarketplaceData data, XElement root)
         {
-            if(data.Boundary == null)
+            if(data.MarketBoundary == null)
             {
                 return;
             } 
