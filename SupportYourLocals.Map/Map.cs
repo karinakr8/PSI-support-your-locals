@@ -6,6 +6,8 @@ using System.Windows.Media.Animation;
 using Nominatim.API.Geocoders;
 using Nominatim.API.Models;
 using System;
+using System.Collections.Generic;
+using SupportYourLocals.Data;
 
 namespace SupportYourLocals.Map
 {
@@ -14,6 +16,7 @@ namespace SupportYourLocals.Map
         private readonly MapControl.Map WPFMap;
         private readonly Marker tempMarker;
         private readonly RadiusCircle searchRadius;
+        private readonly PolygonDrawer polygonDrawer;
 
         public Location Center
         {
@@ -27,10 +30,11 @@ namespace SupportYourLocals.Map
             get { return WPFMap.TargetZoomLevel; }
         }
 
-        public Map (MapControl.Map passedMap, Location center = null, double zoom = 14)
+        public Map (MapControl.Map passedMap, PolygonDrawer passedDrawer, Location center = null, double zoom = 14)
         {
             // Can't create a new map, so use the existing one
             WPFMap = passedMap;
+            polygonDrawer = passedDrawer;
 
             WPFMap.ZoomLevel = zoom;
             WPFMap.MaxZoomLevel = 19; // Any closer and the map starts getting blurry
@@ -201,6 +205,16 @@ namespace SupportYourLocals.Map
             return GetDistance(location1.Longitude, location1.Latitude, location2.Longitude, location2.Latitude);
         }
 
+        public void DrawBoundary(Boundary boundary)
+        {
+            polygonDrawer.DrawPolygon(new LocationCollection(boundary));
+        }
+
+        public void ClearBoundary()
+        {
+            polygonDrawer.ClearPolygon();
+        }
+
         public void DrawRadiusOnTempMarker(double radius)
         {
             if (WPFMap.Children.OfType<Marker2>().Count() == 0)
@@ -227,12 +241,18 @@ namespace SupportYourLocals.Map
         private void OnMarkerClick (object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton != MouseButton.Left)
+            {
                 return;
+            }
 
             if (sender == tempMarker)
-                OnTempMarkerClicked((Marker) sender);
+            {
+                OnTempMarkerClicked((Marker)sender);
+            }
             else
-                OnMarkerClicked((Marker)sender); 
+            {
+                OnMarkerClicked((Marker)sender);
+            }
         }
     }
 }

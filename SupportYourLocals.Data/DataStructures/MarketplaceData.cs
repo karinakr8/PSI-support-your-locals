@@ -87,13 +87,16 @@ namespace SupportYourLocals.Data
 
     public class MarketplaceData : LocationData
     {
-        public List<Location> Boundary { get; set; }
+        public Boundary MarketBoundary { get; set; }
         public Week Timetable { get; set; }
 
-        public MarketplaceData(Location location, string name, Week timetable, List<Location> boundary = null, string id = null) : base(location, name, id)
+        public MarketplaceData(Location location, string name, Week timetable, Boundary boundary = null, string id = null) : base(location, name, id)
         {
             Timetable = timetable;
-            Boundary = boundary;
+            if (boundary != null && boundary.IsValid())
+            {
+                MarketBoundary = boundary;
+            }
         }
     }
 }

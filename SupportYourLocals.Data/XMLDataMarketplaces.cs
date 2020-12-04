@@ -5,12 +5,13 @@ using System.Linq;
 using System.Xml.Linq;
 using System.IO;
 using MapControl;
+using System.Configuration;
 
 namespace SupportYourLocals.Data
 {
     public class XMLDataMarketplaces : IMarketStorage
     {
-        private const string filePath = @"./MarketPlacesData.xml";
+        private readonly string filePath = ConfigurationManager.AppSettings.Get("XMLDataMarketplacesFilePath");
         private readonly Dictionary<string, MarketplaceData> dictionaryMarketplaceDataById;
 
         public XMLDataMarketplaces()
@@ -53,8 +54,7 @@ namespace SupportYourLocals.Data
                 return;
             } 
             XElement boundaryBranch = new XElement("Boundary");
-               
-            foreach (var location in data.Boundary)
+            foreach (var location in data.MarketBoundary)
             {
                 XElement locationBranch = new XElement("Location");
                 locationBranch.Add(content: location);
@@ -103,7 +103,7 @@ namespace SupportYourLocals.Data
                 var location = Location.Parse(element.Attribute("Location").Value);
                 var name = element.Attribute("Name").Value;
 
-                marketplaceDictionary.Add(id, new MarketplaceData(location, name, LoadTimeTable(element), LoadBoundary(element), id));
+                marketplaceDictionary.Add(id, new MarketplaceData(location, name, LoadTimeTable(element), (Boundary)LoadBoundary(element), id));
             }
             return marketplaceDictionary;
         }
