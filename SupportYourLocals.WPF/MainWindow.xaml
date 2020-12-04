@@ -11,13 +11,13 @@
         Title="MainWindow" Height="530" Width="800" MinHeight="530" MinWidth="700">
 
     <Window.Resources>
-        <DataTemplate x:Key="PolylineItemTemplate">
-            <map:MapPolyline Locations="{Binding Locations}" Stroke="Red" StrokeThickness="3" MouseLeftButtonDown="MapMouseLeftButtonDown" MouseRightButtonDown="MapMouseRightButtonDown"/>
+        <DataTemplate x:Key="PolygonItemTemplate">
+            <map:MapPolygon Locations="{Binding Locations}" Fill ="#30FF0000" Stroke="Red" StrokeThickness="3" MouseLeftButtonDown="MapMouseLeftButtonDown" MouseRightButtonDown="MapMouseRightButtonDown"/>
         </DataTemplate>
     </Window.Resources>
 
     <Window.DataContext>
-        <vm:PolylineDrawer/>
+        <vm:PolygonDrawer/>
     </Window.DataContext>
 
     <TabControl>
@@ -235,7 +235,7 @@
                 <!-- Place for a map-->
                 <Grid Grid.Column="2" Grid.Row="2">
                     <map:Map x:Name="MainMap" MouseLeftButtonDown="MapMouseLeftButtonDown" MouseRightButtonDown="MapMouseRightButtonDown" MouseMove="MapMouseMove" Margin="3,0,-3,0">
-                        <map:MapItemsControl ItemsSource="{Binding Polylines}" ItemTemplate="{StaticResource PolylineItemTemplate}"/>
+                        <map:MapItemsControl ItemsSource="{Binding Polygons}" ItemTemplate="{StaticResource PolygonItemTemplate}"/>
                     </map:Map>
                 </Grid>
 

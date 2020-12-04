@@ -5,23 +5,23 @@ namespace SupportYourLocals.Map
 {
     public class MarketBoundaryDrawingTool
     {
-        private readonly PolylineDrawer polylineDrawer;
+        private readonly PolygonDrawer polygonDrawer;
 
-        public MarketBoundaryDrawingTool (PolylineDrawer passedDrawer)
+        public MarketBoundaryDrawingTool (PolygonDrawer passedDrawer)
         {
-            polylineDrawer = passedDrawer;
-            polylineDrawer.ClearPolyline();
-            polylineDrawer.DrawPolyline(new LocationCollection());
+            polygonDrawer = passedDrawer;
+            polygonDrawer.ClearPolygon();
+            polygonDrawer.DrawPolygon(new LocationCollection());
         }
 
         public void UpdateLastPoint(Location location)
         {
-            polylineDrawer.UpdateLastPolylineLocation(location);
+            polygonDrawer.UpdateLastPolygonLocation(location);
         }
 
         public void AddPoint(Location location)
         {
-            polylineDrawer.AddLocationToPolyline(location);
+            polygonDrawer.AddLocationToPolygon(location);
             var boundary = GetBoundary();
             if (boundary != null && !boundary.IsValid())
             {
@@ -31,16 +31,16 @@ namespace SupportYourLocals.Map
 
         public void UndoPoint()
         {
-            polylineDrawer.RemoveLastLocationFromPolyline();
+            polygonDrawer.RemoveLastLocationFromPolygon();
         }
 
         public Boundary GetBoundary()
         {
-            var polyline = polylineDrawer.GetPolyline();
+            var Polygon = polygonDrawer.GetPolygon();
 
-            if (polyline != null)
+            if (Polygon != null)
             {
-                return new Boundary(polylineDrawer.GetPolyline());
+                return new Boundary(polygonDrawer.GetPolygon());
             }
 
             return null;
@@ -48,7 +48,7 @@ namespace SupportYourLocals.Map
 
         public void FinishDrawing()
         {
-            polylineDrawer.ClearPolyline();
+            polygonDrawer.ClearPolygon();
         }
     }
 }

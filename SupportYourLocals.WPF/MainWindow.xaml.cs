@@ -12,6 +12,7 @@ using SupportYourLocals.Map;
 using SupportYourLocals.Data;
 using SupportYourLocals.ExtensionMethods;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace SupportYourLocals.WPF
 {
@@ -21,6 +22,9 @@ namespace SupportYourLocals.WPF
     public partial class MainWindow : Window
     {
         private int AddProductLineNumber = 2;
+
+        private static bool isMapLocked = false;
+        private static object mapLock = new object();
 
         private readonly Map.Map SYLMap;
         private MarketBoundaryDrawingTool boundaryDrawer;
@@ -52,7 +56,7 @@ namespace SupportYourLocals.WPF
             TileImageLoader.Cache = cache;
 
             // Setup map
-            SYLMap = new Map.Map(MainMap, (PolylineDrawer) DataContext);
+            SYLMap = new Map.Map(MainMap, (PolygonDrawer) DataContext);
 
             // Connect to the marker clicked event
             SYLMap.MarkerClicked += new Map.Map.MarkerClickedHandler(OnMarkerClicked);
@@ -132,7 +136,7 @@ namespace SupportYourLocals.WPF
 
         private void UpdateMarketplaces_Click(object sender, RoutedEventArgs e)
         {
-            boundaryDrawer = new MarketBoundaryDrawingTool((PolylineDrawer)DataContext);
+            boundaryDrawer = new MarketBoundaryDrawingTool((PolygonDrawer)DataContext);
         }
 
         private void MapMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -445,57 +449,110 @@ namespace SupportYourLocals.WPF
             return dictionaryListString;
         }
 
+
         private void FindLocation_Click(object sender, RoutedEventArgs e)
         {
-            var location = GetUserLocation(TextBox1Seller.Text.Trim());
+            var center = GetUserLocation(TextBox1Seller.Text.Trim());
 
-            if (location == null)
+            if (center == null)
             {
-                return; // Show some kinda error message
+                DisplayInformationMessage("No location selected");
+                return;
             }
 
             var searchItems = GetSearchProducts();
-            bool searchPhraseGiven = searchItems != null;
+            var radius = Slider1Seller.Value * 1000;
 
-            SYLMap.RemoveAllMarkers();
+            Thread thread = new Thread(AddMarkersWithinRange);
+            thread.Start(new MarkerQueryParameters(center, radius, searchItems));
+        }
 
-            SYLMap.AddMarkerTemp(location);
-            SYLMap.Center = location;
-            SYLMap.DrawRadiusOnTempMarker(Slider1Seller.Value * 1000.0);
 
-            double radius = Slider1Seller.Value;
-            var locations = sellerData.GetAllData();
-            foreach (var loc in locations)
+        private void AddMarkersWithinRange(object data)
+        {
+            if (!(data is MarkerQueryParameters))
             {
-                if (SYLMap.GetDistance(location, loc.Location) < radius * 1000)
+                throw new Exception("Invalid parameters passed");
+            }
+
+            if (isMapLocked)
+            {
+                return;
+            }
+
+            lock (mapLock)
+            {
+                if (isMapLocked)
+                {
+                    return;
+                }
+
+                isMapLocked = true;
+
+                Location center = ((MarkerQueryParameters)data).Center;
+                double radius = ((MarkerQueryParameters)data).Radius;
+                List<string> searchItems = ((MarkerQueryParameters)data).SearchItems;
+
+                // UI operations need to be within the Invoke call, so they would execute on the UI thread
+                Dispatcher.Invoke(() =>
+                {
+                    SYLMap.RemoveAllMarkers();
+
+                    SYLMap.AddMarkerTemp(center);
+                    SYLMap.Center = center;
+                    SYLMap.DrawRadiusOnTempMarker(radius);
+                });
+
+                var markers = FindMarkersWithinRange(center, radius, searchItems);
+
+                Dispatcher.Invoke(() =>
+                {
+                    markers.ForEach(m => SYLMap.AddMarker(m.Location, m.ID));
+                });
+
+                if (searchItems != null)
+                {
+                    DisplayInformationMessage("Local sellers in the radius were loaded by your search phrase");
+                    return;
+                }
+
+                DisplayInformationMessage("All local sellers in radius were loaded");
+
+                isMapLocked = false;
+            }
+        }
+
+
+        private List<MarkerData> FindMarkersWithinRange(Location center, double radius, List<string> searchItems = null)
+        {
+            var markers = new List<MarkerData>();
+            var allData = sellerData.GetAllData();
+
+            foreach (var data in allData)
+            {
+                if (SYLMap.GetDistance(center, data.Location) < radius)
                 {
                     // If no search phrase has been given, just show all markers within range
-                    if (!searchPhraseGiven)
+                    if (searchItems == null)
                     {
-                        SYLMap.AddMarker(id: loc.ID, position: loc.Location);
+                        markers.Add(new MarkerData(data.Location, data.ID));
                         continue;
                     }
 
                     // Go over all product lists and see if there are any matching products
-                    foreach (var productList in loc.Products.Values)
+                    foreach (var productList in data.Products.Values)
                     {
                         var intersection = productList.Intersect(searchItems);
                         if (intersection.Count() > 0)
                         {
-                            SYLMap.AddMarker(loc.Location, loc.ID);
+                            markers.Add(new MarkerData(data.Location, data.ID));
                             break;
                         }
                     }
                 }
             }
-            if (searchPhraseGiven)
-            {
-                DisplayInformationMessage("Local sellers in the radius were loaded by your search phrase");
-            }
-            else
-            {
-                DisplayInformationMessage("All local sellers in radius were loaded");
-            }
+
+            return markers;
         }
 
         private Location GetUserLocation(string searchPhrase)
@@ -910,6 +967,32 @@ namespace SupportYourLocals.WPF
         public string ProductType { get; set; }
         public int ProductCount { get; set; }
         public string Product { get; set; }
+    }
+
+    public class MarkerData
+    {
+        public Location Location { get; set; }
+        public string ID { get; set; }
+
+        public MarkerData (Location location, string id)
+        {
+            Location = location;
+            ID = id;
+        }
+    }
+
+    public class MarkerQueryParameters
+    {
+        public Location Center { get; set; }
+        public double Radius { get; set; }
+        public List<string> SearchItems { get; set; }
+
+        public MarkerQueryParameters (Location center, double radius, List<string> searchItems = null)
+        {
+            Center = center;
+            Radius = radius;
+            SearchItems = searchItems;
+        }
     }
 }
 
