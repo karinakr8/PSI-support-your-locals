@@ -95,7 +95,7 @@ namespace SupportYourLocals.Data
                 var location = Location.Parse(element.Attribute("Location").Value);
                 var name = element.Attribute("Name").Value;
 
-                marketplaceDictionary.Add(id, new MarketplaceData(location, name, LoadTimeTable(element), (Boundary)LoadBoundary(element), id));
+                marketplaceDictionary.Add(id, new MarketplaceData(location, name, LoadTimeTable(element), new Boundary(LoadBoundary(element)), id));
             }
             return marketplaceDictionary;
         }

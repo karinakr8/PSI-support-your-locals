@@ -7,6 +7,7 @@ namespace SupportYourLocals.Data
     public class Boundary : List<Location>
     {
         public Boundary(LocationCollection locations) : base(locations) { }
+        public Boundary(List<Location> locations) : base(locations) { }
 
         public static bool IsCounterClockwise(Location A, Location B, Location C)
         {
