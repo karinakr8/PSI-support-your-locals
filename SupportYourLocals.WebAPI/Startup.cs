@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using SupportYourLocals.Data;
 
 namespace SupportYourLocals.WebAPI
 {
@@ -19,8 +20,13 @@ namespace SupportYourLocals.WebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Create data storage singletons
+            services.AddSingleton<IDataStorage<SellerData>, XMLDataLocalSellers>();
+            services.AddSingleton<IDataStorage<MarketplaceData>, XMLDataMarketplaces>();
+            services.AddSingleton<IDataStorage<UserData>, CSVData>();
 
             services.AddControllers();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "SupportYourLocals.WebAPI", Version = "v1" });
