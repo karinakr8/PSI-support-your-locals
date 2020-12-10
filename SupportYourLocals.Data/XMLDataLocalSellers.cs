@@ -15,7 +15,6 @@ namespace SupportYourLocals.Data
     {
         private readonly string filePath = ConfigurationManager.AppSettings.Get("XMLDataLocalSellersFilePath");
         private readonly Dictionary<string, SellerData> dictionaryLocationDataById;
-        // TODO: Add a lock object once we start working on files asynchronously
 
         public XMLDataLocalSellers()
         {

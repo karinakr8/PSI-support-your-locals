@@ -8,7 +8,10 @@ namespace SupportYourLocals.WebAPI.Controllers
     [ApiController]
     public abstract class GenericDataController<T> : ControllerBase where T : GenericData
     {
-        private IDataStorage<T> _storage;
+        private readonly IDataStorage<T> _storage;
+
+        // Temporary solution, until we'll have the Entity Framework setup
+        private static readonly object dataLock = new object(); 
 
         public GenericDataController(IDataStorage<T> storage)
         {
@@ -18,34 +21,49 @@ namespace SupportYourLocals.WebAPI.Controllers
         [HttpGet]
         public IEnumerable<T> Get()
         {
-            return _storage.GetAllData();
+            lock (dataLock)
+            {
+                return _storage.GetAllData();
+            }
         }
 
         [HttpGet("{id}")]
         public T Get(string id)
         {
-            return _storage.GetData(id);
+            lock (dataLock)
+            {
+                return _storage.GetData(id);
+            }
         }
 
         [HttpPost]
         public void Post([FromBody] T value)
         {
-            _storage.AddData(value);
-            _storage.SaveData();
+            lock (dataLock)
+            {
+                _storage.AddData(value);
+                _storage.SaveData();
+            }
         }
 
         [HttpPut("{id}")]
         public void Put([FromBody] T value)
         {
-            _storage.UpdateData(value);
-            _storage.SaveData();
+            lock (dataLock)
+            {
+                _storage.UpdateData(value);
+                _storage.SaveData();
+            }
         }
 
         [HttpDelete("{id}")]
         public void Delete(string id)
         {
-            _storage.RemoveData(id);
-            _storage.SaveData();
+            lock (dataLock)
+            {
+                _storage.RemoveData(id);
+                _storage.SaveData();
+            }
         }
     }
 }
