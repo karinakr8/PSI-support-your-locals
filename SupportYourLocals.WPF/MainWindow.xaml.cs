@@ -29,10 +29,9 @@ namespace SupportYourLocals.WPF
         private readonly Map.Map SYLMap;
         private MarketBoundaryDrawingTool boundaryDrawer;
 
-        private readonly ISellerStorage sellerData = new XMLDataLocalSellers();
-        private readonly IMarketStorage marketplaceData = new XMLDataMarketplaces();
-
-        private readonly IUserStorage userLoginData = new CSVData();
+        private readonly ISellerStorage sellerData = new WebData();
+        private readonly IMarketStorage marketplaceData = new WebData();
+        private readonly IUserStorage userLoginData = new WebData();
 
         // List for StackPanel elements in Main StackPanel
         List<List<StackPanel>> listOfStackPanelListsAddProduct = new List<List<StackPanel>>();

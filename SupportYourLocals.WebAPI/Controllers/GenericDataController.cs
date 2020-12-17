@@ -19,7 +19,7 @@ namespace SupportYourLocals.WebAPI.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<T> Get()
+        public List<T> Get()
         {
             lock (dataLock)
             {
@@ -36,6 +36,15 @@ namespace SupportYourLocals.WebAPI.Controllers
             }
         }
 
+        [HttpGet("id:int")]
+        public int Get(int id)
+        {
+            lock (dataLock)
+            {
+                return _storage.GetDataCount();
+            }
+        }
+
         [HttpPost]
         public void Post([FromBody] T value)
         {
@@ -46,7 +55,7 @@ namespace SupportYourLocals.WebAPI.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
         public void Put([FromBody] T value)
         {
             lock (dataLock)
