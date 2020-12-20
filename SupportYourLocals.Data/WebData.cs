@@ -11,18 +11,15 @@ namespace SupportYourLocals.Data
 {
     public class WebData : IUserStorage, ISellerStorage, IMarketStorage
     {
-        private static readonly string apiAddress = "https://localhost:44311/api/";
+        private static readonly string apiAddress = "https://localhost:44311/api/"; // TODO: Move this to config
         private static JsonSerializerOptions serializerOptions;
-        private static HttpClient client;
+        private static HttpClient client; // TODO: Inject this instead of creating.
 
         public WebData()
         {
             if (client == null)
             {
-                client = new HttpClient()
-                {
-                    Timeout = TimeSpan.FromSeconds(5)
-                };
+                client = new HttpClient();
             }
 
             if (serializerOptions == null)
@@ -34,12 +31,13 @@ namespace SupportYourLocals.Data
             }    
         }
 
-        public void SaveData()
+        public Task SaveData()
         {
             // Data is sent and retrieved immediately, no use for this function
+            return Task.CompletedTask;
         }
 
-        async Task<T> GetDataAsync<T>(string path, string id) where T : GenericData
+        static async Task<T> GetDataAsync<T>(string path, string id) where T : GenericData
         {
             T data = null;
             string fullPath = "{0}{1}/{2}".Format(apiAddress, path, id);
@@ -54,7 +52,7 @@ namespace SupportYourLocals.Data
             return data;
         }
 
-        async Task<List<T>> GetAllDataAsync<T>(string path) where T : GenericData
+        static async Task<List<T>> GetAllDataAsync<T>(string path) where T : GenericData
         {
             List<T> data = null;
             string fullPath = "{0}{1}".Format(apiAddress, path);
@@ -69,7 +67,7 @@ namespace SupportYourLocals.Data
             return data;
         }
 
-        async Task<int> GetDataCountAsync(string path)
+        static async Task<int> GetDataCountAsync(string path)
         {
             int data = 0;
             string fullPath = "{0}{1}/{2}".Format(apiAddress, path, 0);
@@ -84,7 +82,7 @@ namespace SupportYourLocals.Data
             return data;
         }
 
-        async Task<Uri> SetDataAsync<T>(string path, T data) where T : GenericData
+        static async Task<Uri> SetDataAsync<T>(string path, T data) where T : GenericData
         {
             var json = JsonSerializer.Serialize(data);
             var dataHttp = new StringContent(json, Encoding.UTF8, "application/json");
@@ -96,7 +94,7 @@ namespace SupportYourLocals.Data
             return response.Headers.Location;
         }
 
-        async Task<Uri> UpdateDataAsync<T>(string path, T data) where T : GenericData
+        static async Task<Uri> UpdateDataAsync<T>(string path, T data) where T : GenericData
         {
             var json = JsonSerializer.Serialize(data);
             var dataHttp = new StringContent(json, Encoding.UTF8, "application/json");
@@ -108,49 +106,49 @@ namespace SupportYourLocals.Data
             return response.Headers.Location;
         }
 
-        async Task<HttpStatusCode> RemoveDataAsync(string path, string id)
+        static async Task<HttpStatusCode> RemoveDataAsync(string path, string id)
         {
             HttpResponseMessage response = await client.DeleteAsync($"{apiAddress}{path}/{id}").ConfigureAwait(false);
             return response.StatusCode;
         }
 
 
-        UserData IDataStorage<UserData>.GetData(string id) => GetDataAsync<UserData>("UserData", id).Result;
+        async Task<UserData> IDataStorage<UserData>.GetData(string id) => await GetDataAsync<UserData>("UserData", id);
 
-        List<UserData> IDataStorage<UserData>.GetAllData() => GetAllDataAsync<UserData>("UserData").Result;
+        async Task<List<UserData>> IDataStorage<UserData>.GetAllData() => await GetAllDataAsync<UserData>("UserData");
 
-        int IDataStorage<UserData>.GetDataCount() => GetDataCountAsync("UserData").Result;
+        async Task<int> IDataStorage<UserData>.GetDataCount() => await GetDataCountAsync("UserData");
 
-        void IDataStorage<UserData>.AddData(UserData data) => SetDataAsync("UserData", data);
+        async Task IDataStorage<UserData>.AddData(UserData data) => await SetDataAsync("UserData", data);
 
-        void IDataStorage<UserData>.UpdateData(UserData data) => UpdateDataAsync("UserData", data);
+        async Task IDataStorage<UserData>.UpdateData(UserData data) => await UpdateDataAsync("UserData", data);
 
-        void IDataStorage<UserData>.RemoveData(string id) => RemoveDataAsync("UserData", id);
-
-
-        SellerData IDataStorage<SellerData>.GetData(string id) => GetDataAsync<SellerData>("SellerData", id).Result;
-
-        List<SellerData> IDataStorage<SellerData>.GetAllData() => GetAllDataAsync<SellerData>("SellerData").Result;
-
-        int IDataStorage<SellerData>.GetDataCount() => GetDataCountAsync("SellerData").Result;
-
-        void IDataStorage<SellerData>.AddData(SellerData data) => SetDataAsync("SellerData", data);
-
-        void IDataStorage<SellerData>.UpdateData(SellerData data) => UpdateDataAsync("SellerData", data);
-
-        void IDataStorage<SellerData>.RemoveData(string id) => RemoveDataAsync("SellerData", id);
+        async Task IDataStorage<UserData>.RemoveData(string id) => await RemoveDataAsync("UserData", id);
 
 
-        MarketplaceData IDataStorage<MarketplaceData>.GetData(string id) => GetDataAsync<MarketplaceData>("MarketplaceData", id).Result;
+        async Task<SellerData> IDataStorage<SellerData>.GetData(string id) => await GetDataAsync<SellerData>("SellerData", id);
 
-        List<MarketplaceData> IDataStorage<MarketplaceData>.GetAllData() => GetAllDataAsync<MarketplaceData>("MarketplaceData").Result;
+        async Task<List<SellerData>> IDataStorage<SellerData>.GetAllData() => await GetAllDataAsync<SellerData>("SellerData");
 
-        int IDataStorage<MarketplaceData>.GetDataCount() => GetDataCountAsync("MarketplaceData").Result;
+        async Task<int> IDataStorage<SellerData>.GetDataCount() => await GetDataCountAsync("SellerData");
 
-        void IDataStorage<MarketplaceData>.AddData(MarketplaceData data) => SetDataAsync("MarketplaceData", data);
+        async Task IDataStorage<SellerData>.AddData(SellerData data) => await SetDataAsync("SellerData", data);
 
-        void IDataStorage<MarketplaceData>.UpdateData(MarketplaceData data) => UpdateDataAsync("MarketplaceData", data);
+        async Task IDataStorage<SellerData>.UpdateData(SellerData data) => await UpdateDataAsync("SellerData", data);
 
-        void IDataStorage<MarketplaceData>.RemoveData(string id) => RemoveDataAsync("MarketplaceData", id);
+        async Task IDataStorage<SellerData>.RemoveData(string id) => await RemoveDataAsync("SellerData", id);
+
+
+        async Task<MarketplaceData> IDataStorage<MarketplaceData>.GetData(string id) => await GetDataAsync<MarketplaceData>("MarketplaceData", id);
+
+        async Task<List<MarketplaceData>> IDataStorage<MarketplaceData>.GetAllData() => await GetAllDataAsync<MarketplaceData>("MarketplaceData");
+
+        async Task<int> IDataStorage<MarketplaceData>.GetDataCount() => await GetDataCountAsync("MarketplaceData");
+
+        async Task IDataStorage<MarketplaceData>.AddData(MarketplaceData data) => await SetDataAsync("MarketplaceData", data);
+
+        async Task IDataStorage<MarketplaceData>.UpdateData(MarketplaceData data) => await UpdateDataAsync("MarketplaceData", data);
+
+        async Task IDataStorage<MarketplaceData>.RemoveData(string id) => await RemoveDataAsync("MarketplaceData", id);
     }
 }

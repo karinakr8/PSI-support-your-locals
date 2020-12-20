@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -58,24 +59,7 @@ namespace SupportYourLocals.Data
             return localSellersDictionary;
         }
 
-        public void SaveData()
-        {
-            XDocument doc = new XDocument(new XElement("LocalSellers"));
-            foreach (var data in dictionaryLocationDataById.Values)
-            {
-                XElement root = new XElement("LocalSeller");
-                root.Add(new XAttribute("ID", data.ID));
-                root.Add(new XAttribute("Location", data.Location));
-                root.Add(new XAttribute("Name", data.Name));
-                root.Add(new XAttribute("AddedByID", data.AddedByID));
-                root.Add(new XAttribute("Time", data.Time));
-                AddProductTypesToXml(data, root);
-                doc.Element("LocalSellers").Add(root);
-            }
-            doc.Save(filePath);
-        }
-
-        private void AddProductTypesToXml(SellerData data, XElement root)
+        private static void AddProductTypesToXml(SellerData data, XElement root)
         {
             foreach (var productType in data.Products)
             {
@@ -102,16 +86,48 @@ namespace SupportYourLocals.Data
                 root.Add(productTypeBranch);
             }
         }
-        SellerData IDataStorage<SellerData>.GetData(string id) => dictionaryLocationDataById[id];
 
-        List<SellerData> IDataStorage<SellerData>.GetAllData() => dictionaryLocationDataById.Select(d => d.Value).ToList();
+        public Task SaveData()
+        {
+            XDocument doc = new XDocument(new XElement("LocalSellers"));
+            foreach (var data in dictionaryLocationDataById.Values)
+            {
+                XElement root = new XElement("LocalSeller");
+                root.Add(new XAttribute("ID", data.ID));
+                root.Add(new XAttribute("Location", data.Location));
+                root.Add(new XAttribute("Name", data.Name));
+                root.Add(new XAttribute("AddedByID", data.AddedByID));
+                root.Add(new XAttribute("Time", data.Time));
+                AddProductTypesToXml(data, root);
+                doc.Element("LocalSellers").Add(root);
+            }
+            doc.Save(filePath);
 
-        int IDataStorage<SellerData>.GetDataCount() => dictionaryLocationDataById.Count;
-        
-        void IDataStorage<SellerData>.AddData(SellerData data) => dictionaryLocationDataById.Add(data.ID, data);
+            return Task.CompletedTask;
+        }
 
-        void IDataStorage<SellerData>.UpdateData(SellerData data) => dictionaryLocationDataById[data.ID] = data;
+        public Task<SellerData> GetData(string id) => Task.FromResult(dictionaryLocationDataById[id]);
 
-        void IDataStorage<SellerData>.RemoveData(string id) => dictionaryLocationDataById.Remove(id);
+        public Task<List<SellerData>> GetAllData() => Task.FromResult(dictionaryLocationDataById.Values.ToList());
+
+        public Task<int> GetDataCount() => Task.FromResult(dictionaryLocationDataById.Count);
+
+        public Task AddData(SellerData data)
+        {
+            dictionaryLocationDataById.Add(data.ID, data);
+            return Task.CompletedTask;
+        }
+
+        public Task UpdateData(SellerData data)
+        {
+            dictionaryLocationDataById[data.ID] = data;
+            return Task.CompletedTask;
+        }
+
+        public Task RemoveData(string id)
+        {
+            dictionaryLocationDataById.Remove(id);
+            return Task.CompletedTask;
+        }
     }
 }

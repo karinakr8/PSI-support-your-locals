@@ -1,18 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SupportYourLocals.Data
 {
     public interface IDataStorage <T>
     {
-        public T GetData(string id);
-        public List<T> GetAllData();
-        public int GetDataCount();
-        public void AddData(T data);
-        public void AddData(List<T> dataList) => dataList.ForEach(p => AddData(p));
-        public void UpdateData(T data);
-        public void RemoveData(string id);
-        public void SaveData();
+        public Task<T> GetData(string id);
+        public Task<List<T>> GetAllData();
+        public Task<int> GetDataCount();
+        public Task AddData(T data);
+        public Task UpdateData(T data);
+        public Task RemoveData(string id);
+        public Task SaveData();
+
+        public async Task AddData(List<T> dataList)
+        {
+            var tasks = dataList.Select(item => AddData(item));
+            await Task.WhenAll(tasks);
+        }
     }
 
     public interface ISellerStorage : IDataStorage<SellerData> { }

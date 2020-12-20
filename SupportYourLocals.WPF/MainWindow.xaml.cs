@@ -23,7 +23,6 @@ namespace SupportYourLocals.WPF
     {
         private int AddProductLineNumber = 2;
 
-        private static bool isMapLocked = false;
         private static object mapLock = new object();
 
         private readonly Map.Map SYLMap;
@@ -462,70 +461,43 @@ namespace SupportYourLocals.WPF
             var searchItems = GetSearchProducts();
             var radius = Slider1Seller.Value * 1000;
 
-            Thread thread = new Thread(AddMarkersWithinRange);
-            thread.Start(new MarkerQueryParameters(center, radius, searchItems));
+            _ = AddMarkersWithinRange(center, radius, searchItems);
         }
 
 
-        private void AddMarkersWithinRange(object data)
+        private async Task AddMarkersWithinRange(Location center, double radius, List<string> searchItems = null)
         {
-            if (!(data is MarkerQueryParameters))
+            // UI operations need to be within the Invoke call, so they would execute on the UI thread
+            Dispatcher.Invoke(() =>
             {
-                throw new Exception("Invalid parameters passed");
-            }
+                SYLMap.RemoveAllMarkers();
 
-            if (isMapLocked)
+                SYLMap.AddMarkerTemp(center);
+                SYLMap.Center = center;
+                SYLMap.DrawRadiusOnTempMarker(radius);
+            });
+
+            var markers = await FindMarkersWithinRange(center, radius, searchItems);
+
+            Dispatcher.Invoke(() =>
             {
+                markers.ForEach(m => SYLMap.AddMarker(m.Location, m.ID));
+            });
+
+            if (searchItems != null)
+            {
+                DisplayInformationMessage("Local sellers in the radius were loaded by your search phrase");
                 return;
             }
 
-            lock (mapLock)
-            {
-                if (isMapLocked)
-                {
-                    return;
-                }
-
-                isMapLocked = true;
-
-                Location center = ((MarkerQueryParameters)data).Center;
-                double radius = ((MarkerQueryParameters)data).Radius;
-                List<string> searchItems = ((MarkerQueryParameters)data).SearchItems;
-
-                // UI operations need to be within the Invoke call, so they would execute on the UI thread
-                Dispatcher.Invoke(() =>
-                {
-                    SYLMap.RemoveAllMarkers();
-
-                    SYLMap.AddMarkerTemp(center);
-                    SYLMap.Center = center;
-                    SYLMap.DrawRadiusOnTempMarker(radius);
-                });
-
-                var markers = FindMarkersWithinRange(center, radius, searchItems);
-
-                Dispatcher.Invoke(() =>
-                {
-                    markers.ForEach(m => SYLMap.AddMarker(m.Location, m.ID));
-                });
-
-                if (searchItems != null)
-                {
-                    DisplayInformationMessage("Local sellers in the radius were loaded by your search phrase");
-                    return;
-                }
-
-                DisplayInformationMessage("All local sellers in radius were loaded");
-
-                isMapLocked = false;
-            }
+            DisplayInformationMessage("All local sellers in radius were loaded");
         }
 
 
-        private List<MarkerData> FindMarkersWithinRange(Location center, double radius, List<string> searchItems = null)
+        private async Task<List<MarkerData>> FindMarkersWithinRange(Location center, double radius, List<string> searchItems = null)
         {
             var markers = new List<MarkerData>();
-            var allData = sellerData.GetAllData();
+            var allData = await sellerData.GetAllData();
 
             foreach (var data in allData)
             {
@@ -605,17 +577,17 @@ namespace SupportYourLocals.WPF
             return searchItems;
         }
 
-        void OnMarkerClicked(Marker marker)
+        async void OnMarkerClicked(Marker marker)
         {
-            LoadMarkerInformationWindow(marker.id);
+            await LoadMarkerInformationWindow(marker.id);
         }
 
-        private void LoadMarkerInformationWindow(string id)
+        private async Task LoadMarkerInformationWindow(string id)
         {
             GridMarkerInformation.Visibility = Visibility.Visible;
             var items = new List<MarkerInformation>();
 
-            var locationData = sellerData.GetData(id);
+            var locationData = await sellerData.GetData(id);
             InformationLocalSellerName.Content = locationData.Name;
             InformationLocalSellerDate.Content = locationData.Time;
             foreach (var products in locationData.Products)
@@ -753,7 +725,7 @@ namespace SupportYourLocals.WPF
                     MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-        private void LoginButton_Clicked(object sender, RoutedEventArgs e)
+        private async void LoginButton_Clicked(object sender, RoutedEventArgs e)
         {
             LabelEmptyFieldsError.Visibility = Visibility.Collapsed;
             LabelUsernameError.Visibility = Visibility.Collapsed;
@@ -762,9 +734,11 @@ namespace SupportYourLocals.WPF
             var usernameExists = false;
             string pswHash = null;
             string offlineUserHash = null;
-            string username = UsernameTextBox.Text;            
+            string username = UsernameTextBox.Text;
 
-            foreach (var user in userLoginData.GetAllData())
+            var userData = await userLoginData.GetAllData();
+
+            foreach (var user in userData)
             {                
                 if (user.Username == username)
                 {
@@ -799,7 +773,7 @@ namespace SupportYourLocals.WPF
             GridUserDataToLogin.Visibility = Visibility.Collapsed;
         }
 
-        private void RegisterButton_Clicked(object sender, RoutedEventArgs e)
+        private async void RegisterButton_Clicked(object sender, RoutedEventArgs e)
         {
             var password = PasswordBoxR.Password;
             var username = UsernameTextBoxR.Text;
@@ -810,10 +784,10 @@ namespace SupportYourLocals.WPF
             LabelForConfirmPasswordError.Visibility = Visibility.Collapsed;
             LabelForEmptyFieldsError.Visibility = Visibility.Collapsed;
 
-            if (CheckRegisterData(password, username))
+            if (await CheckRegisterData(password, username))
             {
-                userLoginData.AddData(new UserData(username, password));
-                userLoginData.SaveData();
+                await userLoginData.AddData(new UserData(username, password));
+                await userLoginData.SaveData();
 
                 ShowUsernameLabel.Content = username;
 
@@ -831,11 +805,12 @@ namespace SupportYourLocals.WPF
             GridRegistration.Visibility = Visibility.Collapsed;
         }
 
-        public bool CheckRegisterData(string password, string username)
+        public async Task<bool> CheckRegisterData(string password, string username)
         {
             var usernameExists = false;
+            var userData = await userLoginData.GetAllData();
 
-            foreach (var user in userLoginData.GetAllData())
+            foreach (var user in userData)
             {
                 if (user.Username == username)
                 {
@@ -977,20 +952,6 @@ namespace SupportYourLocals.WPF
         {
             Location = location;
             ID = id;
-        }
-    }
-
-    public class MarkerQueryParameters
-    {
-        public Location Center { get; set; }
-        public double Radius { get; set; }
-        public List<string> SearchItems { get; set; }
-
-        public MarkerQueryParameters (Location center, double radius, List<string> searchItems = null)
-        {
-            Center = center;
-            Radius = radius;
-            SearchItems = searchItems;
         }
     }
 }

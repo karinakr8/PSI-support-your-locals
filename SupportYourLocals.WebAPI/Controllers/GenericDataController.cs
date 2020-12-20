@@ -23,7 +23,7 @@ namespace SupportYourLocals.WebAPI.Controllers
         {
             lock (dataLock)
             {
-                return _storage.GetAllData();
+                return _storage.GetAllData().Result;
             }
         }
 
@@ -32,7 +32,7 @@ namespace SupportYourLocals.WebAPI.Controllers
         {
             lock (dataLock)
             {
-                return _storage.GetData(id);
+                return _storage.GetData(id).Result;
             }
         }
 
@@ -41,7 +41,7 @@ namespace SupportYourLocals.WebAPI.Controllers
         {
             lock (dataLock)
             {
-                return _storage.GetDataCount();
+                return _storage.GetDataCount().Result;
             }
         }
 
