@@ -5,12 +5,28 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IKVM" Version="8.1.5717" />
+    <PackageReference Include="MySql.Data" Version="8.0.22" />
+    <PackageReference Include="MySqlConnector" Version="1.2.1" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
     <PackageReference Include="XAML.MapControl" Version="5.3.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SupportYourLocals.ExtensionMethods\SupportYourLocals.ExtensionMethods.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\karin\source\repos\PSI-support-your-localss1\SupportYourLocals.Data\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\karin\source\repos\PSI-support-your-localss1\SupportYourLocals.Data\.editorconfig" />
   </ItemGroup>
 
 </Project>
