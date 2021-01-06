@@ -7,6 +7,7 @@ namespace SupportYourLocals.Data
     public class Boundary : List<Location>
     {
         public Boundary(LocationCollection locations) : base(locations) { }
+        public Boundary(List<Location> locations) : base(locations) { }
 
         public static bool IsCounterClockwise(Location A, Location B, Location C)
         {
@@ -15,12 +16,12 @@ namespace SupportYourLocals.Data
 
         public static bool DoLinesIntersect(Location A, Location B, Location C, Location D)
         {
-            return (IsCounterClockwise(A, C, D) != IsCounterClockwise(B, C, D)) && 
+            return (IsCounterClockwise(A, C, D) != IsCounterClockwise(B, C, D)) &&
                    (IsCounterClockwise(A, B, C) != IsCounterClockwise(A, B, D));
         }
 
         // Check if all lines of the boundary do not intersect eachother
-        public bool IsValid ()
+        public bool IsValid()
         {
             for (int i = 0; i < Count; i++)
             {

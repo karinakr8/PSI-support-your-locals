@@ -49,10 +49,10 @@ namespace SupportYourLocals.Data
 
         private void AddBoundaryToXml(MarketplaceData data, XElement root)
         {
-            if(data.MarketBoundary == null)
+            if (data.MarketBoundary == null)
             {
                 return;
-            } 
+            }
             XElement boundaryBranch = new XElement("Boundary");
             foreach (var location in data.MarketBoundary)
             {
@@ -65,7 +65,7 @@ namespace SupportYourLocals.Data
 
         private void AddTimeTableToXml(MarketplaceData data, XElement root)
         {
-            if(data.Timetable == null)
+            if (data.Timetable == null)
             {
                 return;
             }
@@ -95,7 +95,7 @@ namespace SupportYourLocals.Data
 
             XDocument doc = XDocument.Load(filePath);
             var marketplaceDictionary = new Dictionary<string, MarketplaceData>();
-            
+
             var groupElements = from elements in doc.Descendants().Elements("Marketplace") select elements;
             foreach (var element in groupElements)
             {
@@ -103,7 +103,7 @@ namespace SupportYourLocals.Data
                 var location = Location.Parse(element.Attribute("Location").Value);
                 var name = element.Attribute("Name").Value;
 
-                marketplaceDictionary.Add(id, new MarketplaceData(location, name, LoadTimeTable(element), (Boundary)LoadBoundary(element), id));
+                marketplaceDictionary.Add(id, new MarketplaceData(location, name, LoadTimeTable(element), new Boundary(LoadBoundary(element)), id));
             }
             return marketplaceDictionary;
         }
