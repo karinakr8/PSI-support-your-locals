@@ -36,8 +36,9 @@ namespace SupportYourLocals.WebAPI.Controllers
             }
         }
 
-        [HttpGet("id:int")]
-        public int Get(int id)
+        [HttpGet]
+        [Route("/api/[controller]/count")]
+        public int GetCount()
         {
             lock (dataLock)
             {
