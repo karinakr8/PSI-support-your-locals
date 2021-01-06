@@ -157,8 +157,9 @@ namespace SupportYourLocals.WPF
                 // Currently drawing a boundary
                 if (boundaryDrawer != null)
                 {
-                    boundaryDrawer.AddPoint(MainMap.ViewToLocation(e.GetPosition(MainMap)));
+                    boundaryDrawer.UndoPoint(); // The single click event added a point, we don't need it
                     var boundary = boundaryDrawer.GetBoundary();
+                    boundary.Add(boundary[0]); // Add the first point again to create an enclosed boundary
                     // Save the boundary
 
                     boundaryDrawer.FinishDrawing();
