@@ -12,10 +12,12 @@ namespace SupportYourLocals.WebAPI.Controllers
     public class MapUtilityController : ControllerBase
     {
         private readonly IDataStorage<SellerData> sellerStorage;
+        private readonly IDataStorage<MarketplaceData> marketStorage;
 
-        public MapUtilityController(IDataStorage<SellerData> storage)
+        public MapUtilityController(IDataStorage<SellerData> storageSeller, IDataStorage<MarketplaceData> storageMarket)
         {
-            sellerStorage = storage;
+            sellerStorage = storageSeller;
+            marketStorage = storageMarket;
         }
 
         private double GetDistance(double latitude, double longitude, double latitude2, double longitude2)
@@ -61,6 +63,35 @@ namespace SupportYourLocals.WebAPI.Controllers
                 if (intersectionCount > 0)
                 {
                     selectedSellers.Add(new SellerInfo (seller, (double)intersectionCount / queryList.Count));
+                }
+            }
+
+            return selectedSellers;
+        }
+
+        [HttpGet]
+        [Route("/api/[controller]/getSellersInMarketplace")]
+        public async Task<ActionResult<List<SellerData>>> GetSellersInMarketplace(string id)
+        {
+            var allSellers = await sellerStorage.GetAllData();
+            MarketplaceData market;
+            try
+            {
+                market = await marketStorage.GetData(id);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+
+            var marketBoundary = market.MarketBoundary;
+            var selectedSellers = new List<SellerData>();
+
+            foreach (var seller in allSellers)
+            {
+                if (marketBoundary.IsWithinBoundary(seller.Location))
+                {
+                    selectedSellers.Add(seller);
                 }
             }
 
