@@ -4,6 +4,8 @@ using SupportYourLocals.Data;
 using System.Threading.Tasks;
 using System;
 using System.Linq;
+using Nominatim.API.Models;
+using Nominatim.API.Geocoders;
 
 namespace SupportYourLocals.WebAPI.Controllers
 {
@@ -20,7 +22,7 @@ namespace SupportYourLocals.WebAPI.Controllers
             marketStorage = storageMarket;
         }
 
-        private double GetDistance(double latitude, double longitude, double latitude2, double longitude2)
+        private static double GetDistance(double latitude, double longitude, double latitude2, double longitude2)
         {
             var d1 = latitude * (Math.PI / 180.0);
             var num1 = longitude * (Math.PI / 180.0);
@@ -29,6 +31,22 @@ namespace SupportYourLocals.WebAPI.Controllers
             var d3 = Math.Pow(Math.Sin((d2 - d1) / 2.0), 2.0) + Math.Cos(d1) * Math.Cos(d2) * Math.Pow(Math.Sin(num2 / 2.0), 2.0);
 
             return 6376500.0 * (2.0 * Math.Atan2(Math.Sqrt(d3), Math.Sqrt(1.0 - d3))); // Distance is in meters
+        }
+
+        private async Task<GeocodeResponse> LocationToAddressInternal(double latitude, double longitude)
+        {
+            var geocoder = new ReverseGeocoder();
+            var request = await geocoder.ReverseGeocode(new ReverseGeocodeRequest
+            {
+                Latitude = latitude,
+                Longitude = longitude,
+                BreakdownAddressElements = true
+            });
+
+            if (request.PlaceID == 0)
+                return null;
+
+            return request;
         }
 
         [HttpGet]
@@ -96,6 +114,53 @@ namespace SupportYourLocals.WebAPI.Controllers
             }
 
             return selectedSellers;
+        }
+
+        [HttpGet]
+        [Route("/api/[controller]/locationToAddress")]
+        public async Task<ActionResult<Tuple<string, string>>> LocationToAddress(double latitude, double longitude)
+        {
+            // Return value 1 - address, 2 - city/district
+            var result = await LocationToAddressInternal(latitude, longitude);
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            string city = result.Address.District;
+
+            if (result.Address.City != null)
+            {
+                city = result.Address.City;
+            }
+
+            int index = result.DisplayName.IndexOf(city);
+            if (index > 2)
+            {
+                index -= 2;
+            }
+
+            // Return the address part without the trailing ", " and the city/district
+            return new Tuple<string, string>(result.DisplayName.Substring(0, index), city);
+        }
+
+        [HttpGet]
+        [Route("/api/[controller]/addressToLocation")]
+        public async Task<Tuple<double, double>> AddressToLocation(string address)
+        {
+            var geocoder = new ForwardGeocoder();
+            var request = await geocoder.Geocode(new ForwardGeocodeRequest
+            {
+                queryString = address
+            });
+
+            if (request.Length < 1)
+            {
+                return null;
+            }
+
+            return new Tuple<double, double> (request[0].Latitude, request[0].Longitude);
         }
     }
 }
