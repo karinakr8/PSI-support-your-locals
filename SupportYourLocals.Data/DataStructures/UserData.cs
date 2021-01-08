@@ -6,7 +6,7 @@ namespace SupportYourLocals.Data
 {
     public class UserData
     {
-        private const int saltSize = 10;
+        public const int saltSize = 10;
         public string ID { get; set; }
         public string Username { get; set; }
         public string PasswordHash { get; set; }
@@ -22,7 +22,7 @@ namespace SupportYourLocals.Data
 
         private static string GenerateId => Guid.NewGuid().ToString("N");
 
-        private static string CreateSalt(int size)
+        public static string CreateSalt(int size)
         {
             var rng = new RNGCryptoServiceProvider();
             var buff = new byte[size];
