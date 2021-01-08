@@ -32,6 +32,8 @@ namespace SupportYourLocals.WPF
         private readonly IMarketStorage marketplaceData = new WebData();
         private readonly IUserStorage userLoginData = new WebData();
 
+        private readonly MapUtilityProvider mapUtility = new MapUtilityProvider();
+
         // List for StackPanel elements in Main StackPanel
         List<List<StackPanel>> listOfStackPanelListsAddProduct = new List<List<StackPanel>>();
         // List for "+" buttons in scrollviewer AddLocalSeller
@@ -137,7 +139,7 @@ namespace SupportYourLocals.WPF
             boundaryDrawer = new MarketBoundaryDrawingTool((PolygonDrawer)DataContext);
         }
 
-        private void MapMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private async void MapMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ClickCount == 1)
             {
@@ -175,7 +177,7 @@ namespace SupportYourLocals.WPF
                 if (GridSellerAdd.Visibility != Visibility.Visible)
                 {
                     SYLMap.DrawRadiusOnTempMarker(Slider1Seller.Value * 1000.0);
-                    var address = SYLMap.LocationToAddressSplit(SYLMap.Center);
+                    var address = await MapUtilityProvider.LocationToAddress(SYLMap.Center.Latitude, SYLMap.Center.Longitude);
                     TextBox2Seller.Text = address.Item2;
                     TextBox3Seller.Text = address.Item1;
                 }
@@ -449,9 +451,9 @@ namespace SupportYourLocals.WPF
         }
 
 
-        private void FindLocation_Click(object sender, RoutedEventArgs e)
+        private async void FindLocation_Click(object sender, RoutedEventArgs e)
         {
-            var center = GetUserLocation(TextBox1Seller.Text.Trim());
+            var center = await GetUserLocation(TextBox1Seller.Text.Trim());
 
             if (center == null)
             {
@@ -461,12 +463,14 @@ namespace SupportYourLocals.WPF
 
             var searchItems = GetSearchProducts();
             var radius = Slider1Seller.Value * 1000;
+            if (searchItems == null)
+                searchItems = new List<string>();
 
-            _ = AddMarkersWithinRange(center, radius, searchItems);
+            _ = AddMarkersWithinRange(center, radius, string.Join(",", searchItems));
         }
 
 
-        private async Task AddMarkersWithinRange(Location center, double radius, List<string> searchItems = null)
+        private async Task AddMarkersWithinRange(Location center, double radius, string searchItems = "")
         {
             // UI operations need to be within the Invoke call, so they would execute on the UI thread
             Dispatcher.Invoke(() =>
@@ -478,11 +482,11 @@ namespace SupportYourLocals.WPF
                 SYLMap.DrawRadiusOnTempMarker(radius);
             });
 
-            var markers = await FindMarkersWithinRange(center, radius, searchItems);
+            var markers = await MapUtilityProvider.GetSellersWithinRange(center.Latitude, center.Longitude, radius, searchItems);
 
             Dispatcher.Invoke(() =>
             {
-                markers.ForEach(m => SYLMap.AddMarker(m.Location, m.ID));
+                markers.ForEach(m => SYLMap.AddMarker(m.sellerData.Location, m.sellerData.ID));
             });
 
             if (searchItems != null)
@@ -494,40 +498,7 @@ namespace SupportYourLocals.WPF
             DisplayInformationMessage("All local sellers in radius were loaded");
         }
 
-
-        private async Task<List<MarkerData>> FindMarkersWithinRange(Location center, double radius, List<string> searchItems = null)
-        {
-            var markers = new List<MarkerData>();
-            var allData = await sellerData.GetAllData();
-
-            foreach (var data in allData)
-            {
-                if (SYLMap.GetDistance(center, data.Location) < radius)
-                {
-                    // If no search phrase has been given, just show all markers within range
-                    if (searchItems == null)
-                    {
-                        markers.Add(new MarkerData(data.Location, data.ID));
-                        continue;
-                    }
-
-                    // Go over all product lists and see if there are any matching products
-                    foreach (var productList in data.Products.Values)
-                    {
-                        var intersection = productList.Intersect(searchItems);
-                        if (intersection.Count() > 0)
-                        {
-                            markers.Add(new MarkerData(data.Location, data.ID));
-                            break;
-                        }
-                    }
-                }
-            }
-
-            return markers;
-        }
-
-        private Location GetUserLocation(string searchPhrase)
+        private async Task<Location> GetUserLocation(string searchPhrase)
         {
             if(!CheckSearchSellerInput(searchPhrase, TextBox2Seller.Text.Trim(), TextBox3Seller.Text.Trim()))
             {
@@ -552,7 +523,8 @@ namespace SupportYourLocals.WPF
                 address = "{0}, {1}".Format(address, TextBox2Seller.Text);
             }
 
-            return SYLMap.AddressToLocation(address);
+            var locationTouple = await MapUtilityProvider.AddressToLocation(address);
+            return new Location(locationTouple.Item1, locationTouple.Item2);
         }
 
         private List<string> GetSearchProducts()

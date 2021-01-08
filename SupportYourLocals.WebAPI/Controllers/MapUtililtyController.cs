@@ -55,6 +55,12 @@ namespace SupportYourLocals.WebAPI.Controllers
         {
             var allSellers = await sellerStorage.GetAllData();
             var selectedSellers = new List<SellerInfo>();
+
+            if (query == null)
+            {
+                query = "";
+            }
+
             var queryList = query.Split(",").ToList();
 
             foreach (var seller in allSellers)

@@ -41,11 +41,11 @@ namespace SupportYourLocals.Data
         {
             T data = null;
             string fullPath = "{0}{1}/{2}".Format(apiAddress, path, id);
-            HttpResponseMessage response = await client.GetAsync(fullPath).ConfigureAwait(false);
+            HttpResponseMessage response = await client.GetAsync(fullPath);
 
             if (response.IsSuccessStatusCode)
             {
-                var dataString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var dataString = await response.Content.ReadAsStringAsync();
                 data = JsonSerializer.Deserialize<T>(dataString, serializerOptions);
             }
 
@@ -56,11 +56,11 @@ namespace SupportYourLocals.Data
         {
             List<T> data = null;
             string fullPath = "{0}{1}".Format(apiAddress, path);
-            HttpResponseMessage response = await client.GetAsync(fullPath).ConfigureAwait(false);
+            HttpResponseMessage response = await client.GetAsync(fullPath);
 
             if (response.IsSuccessStatusCode)
             {
-                var dataString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var dataString = await response.Content.ReadAsStringAsync();
                 data = JsonSerializer.Deserialize<List <T> >(dataString, serializerOptions);
             }
 
@@ -71,11 +71,11 @@ namespace SupportYourLocals.Data
         {
             int data = 0;
             string fullPath = "{0}{1}/{2}".Format(apiAddress, path, 0);
-            HttpResponseMessage response = await client.GetAsync(fullPath).ConfigureAwait(false);
+            HttpResponseMessage response = await client.GetAsync(fullPath);
 
             if (response.IsSuccessStatusCode)
             {
-                var dataString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var dataString = await response.Content.ReadAsStringAsync();
                 data = JsonSerializer.Deserialize<int>(dataString, serializerOptions);
             }
 
@@ -87,7 +87,7 @@ namespace SupportYourLocals.Data
             var json = JsonSerializer.Serialize(data);
             var dataHttp = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await client.PostAsync(apiAddress + path, dataHttp).ConfigureAwait(false);
+            var response = await client.PostAsync(apiAddress + path, dataHttp);
             response.EnsureSuccessStatusCode();
 
             // return URI of the created resource.
@@ -99,7 +99,7 @@ namespace SupportYourLocals.Data
             var json = JsonSerializer.Serialize(data);
             var dataHttp = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await client.PutAsync(apiAddress + path, dataHttp).ConfigureAwait(false);
+            var response = await client.PutAsync(apiAddress + path, dataHttp);
             response.EnsureSuccessStatusCode();
 
             // return URI of the created resource.
@@ -108,7 +108,7 @@ namespace SupportYourLocals.Data
 
         static async Task<HttpStatusCode> RemoveDataAsync(string path, string id)
         {
-            HttpResponseMessage response = await client.DeleteAsync($"{apiAddress}{path}/{id}").ConfigureAwait(false);
+            HttpResponseMessage response = await client.DeleteAsync($"{apiAddress}{path}/{id}");
             return response.StatusCode;
         }
 

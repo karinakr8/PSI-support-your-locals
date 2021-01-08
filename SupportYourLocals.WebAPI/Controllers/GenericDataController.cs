@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using SupportYourLocals.Data;
+using System.Threading.Tasks;
 
 namespace SupportYourLocals.WebAPI.Controllers
 {
@@ -19,61 +20,43 @@ namespace SupportYourLocals.WebAPI.Controllers
         }
 
         [HttpGet]
-        public List<T> Get()
+        public async Task<List<T>> Get()
         {
-            lock (dataLock)
-            {
-                return _storage.GetAllData().Result;
-            }
+            return await _storage.GetAllData();
         }
 
         [HttpGet("{id}")]
-        public T Get(string id)
+        public async Task<T> Get(string id)
         {
-            lock (dataLock)
-            {
-                return _storage.GetData(id).Result;
-            }
+            return await _storage.GetData(id);
         }
 
         [HttpGet]
         [Route("/api/[controller]/count")]
-        public int GetCount()
+        public async Task<int> GetCount()
         {
-            lock (dataLock)
-            {
-                return _storage.GetDataCount().Result;
-            }
+            return await _storage.GetDataCount();
         }
 
         [HttpPost]
-        public void Post([FromBody] T value)
+        public async Task Post([FromBody] T value)
         {
-            lock (dataLock)
-            {
-                _storage.AddData(value);
-                _storage.SaveData();
-            }
+            await _storage.AddData(value);
+            await _storage.SaveData();
         }
 
         [HttpPut]
-        public void Put([FromBody] T value)
+        public async Task Put([FromBody] T value)
         {
-            lock (dataLock)
-            {
-                _storage.UpdateData(value);
-                _storage.SaveData();
-            }
+            await _storage.UpdateData(value);
+            await _storage.SaveData();
         }
 
         [HttpDelete("{id}")]
-        public void Delete(string id)
+        public async Task Delete(string id)
         {
-            lock (dataLock)
-            {
-                _storage.RemoveData(id);
-                _storage.SaveData();
-            }
+            await _storage.RemoveData(id);
+            await _storage.SaveData();
         }
     }
 }
