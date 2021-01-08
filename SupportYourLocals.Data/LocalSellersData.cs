@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace SupportYourLocals.Data
 {
@@ -13,8 +14,6 @@ namespace SupportYourLocals.Data
         private readonly Dictionary<string, SellerData> dictionaryLocationDataById;
         private string connectionString = ConfigurationManager.ConnectionStrings["cs"].ConnectionString;
 
-        // TODO: Add a lock object once we start working on files asynchronously
-
         public LocalSellersData()
         {
             dictionaryLocationDataById = LoadData();
@@ -22,7 +21,6 @@ namespace SupportYourLocals.Data
         private Dictionary<string, SellerData> LoadData()
         {
             var localSellersDictionary = new Dictionary<string, SellerData>();
-            //var groupElements = from elements in doc.Descendants().Elements("LocalSeller") select elements;
             using (var con = new MySqlConnection())
             {
                 con.ConnectionString = connectionString;
@@ -47,11 +45,11 @@ namespace SupportYourLocals.Data
                         var time = DateTime.Parse(reader.GetString(4));
 
                         var type = new List<string>();
-                        takeProductTipes(id, type);
+                        TakeProductTypes(id, type);
                         foreach(string productType in type)
                         {
                             ProductType productTypeEnum = (ProductType)Enum.Parse(typeof(ProductType), productType);
-                            takeProducts(id, dictionary, productsList, productTypeEnum);
+                            TakeProducts(id, dictionary, productsList, productTypeEnum);
                         }                        
                         localSellersDictionary.Add(id, new SellerData(products: dictionary, addedByID: addedById, name: name, id: id, location: location, time: time));
                     }                  
@@ -61,7 +59,7 @@ namespace SupportYourLocals.Data
             }
             return localSellersDictionary;
         }
-        public void takeProductTipes(string id, List<string> type)
+        public void TakeProductTypes(string id, List<string> type)
         {
             using (var con = new MySqlConnection())
             {
@@ -84,7 +82,7 @@ namespace SupportYourLocals.Data
             }
         }
 
-        public void takeProducts(string id, Dictionary<ProductType, List<string>> dictionary, List<string> productsList, ProductType productTypeEnum)
+        public void TakeProducts(string id, Dictionary<ProductType, List<string>> dictionary, List<string> productsList, ProductType productTypeEnum)
         {
             using (var con = new MySqlConnection())
             {
@@ -108,7 +106,7 @@ namespace SupportYourLocals.Data
             }
         }
 
-        public void SaveData()
+        public Task SaveData()
         {
             using (var con = new MySqlConnection())
             {
@@ -138,6 +136,8 @@ namespace SupportYourLocals.Data
 
                 con.Close();
             }
+
+            return Task.CompletedTask;
         }
 
         private void AddProductTypesToDB(SellerData data, MySqlCommand cmd)
@@ -167,16 +167,28 @@ namespace SupportYourLocals.Data
                 }
             }
         }
-        SellerData IDataStorage<SellerData>.GetData(string id) => dictionaryLocationDataById[id];
+        public Task<SellerData> GetData(string id) => Task.FromResult(dictionaryLocationDataById[id]);
 
-        List<SellerData> IDataStorage<SellerData>.GetAllData() => dictionaryLocationDataById.Select(d => d.Value).ToList();
+        public Task<List<SellerData>> GetAllData() => Task.FromResult(dictionaryLocationDataById.Values.ToList());
 
-        int IDataStorage<SellerData>.GetDataCount() => dictionaryLocationDataById.Count;
-        
-        void IDataStorage<SellerData>.AddData(SellerData data) => dictionaryLocationDataById.Add(data.ID, data);
+        public Task<int> GetDataCount() => Task.FromResult(dictionaryLocationDataById.Count);
 
-        void IDataStorage<SellerData>.UpdateData(SellerData data) => dictionaryLocationDataById[data.ID] = data;
+        public Task AddData(SellerData data)
+        {
+            dictionaryLocationDataById.Add(data.ID, data);
+            return Task.CompletedTask;
+        }
 
-        void IDataStorage<SellerData>.RemoveData(string id) => dictionaryLocationDataById.Remove(id);
+        public Task UpdateData(SellerData data)
+        {
+            dictionaryLocationDataById[data.ID] = data;
+            return Task.CompletedTask;
+        }
+
+        public Task RemoveData(string id)
+        {
+            dictionaryLocationDataById.Remove(id);
+            return Task.CompletedTask;
+        }
     }
 }

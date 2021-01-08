@@ -3,6 +3,7 @@ using System.Linq;
 using System.Data;
 using MySqlConnector;
 using System.Configuration;
+using System.Threading.Tasks;
 
 namespace SupportYourLocals.Data
 {
@@ -51,7 +52,7 @@ namespace SupportYourLocals.Data
             return userDataList;
         }
 
-        public void SaveData()
+        public Task SaveData()
         {
             using (var con = new MySqlConnection())
             {
@@ -75,18 +76,32 @@ namespace SupportYourLocals.Data
                 }
                 con.Close();
             }
+
+            return Task.CompletedTask;
         }
 
-        UserData IDataStorage<UserData>.GetData(string id) => dictionaryUserData[id];
+        public Task<UserData> GetData(string id) => Task.FromResult(dictionaryUserData[id]);
 
-        int IDataStorage<UserData>.GetDataCount() => dictionaryUserData.Count;
+        public Task<List<UserData>> GetAllData() => Task.FromResult(dictionaryUserData.Values.ToList());
 
-        void IDataStorage<UserData>.AddData(UserData data) => dictionaryUserData.Add(data.ID, data);
+        public Task<int> GetDataCount() => Task.FromResult(dictionaryUserData.Count);
 
-        void IDataStorage<UserData>.UpdateData(UserData data) => dictionaryUserData[data.ID] = data;
+        public Task AddData(UserData data)
+        {
+            dictionaryUserData.Add(data.ID, data);
+            return Task.CompletedTask;
+        }
 
-        void IDataStorage<UserData>.RemoveData(string id) => dictionaryUserData.Remove(id);
+        public Task UpdateData(UserData data)
+        {
+            dictionaryUserData[data.ID] = data;
+            return Task.CompletedTask;
+        }
 
-        List<UserData> IDataStorage<UserData>.GetAllData() => dictionaryUserData.Select(d => d.Value).ToList();
+        public Task RemoveData(string id)
+        {
+            dictionaryUserData.Remove(id);
+            return Task.CompletedTask;
+        }
     }
 }
