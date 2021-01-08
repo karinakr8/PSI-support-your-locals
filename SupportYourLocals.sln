@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.30503.244
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SupportYourLocals", "SupportYourLocals\SupportYourLocals.csproj", "{0FBD40A3-EBFB-4194-B91D-580763C01B34}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SupportYourLocals.EntityFrameworkCore", "SupportYourLocals.EntityFrameworkCore\SupportYourLocals.EntityFrameworkCore.csproj", "{13760311-18A8-4546-ACD8-C07C078ADCF2}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SupportYourLocals.WPF", "SupportYourLocals.WPF\SupportYourLocals.WPF.csproj", "{D1DC61AF-074C-400B-BD85-12D90C319B7E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SupportYourLocals.Map", "SupportYourLocals.Map\SupportYourLocals.Map.csproj", "{74611E00-230D-4E35-941E-62C3B56D873E}"
@@ -27,10 +25,6 @@ Global
 		{0FBD40A3-EBFB-4194-B91D-580763C01B34}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0FBD40A3-EBFB-4194-B91D-580763C01B34}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0FBD40A3-EBFB-4194-B91D-580763C01B34}.Release|Any CPU.Build.0 = Release|Any CPU
-		{13760311-18A8-4546-ACD8-C07C078ADCF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{13760311-18A8-4546-ACD8-C07C078ADCF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{13760311-18A8-4546-ACD8-C07C078ADCF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{13760311-18A8-4546-ACD8-C07C078ADCF2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D1DC61AF-074C-400B-BD85-12D90C319B7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D1DC61AF-074C-400B-BD85-12D90C319B7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1DC61AF-074C-400B-BD85-12D90C319B7E}.Release|Any CPU.ActiveCfg = Release|Any CPU

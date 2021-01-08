@@ -533,7 +533,7 @@ namespace SupportYourLocals.WPF
             {
                 return null;
             }
-            
+
             var location = SYLMap.GetMarkerTempLocation();
 
             if (location != null)
@@ -664,7 +664,7 @@ namespace SupportYourLocals.WPF
                     {
                         errorMessage += "\"Invalid name\"";
                     }
-                    
+
                 }
                 if(ComboBoxProductType.SelectedIndex < 0)
                 {
@@ -740,7 +740,7 @@ namespace SupportYourLocals.WPF
             var userData = await userLoginData.GetAllData();
 
             foreach (var user in userData)
-            {                
+            {
                 if (user.Username == username)
                 {
                     pswHash = user.PasswordHash;
@@ -766,7 +766,7 @@ namespace SupportYourLocals.WPF
             {
                 ShowUsernameLabel.Content = username;
 
-                GridLogin.Visibility = Visibility.Collapsed; 
+                GridLogin.Visibility = Visibility.Collapsed;
                 GridRegistration.Visibility = Visibility.Collapsed;
             }
 
@@ -877,7 +877,7 @@ namespace SupportYourLocals.WPF
         {
             GridLogin.Visibility = Visibility.Visible;
             GridRegistration.Visibility = Visibility.Collapsed;
-        }        
+        }
 
         private void ShowLogoutButton_Click(object sender, RoutedEventArgs e)
         {
@@ -916,7 +916,7 @@ namespace SupportYourLocals.WPF
                 else
                 {
                     GridUserData.Visibility = Visibility.Visible;
-                }                
+                }
             }
             else
             {
@@ -928,7 +928,7 @@ namespace SupportYourLocals.WPF
                 {
                     GridUserDataToLogin.Visibility = Visibility.Visible;
                 }
-            }            
+            }
         }
 
         private void Slider1Seller_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -956,4 +956,3 @@ namespace SupportYourLocals.WPF
         }
     }
 }
-

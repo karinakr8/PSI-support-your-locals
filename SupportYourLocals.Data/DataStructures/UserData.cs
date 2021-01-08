@@ -22,7 +22,7 @@ namespace SupportYourLocals.Data
         public UserData() { }
 
         public UserData(string name, string password, string salt = null, string id = null) : base(name, id)
-        {                
+        {
             Salt = salt ?? CreateSalt(saltSize);
             Password = password;
         }
