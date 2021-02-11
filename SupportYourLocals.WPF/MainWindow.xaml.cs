@@ -67,6 +67,15 @@ namespace SupportYourLocals.WPF
                 await Task.Delay(2000);
                 await cache.Clean();
             };
+
+            Slider1Seller.Value = 1;
+
+            ComboBoxMarketplaceDistrict.Items.Add("Item1");
+            ComboBoxMarketplaceDistrict.Items.Add("Item2");
+            ComboBoxMarketplaceDistrict.Items.Add("Item3");
+            ComboBoxMarketplaceLocation.Items.Add(new String[] { "Item1", "Item2", "Item3" });
+
+            AddValueToNewMarketPlaceGrid();
         }
 
         private void LoadAddLocalSellerFieldsAndCollections()
@@ -115,6 +124,17 @@ namespace SupportYourLocals.WPF
             }
         }
 
+        private void AddValueToNewMarketPlaceGrid()
+        {
+            var weekDays = Enum.GetValues(typeof(WeekDays));
+
+            foreach (Enum weekDay in weekDays)
+            {
+                // Adding elements to combobox
+                ComboBoxWorkDay.Items.Add(weekDay);
+            }
+        }
+
         private void ClearAddLocalSellerCollections()
         {
             dictionaryOfScrollViewsAddProduct.Clear();
@@ -136,6 +156,7 @@ namespace SupportYourLocals.WPF
 
         private void UpdateMarketplaces_Click(object sender, RoutedEventArgs e)
         {
+            GridMarketplacesAdd.Visibility = Visibility.Visible;
             boundaryDrawer = new MarketBoundaryDrawingTool((PolygonDrawer)DataContext);
         }
 
@@ -174,12 +195,26 @@ namespace SupportYourLocals.WPF
                 SYLMap.Center = MainMap.ViewToLocation(e.GetPosition(MainMap));
                 SYLMap.AddMarkerTemp(SYLMap.Center);
 
-                if (GridSellerAdd.Visibility != Visibility.Visible)
+                if (GridSellerAdd.Visibility == Visibility.Collapsed)
                 {
-                    SYLMap.DrawRadiusOnTempMarker(Slider1Seller.Value * 1000.0);
-                    var address = await MapUtilityProvider.LocationToAddress(SYLMap.Center.Latitude, SYLMap.Center.Longitude);
-                    TextBox2Seller.Text = address.Item2;
-                    TextBox3Seller.Text = address.Item1;
+                    if (GridSellersSearch.Visibility == Visibility.Visible)
+                    {
+                        SYLMap.DrawRadiusOnTempMarker(Slider1Seller.Value * 1000.0);
+                    }
+
+                    var address = SYLMap.LocationToAddressSplit(SYLMap.Center);
+                    if(GridSellersSearch.Visibility == Visibility.Visible)
+                    {
+                        TextBox2Seller.Text = address.Item2;
+                        TextBox3Seller.Text = address.Item1;
+                    }
+                    else if(GridMarketplacesSearch.Visibility == Visibility.Visible && GridMarketplaceInformation.Visibility != Visibility.Visible)
+                    {
+
+                        TextBoxMarketplaceDistrict.Text = address.Item1;
+                        TextBoxMarketplaceLocation.Text = address.Item2;
+                        //MarketplaceCityTextField.Text = address.Item2;
+                    }
                 }
                 else
                 {
@@ -260,23 +295,33 @@ namespace SupportYourLocals.WPF
 
         private void SearchMarketplacesButton_Click(object sender, RoutedEventArgs e)
         {
+            //GridSellerAdd.Visibility = Visibility.Collapsed;
+            ClearAddLocalSellerInputFieldsAndUserInterface();
+            ClearAddLocalSellerCollections();
             GridMarkerInformation.Visibility = Visibility.Collapsed;
             GridSellersSearch.Visibility = Visibility.Collapsed;
+            GridMarketplaceInformation.Visibility = Visibility.Collapsed;
             GridMarketplacesSearch.Visibility = Visibility.Visible;
             SearchSellersButton.FontWeight = FontWeights.Normal;
             SearchMarketplacesButton.FontWeight = FontWeights.Bold;
             SearchSellersButton.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#808080"));
             SearchMarketplacesButton.Foreground = new SolidColorBrush(Colors.Black);
+            SYLMap.RemoveRadiusOnTempMarker();
+            SYLMap.RemoveAllMarkers();
         }
 
         private void SearchSellersButton_Click(object sender, RoutedEventArgs e)
         {
             GridSellersSearch.Visibility = Visibility.Visible;
             GridMarketplacesSearch.Visibility = Visibility.Collapsed;
+            GridMarketplaceInformation.Visibility = Visibility.Collapsed;
+            GridMarketplacesAdd.Visibility = Visibility.Collapsed;
             SearchMarketplacesButton.FontWeight = FontWeights.Normal;
             SearchSellersButton.FontWeight = FontWeights.Bold;
             SearchMarketplacesButton.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#808080"));
             SearchSellersButton.Foreground = new SolidColorBrush(Colors.Black);
+            SYLMap.RemoveAllMarkers();
+            SYLMap.RemoveRadiusOnTempMarker();
         }
 
         private void AddLocalSellerAddProduct1_Click(object sender, RoutedEventArgs e)
@@ -442,7 +487,8 @@ namespace SupportYourLocals.WPF
                             if(elementOfList.Text.Trim() != "")
                             {
                                 listString.Add(elementOfList.Text.Trim());
-                            }                        }
+                            }
+                        }
                     }
                     dictionaryListString.Add(elementTextBox.Key, listString);
                 }
@@ -577,6 +623,25 @@ namespace SupportYourLocals.WPF
             view.GroupDescriptions.Add(groupDescription);
         }
 
+        private void LoadMarketplaceInformationWindow(string id)
+        {
+            var items = new List<MarkerInformation>();
+
+            var locationData = sellerData.GetData(id);
+            foreach (var products in locationData.Products)
+            {
+                foreach (var product in products.Value)
+                {
+                    items.Add(new MarkerInformation { ProductType = products.Key.ToString(), ProductCount = products.Value.Count, Product = product });
+                }
+            }
+            ListViewMarketplaceInformation.ItemsSource = items;
+
+            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(ListViewMarketplaceInformation.ItemsSource);
+            PropertyGroupDescription groupDescription = new PropertyGroupDescription("ProductType");
+            view.GroupDescriptions.Add(groupDescription);
+        }
+
         private void CollapseMarkerInformation_Click(object sender, RoutedEventArgs e)
         {
             GridMarkerInformation.Visibility = Visibility.Collapsed;
@@ -584,7 +649,12 @@ namespace SupportYourLocals.WPF
 
         private void ButtonCloseMarkerInformation_Click(object sender, RoutedEventArgs e)
         {
-            GridMarkerInformation.Visibility = Visibility.Collapsed;
+            ComboBoxMarketplacesInInformation.Items.Clear();
+            ComboBoxChooseMarketplace.Items.Clear();
+            LabelMarketplaceAddedTime.Content = "Location added (Time)";
+            ListViewMarketplaceInformation.ItemsSource = null;
+            GridMarketplaceInformation.Visibility = Visibility.Collapsed;
+            SYLMap.RemoveAllMarkers();
         }
 
         private void ClearSearchSellerWindow()
@@ -698,6 +768,55 @@ namespace SupportYourLocals.WPF
                     MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
+        private void FilterByOpenTimeCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            FilterByOpenTimeStackPanel.Visibility = Visibility.Visible;
+        }
+        private void FilterByOpenTimeCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            TextBoxMarketplaceSearchOpenTime.Clear();
+            FilterByOpenTimeStackPanel.Visibility = Visibility.Collapsed;
+        }
+        private void FilterByProductsCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            FilterByProductsStackPanel.Visibility = Visibility.Visible;
+        }
+        private void FilterByProductsCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            TextBoxMarketplaceSearchProducts.Clear();
+            FilterByProductsStackPanel.Visibility = Visibility.Collapsed;
+        }
+
+        private void ButtonFindMarketplaces_Click(object sender, RoutedEventArgs e)
+        {
+            ClearFindMarketplaceFields();
+            LoadMarketplacesInformationGrid();
+            GridMarketplaceInformation.Visibility = Visibility.Visible;
+
+        }
+
+        private void LoadMarketplacesInformationGrid()
+        {
+            foreach (var marketplace in marketplaceData.GetAllData())
+            {
+                if(SYLMap.LocationToAddressSplit(marketplace.Location).Item2 == TextBoxMarketplaceLocation.Text)
+                {
+                    ComboBoxMarketplacesInInformation.Items.Add(marketplace.Name);
+                }
+            }
+        }
+
+        private void ClearFindMarketplaceFields()
+        {
+            ComboBoxMarketplaceDistrict.Items.Clear();
+            ComboBoxMarketplaceLocation.Items.Clear();
+            ComboBoxMarketplaceDistrict.Text = "";
+            ComboBoxMarketplaceLocation.Text = "";
+            TextBoxMarketplaceSearchOpenTime.Clear();
+            TextBoxMarketplaceSearchProducts.Clear();
+            CheckBoxFilterByOpenTime.IsChecked = false;
+            CheckBoxFilterByProducts.IsChecked = false;
+        }
         private async void LoginButton_Clicked(object sender, RoutedEventArgs e)
         {
             LabelEmptyFieldsError.Visibility = Visibility.Collapsed;
@@ -905,7 +1024,87 @@ namespace SupportYourLocals.WPF
 
         private void Slider1Seller_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            TextBoxSliderValue.Text = Slider1Seller.Value.ToString("F2");
             SYLMap?.DrawRadiusOnTempMarker(e.NewValue * 1000.0);
+        }
+
+        private void ButtonAddNewMarketPlace_Click(object sender, RoutedEventArgs e)
+        {
+            var timePairTimes = new List<TimePair>();
+            var timePair = new TimePair
+            {
+                StartTime = new Time(TextBoxStartTime.Text),
+                EndTime = new Time(TextBoxEndTime.Text)
+            };
+
+            marketplaceData.AddData(
+                new MarketplaceData(
+                    SYLMap.GetMarkerTempLocation(), TextBoxNewMarketplace.Text.Trim(), null, null, null
+                                    ));
+            marketplaceData.SaveData();
+            ClearUpdateMarketplaceWindow();
+            SYLMap.RemoveAllMarkers();
+            GridMarketplacesAdd.Visibility = Visibility.Collapsed;
+        }
+
+        private void ClearUpdateMarketplaceWindow()
+        {
+            TextBoxNewMarketplace.Text = "";
+            TextBoxStartTime.Text = "";
+            TextBoxEndTime.Text = "";
+        }
+
+        private void ComboBoxMarketplaceInformatione_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            DeleteAllMarkersExceptTemp();
+            ComboBoxChooseMarketplace.Items.Clear();
+            foreach (var seller in sellerData.GetAllData())
+            {
+                foreach (var marketplace in marketplaceData.GetAllData())
+                {
+                    if (ComboBoxMarketplacesInInformation.SelectedValue != null)
+                    {
+                        if (marketplace.Name == ComboBoxMarketplacesInInformation.SelectedValue.ToString())
+                        {
+                            SYLMap.AddMarkerTemp(marketplace.Location);
+                            if (SYLMap.GetDistance(seller.Location, marketplace.Location) < 100)
+                            {
+                                ComboBoxChooseMarketplace.Items.Add(seller.Name);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void ComboBoxChooseMarketplace_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            foreach (var seller in sellerData.GetAllData())
+            {
+                if(ComboBoxChooseMarketplace.SelectedValue != null)
+                {
+                    if(ComboBoxChooseMarketplace.SelectedValue.ToString() == seller.Name)
+                    {
+                        LabelMarketplaceAddedTime.Content = seller.Time;
+                        LoadMarketplaceInformationWindow(seller.ID);
+                        DeleteAllMarkersExceptTemp();
+                        SYLMap.AddMarker(seller.Location, seller.ID);
+                    }
+                }
+            }
+        }
+
+        private void DeleteAllMarkersExceptTemp()
+        {
+            var tempMarkerLocation = SYLMap.GetMarkerTempLocation();
+            SYLMap.RemoveAllMarkers();
+            SYLMap.AddMarkerTemp(tempMarkerLocation);
+        }
+
+        private void ButtonCloseNewMarketPlace_Click(object sender, RoutedEventArgs e)
+        {
+            ClearUpdateMarketplaceWindow();
+            GridMarketplacesAdd.Visibility = Visibility.Collapsed;
         }
     }
 
