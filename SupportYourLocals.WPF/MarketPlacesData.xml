@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Marketplaces>
+  <Marketplace ID="123" Location="54.70019,25.28442" Name="Kalvariju turgus" />
+  <Marketplace ID="83dbc7b38f07425b83c1990c4a9e8440" Location="54.67854,25.30298" Name="Paupio turgus" marketBoundary=null timetable=null />
+  <Marketplace ID="7d494f9b653840a19c7ccb2afa9566c7" Location="54.70954,25.29226" Name="Ulonu turgus" />
+  <Marketplace ID="c9cf554f05d041c4bdeb4ffb3916c662" Location="54.88781,23.93106" Name="Stoties turgus" />
+  <Marketplace ID="1d6d15cb9d334eeb919e3dcb81137fab" Location="54.90887,23.91575" Name="Žaliakalnio turgus" />
+  <Marketplace ID="c1de30335f064db19129121eb8389834" Location="54.60392,24.02223" Name="Mažas turgelis" />
+  <Marketplace ID="74a306f983d04f66880b5ab4cb1534b3" Location="54.90880,23.93542" Name="Testing turgus" />
+</Marketplaces>

@@ -628,7 +628,7 @@ namespace SupportYourLocals.WPF
             var items = new List<MarkerInformation>();
 
             var locationData = sellerData.GetData(id);
-            foreach (var products in locationData.Products)
+            foreach (var products in locationData.Result.Products)
             {
                 foreach (var product in products.Value)
                 {
@@ -795,9 +795,9 @@ namespace SupportYourLocals.WPF
 
         }
 
-        private void LoadMarketplacesInformationGrid()
+        private async void LoadMarketplacesInformationGrid()
         {
-            foreach (var marketplace in marketplaceData.GetAllData())
+            foreach (var marketplace in await marketplaceData.GetAllData())
             {
                 if(SYLMap.LocationToAddressSplit(marketplace.Location).Item2 == TextBoxMarketplaceLocation.Text)
                 {
@@ -1054,13 +1054,13 @@ namespace SupportYourLocals.WPF
             TextBoxEndTime.Text = "";
         }
 
-        private void ComboBoxMarketplaceInformatione_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void ComboBoxMarketplaceInformatione_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             DeleteAllMarkersExceptTemp();
             ComboBoxChooseMarketplace.Items.Clear();
-            foreach (var seller in sellerData.GetAllData())
+            foreach (var seller in await sellerData.GetAllData())
             {
-                foreach (var marketplace in marketplaceData.GetAllData())
+                foreach (var marketplace in await marketplaceData.GetAllData())
                 {
                     if (ComboBoxMarketplacesInInformation.SelectedValue != null)
                     {
@@ -1077,9 +1077,9 @@ namespace SupportYourLocals.WPF
             }
         }
 
-        private void ComboBoxChooseMarketplace_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void ComboBoxChooseMarketplace_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            foreach (var seller in sellerData.GetAllData())
+            foreach (var seller in await sellerData.GetAllData())
             {
                 if(ComboBoxChooseMarketplace.SelectedValue != null)
                 {

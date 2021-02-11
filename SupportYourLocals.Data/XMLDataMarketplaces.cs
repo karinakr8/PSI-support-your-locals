@@ -17,37 +17,10 @@ namespace SupportYourLocals.Data
 
         public XMLDataMarketplaces()
         {
-            dictionaryMarketplaceDataById = LoadData();
+            dictionaryMarketplaceData = LoadData();
         }
 
-        MarketplaceData IDataStorage<MarketplaceData>.GetData(string id) => dictionaryMarketplaceDataById[id];
 
-        List<MarketplaceData> IDataStorage<MarketplaceData>.GetAllData() => dictionaryMarketplaceDataById.Select(d => d.Value).ToList();
-
-        int IDataStorage<MarketplaceData>.GetDataCount() => dictionaryMarketplaceDataById.Count;
-
-        void IDataStorage<MarketplaceData>.AddData(MarketplaceData data) => dictionaryMarketplaceDataById.Add(data.ID, data);
-
-        void IDataStorage<MarketplaceData>.UpdateData(MarketplaceData data) => dictionaryMarketplaceDataById[data.ID] = data;
-
-        void IDataStorage<MarketplaceData>.RemoveData(string id) => dictionaryMarketplaceDataById.Remove(id);
-
-        public void SaveData()
-        {
-            XDocument doc = new XDocument(new XElement("Marketplaces"));
-            foreach (var data in dictionaryMarketplaceDataById.Values)
-            {
-                XElement root = new XElement("Marketplace");
-                root.Add(new XAttribute("ID", data.ID));
-                root.Add(new XAttribute("Location", data.Location));
-                root.Add(new XAttribute("Name", data.Name));
-                AddBoundaryToXml(data, root);
-                //AddTimeTableToXml(data, root);
-                doc.Element("Marketplaces").Add(root);
-            }
-            doc.Save(filePath);
-
-        }
 
         private void AddBoundaryToXml(MarketplaceData data, XElement root)
         {
