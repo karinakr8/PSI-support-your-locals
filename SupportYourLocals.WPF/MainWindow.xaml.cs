@@ -23,16 +23,16 @@ namespace SupportYourLocals.WPF
     {
         private int AddProductLineNumber = 2;
 
-        private static bool isMapLocked = false;
         private static object mapLock = new object();
 
         private readonly Map.Map SYLMap;
         private MarketBoundaryDrawingTool boundaryDrawer;
 
-        private readonly ISellerStorage sellerData = new XMLDataLocalSellers();
-        private readonly IMarketStorage marketplaceData = new XMLDataMarketplaces();
+        private readonly ISellerStorage sellerData = new WebData();
+        private readonly IMarketStorage marketplaceData = new WebData();
+        private readonly IUserStorage userLoginData = new WebData();
 
-        private readonly IUserStorage userLoginData = new CSVData();
+        private readonly MapUtilityProvider mapUtility = new MapUtilityProvider();
 
         // List for StackPanel elements in Main StackPanel
         List<List<StackPanel>> listOfStackPanelListsAddProduct = new List<List<StackPanel>>();
@@ -67,15 +67,6 @@ namespace SupportYourLocals.WPF
                 await Task.Delay(2000);
                 await cache.Clean();
             };
-
-            Slider1Seller.Value = 1;
-
-            ComboBoxMarketplaceDistrict.Items.Add("Item1");
-            ComboBoxMarketplaceDistrict.Items.Add("Item2");
-            ComboBoxMarketplaceDistrict.Items.Add("Item3");
-            ComboBoxMarketplaceLocation.Items.Add(new String[] { "Item1", "Item2", "Item3" });
-
-            AddValueToNewMarketPlaceGrid();
         }
 
         private void LoadAddLocalSellerFieldsAndCollections()
@@ -124,17 +115,6 @@ namespace SupportYourLocals.WPF
             }
         }
 
-        private void AddValueToNewMarketPlaceGrid()
-        {
-            var weekDays = Enum.GetValues(typeof(WeekDays));
-
-            foreach (Enum weekDay in weekDays)
-            {
-                // Adding elements to combobox
-                ComboBoxWorkDay.Items.Add(weekDay);
-            }
-        }
-
         private void ClearAddLocalSellerCollections()
         {
             dictionaryOfScrollViewsAddProduct.Clear();
@@ -156,11 +136,10 @@ namespace SupportYourLocals.WPF
 
         private void UpdateMarketplaces_Click(object sender, RoutedEventArgs e)
         {
-            GridMarketplacesAdd.Visibility = Visibility.Visible;
             boundaryDrawer = new MarketBoundaryDrawingTool((PolygonDrawer)DataContext);
         }
 
-        private void MapMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private async void MapMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ClickCount == 1)
             {
@@ -180,8 +159,9 @@ namespace SupportYourLocals.WPF
                 // Currently drawing a boundary
                 if (boundaryDrawer != null)
                 {
-                    boundaryDrawer.AddPoint(MainMap.ViewToLocation(e.GetPosition(MainMap)));
+                    boundaryDrawer.UndoPoint(); // The single click event added a point, we don't need it
                     var boundary = boundaryDrawer.GetBoundary();
+                    boundary.Add(boundary[0]); // Add the first point again to create an enclosed boundary
                     // Save the boundary
 
                     boundaryDrawer.FinishDrawing();
@@ -194,26 +174,12 @@ namespace SupportYourLocals.WPF
                 SYLMap.Center = MainMap.ViewToLocation(e.GetPosition(MainMap));
                 SYLMap.AddMarkerTemp(SYLMap.Center);
 
-                if (GridSellerAdd.Visibility == Visibility.Collapsed)
+                if (GridSellerAdd.Visibility != Visibility.Visible)
                 {
-                    if (GridSellersSearch.Visibility == Visibility.Visible)
-                    {
-                        SYLMap.DrawRadiusOnTempMarker(Slider1Seller.Value * 1000.0);
-                    }
-
-                    var address = SYLMap.LocationToAddressSplit(SYLMap.Center);
-                    if(GridSellersSearch.Visibility == Visibility.Visible)
-                    {
-                        TextBox2Seller.Text = address.Item2;
-                        TextBox3Seller.Text = address.Item1;
-                    }
-                    else if(GridMarketplacesSearch.Visibility == Visibility.Visible && GridMarketplaceInformation.Visibility != Visibility.Visible)
-                    {
-
-                        TextBoxMarketplaceDistrict.Text = address.Item1;
-                        TextBoxMarketplaceLocation.Text = address.Item2;
-                        //MarketplaceCityTextField.Text = address.Item2;
-                    }
+                    SYLMap.DrawRadiusOnTempMarker(Slider1Seller.Value * 1000.0);
+                    var address = await MapUtilityProvider.LocationToAddress(SYLMap.Center.Latitude, SYLMap.Center.Longitude);
+                    TextBox2Seller.Text = address.Item2;
+                    TextBox3Seller.Text = address.Item1;
                 }
                 else
                 {
@@ -294,33 +260,23 @@ namespace SupportYourLocals.WPF
 
         private void SearchMarketplacesButton_Click(object sender, RoutedEventArgs e)
         {
-            //GridSellerAdd.Visibility = Visibility.Collapsed;
-            ClearAddLocalSellerInputFieldsAndUserInterface();
-            ClearAddLocalSellerCollections();
             GridMarkerInformation.Visibility = Visibility.Collapsed;
             GridSellersSearch.Visibility = Visibility.Collapsed;
-            GridMarketplaceInformation.Visibility = Visibility.Collapsed;
             GridMarketplacesSearch.Visibility = Visibility.Visible;
             SearchSellersButton.FontWeight = FontWeights.Normal;
             SearchMarketplacesButton.FontWeight = FontWeights.Bold;
             SearchSellersButton.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#808080"));
             SearchMarketplacesButton.Foreground = new SolidColorBrush(Colors.Black);
-            SYLMap.RemoveRadiusOnTempMarker();
-            SYLMap.RemoveAllMarkers();
         }
 
         private void SearchSellersButton_Click(object sender, RoutedEventArgs e)
         {
             GridSellersSearch.Visibility = Visibility.Visible;
             GridMarketplacesSearch.Visibility = Visibility.Collapsed;
-            GridMarketplaceInformation.Visibility = Visibility.Collapsed;
-            GridMarketplacesAdd.Visibility = Visibility.Collapsed;
             SearchMarketplacesButton.FontWeight = FontWeights.Normal;
             SearchSellersButton.FontWeight = FontWeights.Bold;
             SearchMarketplacesButton.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#808080"));
             SearchSellersButton.Foreground = new SolidColorBrush(Colors.Black);
-            SYLMap.RemoveAllMarkers();
-            SYLMap.RemoveRadiusOnTempMarker();
         }
 
         private void AddLocalSellerAddProduct1_Click(object sender, RoutedEventArgs e)
@@ -486,8 +442,7 @@ namespace SupportYourLocals.WPF
                             if(elementOfList.Text.Trim() != "")
                             {
                                 listString.Add(elementOfList.Text.Trim());
-                            }
-                        }
+                            }                        }
                     }
                     dictionaryListString.Add(elementTextBox.Key, listString);
                 }
@@ -496,9 +451,9 @@ namespace SupportYourLocals.WPF
         }
 
 
-        private void FindLocation_Click(object sender, RoutedEventArgs e)
+        private async void FindLocation_Click(object sender, RoutedEventArgs e)
         {
-            var center = GetUserLocation(TextBox1Seller.Text.Trim());
+            var center = await GetUserLocation(TextBox1Seller.Text.Trim());
 
             if (center == null)
             {
@@ -508,100 +463,42 @@ namespace SupportYourLocals.WPF
 
             var searchItems = GetSearchProducts();
             var radius = Slider1Seller.Value * 1000;
+            if (searchItems == null)
+                searchItems = new List<string>();
 
-            Thread thread = new Thread(AddMarkersWithinRange);
-            thread.Start(new MarkerQueryParameters(center, radius, searchItems));
+            _ = AddMarkersWithinRange(center, radius, string.Join(",", searchItems));
         }
 
 
-        private void AddMarkersWithinRange(object data)
+        private async Task AddMarkersWithinRange(Location center, double radius, string searchItems = "")
         {
-            if (!(data is MarkerQueryParameters))
+            // UI operations need to be within the Invoke call, so they would execute on the UI thread
+            Dispatcher.Invoke(() =>
             {
-                throw new Exception("Invalid parameters passed");
-            }
+                SYLMap.RemoveAllMarkers();
 
-            if (isMapLocked)
+                SYLMap.AddMarkerTemp(center);
+                SYLMap.Center = center;
+                SYLMap.DrawRadiusOnTempMarker(radius);
+            });
+
+            var markers = await MapUtilityProvider.GetSellersWithinRange(center.Latitude, center.Longitude, radius, searchItems);
+
+            Dispatcher.Invoke(() =>
             {
+                markers.ForEach(m => SYLMap.AddMarker(m.sellerData.Location, m.sellerData.ID));
+            });
+
+            if (searchItems != null)
+            {
+                DisplayInformationMessage("Local sellers in the radius were loaded by your search phrase");
                 return;
             }
 
-            lock (mapLock)
-            {
-                if (isMapLocked)
-                {
-                    return;
-                }
-
-                isMapLocked = true;
-
-                Location center = ((MarkerQueryParameters)data).Center;
-                double radius = ((MarkerQueryParameters)data).Radius;
-                List<string> searchItems = ((MarkerQueryParameters)data).SearchItems;
-
-                // UI operations need to be within the Invoke call, so they would execute on the UI thread
-                Dispatcher.Invoke(() =>
-                {
-                    SYLMap.RemoveAllMarkers();
-
-                    SYLMap.AddMarkerTemp(center);
-                    SYLMap.Center = center;
-                    SYLMap.DrawRadiusOnTempMarker(radius);
-                });
-
-                var markers = FindMarkersWithinRange(center, radius, searchItems);
-
-                Dispatcher.Invoke(() =>
-                {
-                    markers.ForEach(m => SYLMap.AddMarker(m.Location, m.ID));
-                });
-
-                if (searchItems != null)
-                {
-                    DisplayInformationMessage("Local sellers in the radius were loaded by your search phrase");
-                    return;
-                }
-
-                DisplayInformationMessage("All local sellers in radius were loaded");
-
-                isMapLocked = false;
-            }
+            DisplayInformationMessage("All local sellers in radius were loaded");
         }
 
-
-        private List<MarkerData> FindMarkersWithinRange(Location center, double radius, List<string> searchItems = null)
-        {
-            var markers = new List<MarkerData>();
-            var allData = sellerData.GetAllData();
-
-            foreach (var data in allData)
-            {
-                if (SYLMap.GetDistance(center, data.Location) < radius)
-                {
-                    // If no search phrase has been given, just show all markers within range
-                    if (searchItems == null)
-                    {
-                        markers.Add(new MarkerData(data.Location, data.ID));
-                        continue;
-                    }
-
-                    // Go over all product lists and see if there are any matching products
-                    foreach (var productList in data.Products.Values)
-                    {
-                        var intersection = productList.Intersect(searchItems);
-                        if (intersection.Count() > 0)
-                        {
-                            markers.Add(new MarkerData(data.Location, data.ID));
-                            break;
-                        }
-                    }
-                }
-            }
-
-            return markers;
-        }
-
-        private Location GetUserLocation(string searchPhrase)
+        private async Task<Location> GetUserLocation(string searchPhrase)
         {
             if(!CheckSearchSellerInput(searchPhrase, TextBox2Seller.Text.Trim(), TextBox3Seller.Text.Trim()))
             {
@@ -626,7 +523,8 @@ namespace SupportYourLocals.WPF
                 address = "{0}, {1}".Format(address, TextBox2Seller.Text);
             }
 
-            return SYLMap.AddressToLocation(address);
+            var locationTouple = await MapUtilityProvider.AddressToLocation(address);
+            return new Location(locationTouple.Item1, locationTouple.Item2);
         }
 
         private List<string> GetSearchProducts()
@@ -652,17 +550,17 @@ namespace SupportYourLocals.WPF
             return searchItems;
         }
 
-        void OnMarkerClicked(Marker marker)
+        async void OnMarkerClicked(Marker marker)
         {
-            LoadMarkerInformationWindow(marker.id);
+            await LoadMarkerInformationWindow(marker.id);
         }
 
-        private void LoadMarkerInformationWindow(string id)
+        private async Task LoadMarkerInformationWindow(string id)
         {
             GridMarkerInformation.Visibility = Visibility.Visible;
             var items = new List<MarkerInformation>();
 
-            var locationData = sellerData.GetData(id);
+            var locationData = await sellerData.GetData(id);
             InformationLocalSellerName.Content = locationData.Name;
             InformationLocalSellerDate.Content = locationData.Time;
             foreach (var products in locationData.Products)
@@ -679,25 +577,6 @@ namespace SupportYourLocals.WPF
             view.GroupDescriptions.Add(groupDescription);
         }
 
-        private void LoadMarketplaceInformationWindow(string id)
-        {
-            var items = new List<MarkerInformation>();
-
-            var locationData = sellerData.GetData(id);
-            foreach (var products in locationData.Products)
-            {
-                foreach (var product in products.Value)
-                {
-                    items.Add(new MarkerInformation { ProductType = products.Key.ToString(), ProductCount = products.Value.Count, Product = product });
-                }
-            }
-            ListViewMarketplaceInformation.ItemsSource = items;
-
-            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(ListViewMarketplaceInformation.ItemsSource);
-            PropertyGroupDescription groupDescription = new PropertyGroupDescription("ProductType");
-            view.GroupDescriptions.Add(groupDescription);
-        }
-
         private void CollapseMarkerInformation_Click(object sender, RoutedEventArgs e)
         {
             GridMarkerInformation.Visibility = Visibility.Collapsed;
@@ -705,12 +584,7 @@ namespace SupportYourLocals.WPF
 
         private void ButtonCloseMarkerInformation_Click(object sender, RoutedEventArgs e)
         {
-            ComboBoxMarketplacesInInformation.Items.Clear();
-            ComboBoxChooseMarketplace.Items.Clear();
-            LabelMarketplaceAddedTime.Content = "Location added (Time)";
-            ListViewMarketplaceInformation.ItemsSource = null;
-            GridMarketplaceInformation.Visibility = Visibility.Collapsed;
-            SYLMap.RemoveAllMarkers();
+            GridMarkerInformation.Visibility = Visibility.Collapsed;
         }
 
         private void ClearSearchSellerWindow()
@@ -824,56 +698,7 @@ namespace SupportYourLocals.WPF
                     MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-        private void FilterByOpenTimeCheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            FilterByOpenTimeStackPanel.Visibility = Visibility.Visible;
-        }
-        private void FilterByOpenTimeCheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            TextBoxMarketplaceSearchOpenTime.Clear();
-            FilterByOpenTimeStackPanel.Visibility = Visibility.Collapsed;
-        }
-        private void FilterByProductsCheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            FilterByProductsStackPanel.Visibility = Visibility.Visible;
-        }
-        private void FilterByProductsCheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            TextBoxMarketplaceSearchProducts.Clear();
-            FilterByProductsStackPanel.Visibility = Visibility.Collapsed;
-        }
-
-        private void ButtonFindMarketplaces_Click(object sender, RoutedEventArgs e)
-        {
-            ClearFindMarketplaceFields();
-            LoadMarketplacesInformationGrid();
-            GridMarketplaceInformation.Visibility = Visibility.Visible;
-
-        }
-
-        private void LoadMarketplacesInformationGrid()
-        {
-            foreach (var marketplace in marketplaceData.GetAllData())
-            {
-                if(SYLMap.LocationToAddressSplit(marketplace.Location).Item2 == TextBoxMarketplaceLocation.Text)
-                {
-                    ComboBoxMarketplacesInInformation.Items.Add(marketplace.Name);
-                }
-            }
-        }
-
-        private void ClearFindMarketplaceFields()
-        {
-            ComboBoxMarketplaceDistrict.Items.Clear();
-            ComboBoxMarketplaceLocation.Items.Clear();
-            ComboBoxMarketplaceDistrict.Text = "";
-            ComboBoxMarketplaceLocation.Text = "";
-            TextBoxMarketplaceSearchOpenTime.Clear();
-            TextBoxMarketplaceSearchProducts.Clear();
-            CheckBoxFilterByOpenTime.IsChecked = false;
-            CheckBoxFilterByProducts.IsChecked = false;
-        }
-        private void LoginButton_Clicked(object sender, RoutedEventArgs e)
+        private async void LoginButton_Clicked(object sender, RoutedEventArgs e)
         {
             LabelEmptyFieldsError.Visibility = Visibility.Collapsed;
             LabelUsernameError.Visibility = Visibility.Collapsed;
@@ -884,7 +709,9 @@ namespace SupportYourLocals.WPF
             string offlineUserHash = null;
             string username = UsernameTextBox.Text;
 
-            foreach (var user in userLoginData.GetAllData())
+            var userData = await userLoginData.GetAllData();
+
+            foreach (var user in userData)
             {
                 if (user.Username == username)
                 {
@@ -919,7 +746,7 @@ namespace SupportYourLocals.WPF
             GridUserDataToLogin.Visibility = Visibility.Collapsed;
         }
 
-        private void RegisterButton_Clicked(object sender, RoutedEventArgs e)
+        private async void RegisterButton_Clicked(object sender, RoutedEventArgs e)
         {
             var password = PasswordBoxR.Password;
             var username = UsernameTextBoxR.Text;
@@ -930,10 +757,10 @@ namespace SupportYourLocals.WPF
             LabelForConfirmPasswordError.Visibility = Visibility.Collapsed;
             LabelForEmptyFieldsError.Visibility = Visibility.Collapsed;
 
-            if (CheckRegisterData(password, username))
+            if (await CheckRegisterData(password, username))
             {
-                userLoginData.AddData(new UserData(username, password));
-                userLoginData.SaveData();
+                await userLoginData.AddData(new UserData(username, password));
+                await userLoginData.SaveData();
 
                 ShowUsernameLabel.Content = username;
 
@@ -951,11 +778,12 @@ namespace SupportYourLocals.WPF
             GridRegistration.Visibility = Visibility.Collapsed;
         }
 
-        public bool CheckRegisterData(string password, string username)
+        public async Task<bool> CheckRegisterData(string password, string username)
         {
             var usernameExists = false;
+            var userData = await userLoginData.GetAllData();
 
-            foreach (var user in userLoginData.GetAllData())
+            foreach (var user in userData)
             {
                 if (user.Username == username)
                 {
@@ -1077,87 +905,7 @@ namespace SupportYourLocals.WPF
 
         private void Slider1Seller_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            TextBoxSliderValue.Text = Slider1Seller.Value.ToString("F2");
             SYLMap?.DrawRadiusOnTempMarker(e.NewValue * 1000.0);
-        }
-
-        private void ButtonAddNewMarketPlace_Click(object sender, RoutedEventArgs e)
-        {
-            var timePairTimes = new List<TimePair>();
-            var timePair = new TimePair
-            {
-                StartTime = new Time(TextBoxStartTime.Text),
-                EndTime = new Time(TextBoxEndTime.Text)
-            };
-
-            marketplaceData.AddData(
-                new MarketplaceData(
-                    SYLMap.GetMarkerTempLocation(), TextBoxNewMarketplace.Text.Trim(), null, null, null
-                                    ));
-            marketplaceData.SaveData();
-            ClearUpdateMarketplaceWindow();
-            SYLMap.RemoveAllMarkers();
-            GridMarketplacesAdd.Visibility = Visibility.Collapsed;
-        }
-
-        private void ClearUpdateMarketplaceWindow()
-        {
-            TextBoxNewMarketplace.Text = "";
-            TextBoxStartTime.Text = "";
-            TextBoxEndTime.Text = "";
-        }
-
-        private void ComboBoxMarketplaceInformatione_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            DeleteAllMarkersExceptTemp();
-            ComboBoxChooseMarketplace.Items.Clear();
-            foreach (var seller in sellerData.GetAllData())
-            {
-                foreach (var marketplace in marketplaceData.GetAllData())
-                {
-                    if (ComboBoxMarketplacesInInformation.SelectedValue != null)
-                    {
-                        if (marketplace.Name == ComboBoxMarketplacesInInformation.SelectedValue.ToString())
-                        {
-                            SYLMap.AddMarkerTemp(marketplace.Location);
-                            if (SYLMap.GetDistance(seller.Location, marketplace.Location) < 100)
-                            {
-                                ComboBoxChooseMarketplace.Items.Add(seller.Name);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private void ComboBoxChooseMarketplace_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            foreach (var seller in sellerData.GetAllData())
-            {
-                if(ComboBoxChooseMarketplace.SelectedValue != null)
-                {
-                    if(ComboBoxChooseMarketplace.SelectedValue.ToString() == seller.Name)
-                    {
-                        LabelMarketplaceAddedTime.Content = seller.Time;
-                        LoadMarketplaceInformationWindow(seller.ID);
-                        DeleteAllMarkersExceptTemp();
-                        SYLMap.AddMarker(seller.Location, seller.ID);
-                    }
-                }
-            }
-        }
-
-        private void DeleteAllMarkersExceptTemp()
-        {
-            var tempMarkerLocation = SYLMap.GetMarkerTempLocation();
-            SYLMap.RemoveAllMarkers();
-            SYLMap.AddMarkerTemp(tempMarkerLocation);
-        }
-
-        private void ButtonCloseNewMarketPlace_Click(object sender, RoutedEventArgs e)
-        {
-            ClearUpdateMarketplaceWindow();
-            GridMarketplacesAdd.Visibility = Visibility.Collapsed;
         }
     }
 
@@ -1177,20 +925,6 @@ namespace SupportYourLocals.WPF
         {
             Location = location;
             ID = id;
-        }
-    }
-
-    public class MarkerQueryParameters
-    {
-        public Location Center { get; set; }
-        public double Radius { get; set; }
-        public List<string> SearchItems { get; set; }
-
-        public MarkerQueryParameters (Location center, double radius, List<string> searchItems = null)
-        {
-            Center = center;
-            Radius = radius;
-            SearchItems = searchItems;
         }
     }
 }

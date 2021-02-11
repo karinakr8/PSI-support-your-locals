@@ -4,24 +4,15 @@ using SupportYourLocals.ExtensionMethods;
 
 namespace SupportYourLocals.Data
 {
-    public class LocationData : IComparable<LocationData>
+    public class LocationData : GenericData
     {
-        public string ID { get; set; }
         public Location Location { get; set; }
-        public string Name { get; set; }
 
-        public LocationData(Location location, string name, string id = null)
+        public LocationData() { }
+
+        public LocationData(Location location, string name, string id = null) : base(name, id)
         {
-            ID = id ?? GenerateId;
             Location = location;
-            Name = name;
-        }
-
-        public static string GenerateId => Guid.NewGuid().ToString("N");
-
-        public int CompareTo(LocationData obj)
-        {
-            return Name.Compare(obj.Name);
         }
     }
 }
