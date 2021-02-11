@@ -6,13 +6,14 @@ using System.Xml.Linq;
 using System.IO;
 using MapControl;
 using System.Configuration;
+using System.Threading.Tasks;
 
 namespace SupportYourLocals.Data
 {
     public class XMLDataMarketplaces : IMarketStorage
     {
         private readonly string filePath = ConfigurationManager.AppSettings.Get("XMLDataMarketplacesFilePath");
-        private readonly Dictionary<string, MarketplaceData> dictionaryMarketplaceDataById;
+        private readonly Dictionary<string, MarketplaceData> dictionaryMarketplaceData;
 
         public XMLDataMarketplaces()
         {
@@ -45,6 +46,7 @@ namespace SupportYourLocals.Data
                 doc.Element("Marketplaces").Add(root);
             }
             doc.Save(filePath);
+
         }
 
         private void AddBoundaryToXml(MarketplaceData data, XElement root)
@@ -148,6 +150,48 @@ namespace SupportYourLocals.Data
                 week.Add(weekDayName, timePairList);
             }
             return week;
+        }
+
+        public Task SaveData()
+        {
+            XDocument doc = new XDocument(new XElement("Marketplaces"));
+            foreach (var data in dictionaryMarketplaceData.Values)
+            {
+                XElement root = new XElement("Marketplace");
+                root.Add(new XAttribute("ID", data.ID));
+                root.Add(new XAttribute("Location", data.Location));
+                root.Add(new XAttribute("Name", data.Name));
+                AddBoundaryToXml(data, root);
+                AddTimeTableToXml(data, root);
+                doc.Element("Marketplaces").Add(root);
+            }
+            doc.Save(filePath);
+
+            return Task.CompletedTask;
+        }
+
+        public Task<MarketplaceData> GetData(string id) => Task.FromResult(dictionaryMarketplaceData[id]);
+
+        public Task<List<MarketplaceData>> GetAllData() => Task.FromResult(dictionaryMarketplaceData.Values.ToList());
+
+        public Task<int> GetDataCount() => Task.FromResult(dictionaryMarketplaceData.Count);
+
+        public Task AddData(MarketplaceData data)
+        {
+            dictionaryMarketplaceData.Add(data.ID, data);
+            return Task.CompletedTask;
+        }
+
+        public Task UpdateData(MarketplaceData data)
+        {
+            dictionaryMarketplaceData[data.ID] = data;
+            return Task.CompletedTask;
+        }
+
+        public Task RemoveData(string id)
+        {
+            dictionaryMarketplaceData.Remove(id);
+            return Task.CompletedTask;
         }
     }
 }

@@ -4,23 +4,28 @@ using System.Text;
 
 namespace SupportYourLocals.Data
 {
-    public class UserData
+    public class UserData : GenericData
     {
         private const int saltSize = 10;
-        public string ID { get; set; }
-        public string Username { get; set; }
-        public string PasswordHash { get; set; }
+        public string Username => Name;
+        public string PasswordHash { get; private set; }
         public string Salt { get; set; }
-
-        public UserData(string username, string password, string salt = null, string id = null)
-        {            
-            Username = username;            
-            Salt = salt ?? CreateSalt(saltSize);
-            PasswordHash = GenerateHash(password, Salt);
-            ID = id ?? GenerateId;
+        public string Password
+        {
+            set
+            {
+                Salt ??= CreateSalt(saltSize);
+                PasswordHash = GenerateHash(value, Salt);
+            }
         }
 
-        private static string GenerateId => Guid.NewGuid().ToString("N");
+        public UserData() { }
+
+        public UserData(string name, string password, string salt = null, string id = null) : base(name, id)
+        {
+            Salt = salt ?? CreateSalt(saltSize);
+            Password = password;
+        }
 
         private static string CreateSalt(int size)
         {

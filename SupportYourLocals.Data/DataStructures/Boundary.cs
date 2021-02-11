@@ -14,6 +14,7 @@ namespace SupportYourLocals.Data
             return (C.Longitude - A.Longitude) * (B.Latitude - A.Latitude) > (B.Longitude - A.Longitude) * (C.Latitude - A.Latitude);
         }
 
+
         public static bool DoLinesIntersect(Location A, Location B, Location C, Location D)
         {
             return (IsCounterClockwise(A, C, D) != IsCounterClockwise(B, C, D)) &&
@@ -23,15 +24,27 @@ namespace SupportYourLocals.Data
         // Check if all lines of the boundary do not intersect eachother
         public bool IsValid()
         {
+            // Everything up to a triangle cannot intersect
+            if (Count < 4)
+            {
+                return true;
+            }
+
             for (int i = 0; i < Count; i++)
             {
                 Location point1 = this[i];
-                Location point2 = ((i == Count - 1) ? this[0] : this[i + 1]);
+                Location point2 = (i == Count - 1) ? this[0] : this[i + 1];
 
                 for (int j = 0; j < Count; j++)
                 {
                     Location point1i = this[j];
-                    Location point2i = (j == Count - 1) ? this[0] : this[j];
+                    Location point2i = (j == Count - 1) ? this[0] : this[j + 1];
+
+                    // If 2 lines have a common point, they cannot intersect
+                    if (point1.Equals(point1i) || point1.Equals(point2i) || point2.Equals(point1i) || point2.Equals(point2i))
+                    {
+                        continue;
+                    }
 
                     if (DoLinesIntersect(point1, point2, point1i, point2i))
                     {

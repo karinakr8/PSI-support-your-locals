@@ -26,6 +26,8 @@ namespace SupportYourLocals.Data
         public DateTime Time { get; set; }
         public Dictionary<ProductType, List<string> > Products { get; set; }
 
+        public SellerData() { }
+
         public SellerData(Location location, string name, int addedByID, DateTime time, Dictionary<ProductType, List<string>> products, string id = null) : base (location, name, id)
         {
             AddedByID = addedByID;

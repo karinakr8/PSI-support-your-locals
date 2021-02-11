@@ -90,6 +90,8 @@ namespace SupportYourLocals.Data
         public Boundary MarketBoundary { get; set; }
         public Week Timetable { get; set; }
 
+        public MarketplaceData() { }
+
         public MarketplaceData(Location location, string name, Week timetable, Boundary boundary = null, string id = null) : base(location, name, id)
         {
             Timetable = timetable;

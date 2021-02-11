@@ -21,11 +21,10 @@ namespace SupportYourLocals.Map
 
         public void AddPoint(Location location)
         {
-            polygonDrawer.AddLocationToPolygon(location);
             var boundary = GetBoundary();
-            if (boundary != null && !boundary.IsValid())
+            if (boundary != null && boundary.IsValid())
             {
-                UndoPoint();
+                polygonDrawer.AddLocationToPolygon(location);
             }
         }
 
