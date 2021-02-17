@@ -68,14 +68,7 @@ namespace SupportYourLocals.WPF
                 await cache.Clean();
             };
 
-            Slider1Seller.Value = 1;
-
-            ComboBoxMarketplaceDistrict.Items.Add("Item1");
-            ComboBoxMarketplaceDistrict.Items.Add("Item2");
-            ComboBoxMarketplaceDistrict.Items.Add("Item3");
-            ComboBoxMarketplaceLocation.Items.Add(new String[] { "Item1", "Item2", "Item3" });
-
-            AddValueToNewMarketPlaceGrid();
+            AddWorkdaysToMarketPlaceWorkdayCombobox();
         }
 
         private void LoadAddLocalSellerFieldsAndCollections()
@@ -124,7 +117,7 @@ namespace SupportYourLocals.WPF
             }
         }
 
-        private void AddValueToNewMarketPlaceGrid()
+        private void AddWorkdaysToMarketPlaceWorkdayCombobox()
         {
             var weekDays = Enum.GetValues(typeof(WeekDays));
 
@@ -202,18 +195,16 @@ namespace SupportYourLocals.WPF
                         SYLMap.DrawRadiusOnTempMarker(Slider1Seller.Value * 1000.0);
                     }
 
-                    var address = SYLMap.LocationToAddressSplit(SYLMap.Center);
-                    if(GridSellersSearch.Visibility == Visibility.Visible)
+                    var address = await MapUtilityProvider.LocationToAddress(SYLMap.Center.Latitude, SYLMap.Center.Longitude);
+                    if (GridSellersSearch.Visibility == Visibility.Visible)
                     {
                         TextBox2Seller.Text = address.Item2;
                         TextBox3Seller.Text = address.Item1;
                     }
                     else if(GridMarketplacesSearch.Visibility == Visibility.Visible && GridMarketplaceInformation.Visibility != Visibility.Visible)
                     {
-
                         TextBoxMarketplaceDistrict.Text = address.Item1;
                         TextBoxMarketplaceLocation.Text = address.Item2;
-                        //MarketplaceCityTextField.Text = address.Item2;
                     }
                 }
                 else
@@ -295,7 +286,6 @@ namespace SupportYourLocals.WPF
 
         private void SearchMarketplacesButton_Click(object sender, RoutedEventArgs e)
         {
-            //GridSellerAdd.Visibility = Visibility.Collapsed;
             ClearAddLocalSellerInputFieldsAndUserInterface();
             ClearAddLocalSellerCollections();
             GridMarkerInformation.Visibility = Visibility.Collapsed;
@@ -623,12 +613,12 @@ namespace SupportYourLocals.WPF
             view.GroupDescriptions.Add(groupDescription);
         }
 
-        private void LoadMarketplaceInformationWindow(string id)
+        private async void LoadMarketplaceInformationWindow(string id)
         {
             var items = new List<MarkerInformation>();
 
-            var locationData = sellerData.GetData(id);
-            foreach (var products in locationData.Result.Products)
+            var locationData = await sellerData.GetData(id);
+            foreach (var products in locationData.Products)
             {
                 foreach (var product in products.Value)
                 {
@@ -640,11 +630,6 @@ namespace SupportYourLocals.WPF
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(ListViewMarketplaceInformation.ItemsSource);
             PropertyGroupDescription groupDescription = new PropertyGroupDescription("ProductType");
             view.GroupDescriptions.Add(groupDescription);
-        }
-
-        private void CollapseMarkerInformation_Click(object sender, RoutedEventArgs e)
-        {
-            GridMarkerInformation.Visibility = Visibility.Collapsed;
         }
 
         private void ButtonCloseMarkerInformation_Click(object sender, RoutedEventArgs e)
@@ -772,15 +757,18 @@ namespace SupportYourLocals.WPF
         {
             FilterByOpenTimeStackPanel.Visibility = Visibility.Visible;
         }
+
         private void FilterByOpenTimeCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             TextBoxMarketplaceSearchOpenTime.Clear();
             FilterByOpenTimeStackPanel.Visibility = Visibility.Collapsed;
         }
+
         private void FilterByProductsCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             FilterByProductsStackPanel.Visibility = Visibility.Visible;
         }
+
         private void FilterByProductsCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             TextBoxMarketplaceSearchProducts.Clear();
@@ -792,7 +780,6 @@ namespace SupportYourLocals.WPF
             ClearFindMarketplaceFields();
             LoadMarketplacesInformationGrid();
             GridMarketplaceInformation.Visibility = Visibility.Visible;
-
         }
 
         private async void LoadMarketplacesInformationGrid()
@@ -1024,6 +1011,10 @@ namespace SupportYourLocals.WPF
 
         private void Slider1Seller_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (TextBoxSliderValue == null)
+            {
+                TextBoxSliderValue = new TextBox();
+            }
             TextBoxSliderValue.Text = Slider1Seller.Value.ToString("F2");
             SYLMap?.DrawRadiusOnTempMarker(e.NewValue * 1000.0);
         }
@@ -1058,19 +1049,21 @@ namespace SupportYourLocals.WPF
         {
             DeleteAllMarkersExceptTemp();
             ComboBoxChooseMarketplace.Items.Clear();
+            var marketplaces = await marketplaceData.GetAllData();
             foreach (var seller in await sellerData.GetAllData())
             {
-                foreach (var marketplace in await marketplaceData.GetAllData())
+                foreach (var marketplace in marketplaces)
                 {
-                    if (ComboBoxMarketplacesInInformation.SelectedValue != null)
+                    if (ComboBoxMarketplacesInInformation.SelectedValue == null)
                     {
-                        if (marketplace.Name == ComboBoxMarketplacesInInformation.SelectedValue.ToString())
+                        continue;
+                    }
+                    if (marketplace.Name == ComboBoxMarketplacesInInformation.SelectedValue.ToString())
+                    {
+                        SYLMap.AddMarkerTemp(marketplace.Location);
+                        if (SYLMap.GetDistance(seller.Location, marketplace.Location) < 100)
                         {
-                            SYLMap.AddMarkerTemp(marketplace.Location);
-                            if (SYLMap.GetDistance(seller.Location, marketplace.Location) < 100)
-                            {
-                                ComboBoxChooseMarketplace.Items.Add(seller.Name);
-                            }
+                            ComboBoxChooseMarketplace.Items.Add(seller.Name);
                         }
                     }
                 }

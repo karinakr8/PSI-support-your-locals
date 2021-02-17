@@ -10,6 +10,7 @@
 *.userosscache
 *.sln.docstates
 Testing.txt
+SupportYourLocals.WebAPI/*.xml
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
