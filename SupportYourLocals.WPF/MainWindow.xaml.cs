@@ -467,21 +467,24 @@ namespace SupportYourLocals.WPF
 
             foreach (var elementTextBox in dictionary)
             {
-                if (elementTextBox.Value != null)
+                if (elementTextBox.Value == null)
                 {
-                    var listString = new List<string>();
-                    foreach (var elementOfList in elementTextBox.Value)
-                    {
-                        if (elementOfList != null)
-                        {
-                            if(elementOfList.Text.Trim() != "")
-                            {
-                                listString.Add(elementOfList.Text.Trim());
-                            }
-                        }
-                    }
-                    dictionaryListString.Add(elementTextBox.Key, listString);
+                    continue;
                 }
+                var listString = new List<string>();
+                foreach (var elementOfList in elementTextBox.Value)
+                {
+                    if (elementOfList == null)
+                    {
+                        continue;
+                    }
+                    if (elementOfList.Text.Trim() == "")
+                    {
+                        continue;
+                    }
+                    listString.Add(elementOfList.Text.Trim());
+                }
+                dictionaryListString.Add(elementTextBox.Key, listString);
             }
             return dictionaryListString;
         }
@@ -613,7 +616,7 @@ namespace SupportYourLocals.WPF
             view.GroupDescriptions.Add(groupDescription);
         }
 
-        private async void LoadMarketplaceInformationWindow(string id)
+        private async void AddSellerInformationToMarketplaceInformationWindow(string id)
         {
             var items = new List<MarkerInformation>();
 
@@ -819,13 +822,14 @@ namespace SupportYourLocals.WPF
 
             foreach (var user in userData)
             {
-                if (user.Username == username)
+                if (user.Username != username)
                 {
-                    pswHash = user.PasswordHash;
-                    usernameExists = true;
-                    offlineUserHash = UserData.GenerateHash(PasswordBox.Password, user.Salt);
-                    break;
+                    continue;
                 }
+                pswHash = user.PasswordHash;
+                usernameExists = true;
+                offlineUserHash = UserData.GenerateHash(PasswordBox.Password, user.Salt);
+                break;
             }
 
             if (username.Length == 0 || PasswordBox.Password.Length == 0)
@@ -891,11 +895,12 @@ namespace SupportYourLocals.WPF
 
             foreach (var user in userData)
             {
-                if (user.Username == username)
+                if (user.Username != username)
                 {
-                    usernameExists = true;
-                    break;
+                    continue;
                 }
+                usernameExists = true;
+                break;
             }
 
             if (password.Length == 0 || username.Length == 0 || ConfirmPasswordBoxR.Password.Length == 0)
@@ -1058,13 +1063,14 @@ namespace SupportYourLocals.WPF
                     {
                         continue;
                     }
-                    if (marketplace.Name == ComboBoxMarketplacesInInformation.SelectedValue.ToString())
+                    if (marketplace.Name != ComboBoxMarketplacesInInformation.SelectedValue.ToString())
                     {
-                        SYLMap.AddMarkerTemp(marketplace.Location);
-                        if (SYLMap.GetDistance(seller.Location, marketplace.Location) < 100)
-                        {
-                            ComboBoxChooseMarketplace.Items.Add(seller.Name);
-                        }
+                        continue;
+                    }
+                    SYLMap.AddMarkerTemp(marketplace.Location);
+                    if (SYLMap.GetDistance(seller.Location, marketplace.Location) < 100)
+                    {
+                        ComboBoxChooseMarketplace.Items.Add(seller.Name);
                     }
                 }
             }
@@ -1074,16 +1080,18 @@ namespace SupportYourLocals.WPF
         {
             foreach (var seller in await sellerData.GetAllData())
             {
-                if(ComboBoxChooseMarketplace.SelectedValue != null)
+                if (ComboBoxChooseMarketplace.SelectedValue == null)
                 {
-                    if(ComboBoxChooseMarketplace.SelectedValue.ToString() == seller.Name)
-                    {
-                        LabelMarketplaceAddedTime.Content = seller.Time;
-                        LoadMarketplaceInformationWindow(seller.ID);
-                        DeleteAllMarkersExceptTemp();
-                        SYLMap.AddMarker(seller.Location, seller.ID);
-                    }
+                    continue;
                 }
+                if (ComboBoxChooseMarketplace.SelectedValue.ToString() != seller.Name)
+                {
+                    continue;
+                }
+                LabelMarketplaceAddedTime.Content = seller.Time;
+                AddSellerInformationToMarketplaceInformationWindow(seller.ID);
+                DeleteAllMarkersExceptTemp();
+                SYLMap.AddMarker(seller.Location, seller.ID);
             }
         }
 
