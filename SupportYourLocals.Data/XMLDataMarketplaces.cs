@@ -20,8 +20,14 @@ namespace SupportYourLocals.Data
             dictionaryMarketplaceData = LoadData();
         }
 
+
+
         private void AddBoundaryToXml(MarketplaceData data, XElement root)
         {
+            if (data.MarketBoundary == null)
+            {
+                return;
+            }
             XElement boundaryBranch = new XElement("Boundary");
             foreach (var location in data.MarketBoundary)
             {
@@ -34,6 +40,10 @@ namespace SupportYourLocals.Data
 
         private void AddTimeTableToXml(MarketplaceData data, XElement root)
         {
+            if (data.Timetable == null)
+            {
+                return;
+            }
             XElement boundaryBranch = new XElement("TimeTable");
             foreach (var weekDay in data.Timetable)
             {
@@ -42,8 +52,8 @@ namespace SupportYourLocals.Data
                 foreach (var day in weekDay.Value)
                 {
                     XElement dayBranch = new XElement("WorkingHours");
-                    dayBranch.Add(new XAttribute("StartTime", $"{day.StartTime.Hours}:{day.StartTime.Hours}"));
-                    dayBranch.Add(new XAttribute("EndTime", $"{day.EndTime.Hours}:{day.EndTime.Hours}"));
+                    dayBranch.Add(new XAttribute("StartTime", $"{day.StartTime.Hours}:{day.StartTime.Minutes}"));
+                    dayBranch.Add(new XAttribute("EndTime", $"{day.EndTime.Hours}:{day.EndTime.Minutes}"));
                     weekDayBranch.Add(dayBranch);
                 }
                 boundaryBranch.Add(weekDayBranch);
@@ -60,7 +70,7 @@ namespace SupportYourLocals.Data
 
             XDocument doc = XDocument.Load(filePath);
             var marketplaceDictionary = new Dictionary<string, MarketplaceData>();
-            
+
             var groupElements = from elements in doc.Descendants().Elements("Marketplace") select elements;
             foreach (var element in groupElements)
             {

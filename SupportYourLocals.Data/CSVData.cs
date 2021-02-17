@@ -47,7 +47,7 @@ namespace SupportYourLocals.Data
                     userDataList.Add(id, new UserData(username, passwordHash, salt, id));
                 }
             }
-            return userDataList; 
+            return userDataList;
         }
 
         public Task SaveData()

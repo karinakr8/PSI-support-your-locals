@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SupportYourLocals.WPF"
         xmlns:map="clr-namespace:MapControl;assembly=MapControl.WPF"
+        xmlns:System="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:vm="clr-namespace:SupportYourLocals.Map;assembly=SupportYourLocals.Map"
@@ -14,6 +15,8 @@
         <DataTemplate x:Key="PolygonItemTemplate">
             <map:MapPolygon Locations="{Binding Locations}" Fill ="#30FF0000" Stroke="Red" StrokeThickness="3" MouseLeftButtonDown="MapMouseLeftButtonDown" MouseRightButtonDown="MapMouseRightButtonDown"/>
         </DataTemplate>
+        <System:Double x:Key="initialSliderValue">1</System:Double>
+        <System:String x:Key="initialSliderTextBoxValue">1,00</System:String>
     </Window.Resources>
 
     <Window.DataContext>
@@ -21,8 +24,6 @@
     </Window.DataContext>
 
     <TabControl>
-        <!--<materialDesign:PackIcon Name="AddProductButton" Kind="PlusThick" Width="25" Height="25" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#808080"/>
-        <materialDesign:PackIcon Name="RemoveProductButton" Kind="Minus" Width="25" Height="25" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#808080"/>-->
         <TabItem Header="Search">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -69,10 +70,14 @@
 
                         <TextBox x:Name="TextBox3Seller" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="0 185 0 0" Height="50" TextWrapping="Wrap" VerticalAlignment="Top" Width="160" />
 
-                        <Label x:Name="Label4Seller" Content="Radius from adress location (km)" HorizontalContentAlignment="Center" Margin="0 240 0 0" VerticalAlignment="Top"  Style="{StaticResource FontSetterLabelYuGothic}" Grid.ColumnSpan="2"/>
+                        <Label x:Name="Label4Seller" Content="Radius from adress location (km)" HorizontalContentAlignment="Center" Margin="0 240 0 0" VerticalAlignment="Top"  FontFamily="Yu Gothic UI Semibold" FontSize="16" Grid.ColumnSpan="2"/>
+                        <StackPanel Orientation="Horizontal" Margin="0 280 0 0" HorizontalAlignment="Center">
+                            <Slider x:Name="Slider1Seller"  VerticalAlignment="Top" HorizontalContentAlignment="Center" Height="22" Width="160" Value="{StaticResource initialSliderValue}" TickFrequency="10" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="2" SmallChange="1" LargeChange="1" ValueChanged="Slider1Seller_ValueChanged"/>
+                            <TextBox x:Name="TextBoxSliderValue" Margin="5 0 0 0" HorizontalContentAlignment="Center" Height="23" Text="{StaticResource initialSliderTextBoxValue}" VerticalAlignment="Top" Width="34" IsReadOnly="True"/>
 
-                        <Slider x:Name="Slider1Seller"  VerticalAlignment="Top" HorizontalContentAlignment="Center" Margin="0 280 0 0" Height="22" Width="160" TickFrequency="1" Value="1" Maximum="5" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="2" SmallChange="1" LargeChange="1" ValueChanged="Slider1Seller_ValueChanged"/>
-                        <Button x:Name="Button1Seller" Content="Find" HorizontalContentAlignment="Center" Margin="0 330 0 0" VerticalAlignment="Top" Width="160" Style="{StaticResource FontSetterButtonYuGothic}" Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}" Click="FindLocation_Click">
+                        </StackPanel>
+                        <Button x:Name="Button1Seller" Content="Find" HorizontalContentAlignment="Center" Margin="0 330 0 0" VerticalAlignment="Top" Width="160" FontFamily="Yu Gothic UI Semibold" FontSize="16" Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}" Click="FindLocation_Click">
+
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="10"/>
@@ -209,17 +214,40 @@
                     <!-- Search marketplaces grid-->
                     <Grid x:Name="GridMarketplacesSearch" HorizontalAlignment="Left" Margin="0,40,0,0" Width="300" Background="#e8ffff" Visibility="Collapsed">
 
-                        <Label Content="City" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 10 0 0" Style="{StaticResource FontSetterLabelYuGothic}" Height="32" Width="160"/>
-                        <TextBox HorizontalAlignment="Center" Height="23"  Margin="0 45 0 0"  materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="160" />
+                        <Label Content="Double click on a map or fill in" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,0,0,0" FontFamily="Yu Gothic UI Semibold" Foreground="#808080" FontSize="12" Width="300" />
+                        <Label Content="Address" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 20 0 0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Height="32" Width="160"/>
 
-                        <Label Content="Marketplace" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 90 0 0" Style="{StaticResource FontSetterLabelYuGothic}" Height="32"/>
-                        <ComboBox HorizontalAlignment="Center" Height="23"  VerticalAlignment="Top" Width="160" Margin="0 125 0 0"/>
-                        <Label HorizontalAlignment="Center" HorizontalContentAlignment="Center" Content="Or" Margin="0 160 0 0" VerticalAlignment="Top" Foreground="#C0C0C0" Width="160" Height="26"/>
+                        <ComboBox  x:Name="ComboBoxMarketplaceDistrict" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="0 50 0 0" VerticalAlignment="Top" Width="160" Height="22" IsEditable="True" SelectionChanged="ComboBoxProductType_SelectionChanged" Visibility="Collapsed"/>
+                        <TextBox x:Name="TextBoxMarketplaceDistrict"  HorizontalContentAlignment="Center" Margin="0 50 0 0 " Height="23" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Strawberries" materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="160" />
 
-                        <Label Content="Type of goods" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 195 0 0" Style="{StaticResource FontSetterLabelYuGothic}" Height="32"/>
-                        <ComboBox HorizontalAlignment="Center" Margin="0 230 0 0" VerticalAlignment="Top" Width="160" Height="22"/>
+                        <Label Content="City/town/village" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 70 0 0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Height="32" Width="160"/>
+                        <ComboBox  x:Name="ComboBoxMarketplaceLocation" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="0,100,0,0" VerticalAlignment="Top" Width="160" Height="22" IsEditable="True" SelectionChanged="ComboBoxProductType_SelectionChanged" Visibility="Collapsed"/>
+                        <TextBox x:Name="TextBoxMarketplaceLocation"  HorizontalContentAlignment="Center" Margin="0 100 0 0 " Height="23" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Strawberries" materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="160" />
 
-                        <Button Content="Find" HorizontalAlignment="Center" Margin="0 295 0 0" VerticalAlignment="Top" Width="160" Style="{StaticResource FontSetterButtonYuGothic}" Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}" Height="25">
+                        <!--<TextBox Name="MarketplaceCityTextField" HorizontalContentAlignment="Center" Margin="0 70 0 0"  Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="160" Background="{x:Null}" IsReadOnly="True"/>-->
+
+                        <StackPanel Height="30" Margin="0 130 0 0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Visibility="Collapsed">
+                            <Label Content="Filter by products" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 0 0 0" FontSize="14" Height="32" Width="160"/>
+                            <CheckBox Name="CheckBoxFilterByProducts" Margin="0 0 0 0 " HorizontalContentAlignment="Center" VerticalAlignment="Center" Checked="FilterByProductsCheckBox_Checked" Unchecked="FilterByProductsCheckBox_Unchecked"/>
+
+                        </StackPanel>
+                        <StackPanel Height="30" Margin="0 160 0 0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Visibility="Collapsed">
+                            <Label Content="Filter by open time" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 0 0 0" FontSize="14" Height="32" Width="160"/>
+                            <CheckBox Name="CheckBoxFilterByOpenTime" Margin="0 0 0 0 " HorizontalContentAlignment="Center" VerticalAlignment="Center" Checked="FilterByOpenTimeCheckBox_Checked" Unchecked="FilterByOpenTimeCheckBox_Unchecked"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical" Margin="0 190 0 0">
+                            <StackPanel Name="FilterByProductsStackPanel" VerticalAlignment="Top" HorizontalAlignment="Center" Orientation="Vertical" Visibility="Collapsed">
+                                <Label Content="Products" HorizontalContentAlignment="Center" VerticalAlignment="Top" FontFamily="Yu Gothic UI Semibold" FontSize="16" Height="32" Width="160"/>
+                                <TextBox Name="TextBoxMarketplaceSearchProducts"  HorizontalContentAlignment="Center" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="160" />
+                            </StackPanel>
+                            <StackPanel Name="FilterByOpenTimeStackPanel" VerticalAlignment="Top" HorizontalAlignment="Center" Orientation="Vertical" Visibility="Collapsed">
+                                <Label Content="Open time" HorizontalContentAlignment="Center" VerticalAlignment="Top" FontFamily="Yu Gothic UI Semibold" FontSize="16" Height="32" Width="160"/>
+                                <TextBox Name="TextBoxMarketplaceSearchOpenTime"  HorizontalContentAlignment="Center" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="160" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <Button Name="ButtonFindMarketplaces" Content="Find" HorizontalAlignment="Center" Margin="0 310 0 0" VerticalAlignment="Top" Width="160" FontFamily="Yu Gothic UI Semibold" FontSize="16" Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}" Height="25" Click="ButtonFindMarketplaces_Click">
+
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="10"/>
@@ -228,7 +256,102 @@
                         </Button>
 
                         <!--Button for adding, updating marketplaces-->
-                        <Button Content="Update marketplaces" HorizontalAlignment="Center" Margin="0 340 0 0" VerticalAlignment="Top" Width="160" Background="Transparent" BorderBrush="{x:Null}" Foreground="#808080" Height="19" Click="UpdateMarketplaces_Click"/>
+                        <Button Content="Update marketplaces" HorizontalAlignment="Center" Margin="0 350 0 0" VerticalAlignment="Top" Width="160" Background="Transparent" BorderBrush="{x:Null}" Foreground="#808080" Height="19" Click="UpdateMarketplaces_Click"/>
+                    </Grid>
+                    <Grid Name="GridMarketplaceInformation"  VerticalAlignment="Top" Margin="5,40,5,0" Background="#e8ffff" Visibility="Collapsed">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="60"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="250"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0">
+                            <Label Content="Marketplace" HorizontalContentAlignment="Center" VerticalAlignment="Top" FontFamily="Yu Gothic UI Semibold" FontSize="16" Width="160" />
+                            <ComboBox Name="ComboBoxMarketplacesInInformation" Margin="0 30 0 0" HorizontalAlignment="Center"  HorizontalContentAlignment="Center" VerticalAlignment="Top" Width="160" Height="22" SelectionChanged="ComboBoxMarketplaceInformatione_SelectionChanged"/>
+
+                        </Grid>
+                        <Grid Grid.Row="1">
+                            <ComboBox  x:Name="ComboBoxChooseMarketplace" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalAlignment="Top" Width="140" Height="22" Margin="0 5 0 0 " SelectionChanged="ComboBoxChooseMarketplace_SelectionChanged"/>
+
+
+                            <Label Name="LabelMarketplaceAddedTime" MaxWidth="150" Content="Location added (Time)" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontFamily="Yu Gothic UI Semibold" FontSize="13" Foreground="#808080"/>
+                        </Grid>
+                        <Grid Grid.Row="2" >
+                            <ListView Name="ListViewMarketplaceInformation" HorizontalContentAlignment="Center">
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="Products" Width="255" DisplayMemberBinding="{Binding Product}" />
+                                    </GridView>
+                                </ListView.View>
+                                <ListView.GroupStyle>
+                                    <GroupStyle>
+                                        <GroupStyle.ContainerStyle>
+                                            <Style TargetType="{x:Type GroupItem}">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate>
+                                                            <Expander IsExpanded="False">
+                                                                <Expander.Header>
+                                                                    <StackPanel Orientation="Horizontal">
+                                                                        <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="#808080" FontSize="14" VerticalAlignment="Center" />
+                                                                        <TextBlock Text="{Binding ItemCount}" FontSize="14" Foreground="#41aea9" FontWeight="Bold" FontStyle="Italic" Margin="10,0,0,0" VerticalAlignment="Center"  />
+                                                                        <TextBlock Text=" product(s)" FontSize="14" Foreground="#808080" FontStyle="Italic" VerticalAlignment="Center" />
+                                                                    </StackPanel>
+                                                                </Expander.Header>
+                                                                <ItemsPresenter />
+                                                            </Expander>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </GroupStyle.ContainerStyle>
+                                    </GroupStyle>
+                                </ListView.GroupStyle>
+                            </ListView>
+                        </Grid>
+
+
+                        <Grid Grid.Row="3" Margin="0 10 0 5">
+                            <Button Name="ButtonCloseMarketplaceInformation" Content="Close" Height="25" Width="110" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Yu Gothic UI Semibold" FontSize="14"  Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}" Click="ButtonCloseMarkerInformation_Click">
+                                <Button.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="10"/>
+                                    </Style>
+                                </Button.Resources>
+                            </Button>
+                        </Grid>
+                    </Grid>
+                    <Grid x:Name="GridMarketplacesAdd" HorizontalAlignment="Left" Margin="0,40,0,0" Width="300" Background="#e8ffff" Visibility="Collapsed">
+                        <Label Content="Pin the location of a marketplace on the map" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,0,0,0" FontFamily="Yu Gothic UI Semibold" Foreground="#808080" FontSize="12" Width="300" />
+
+                        <Label Content="Name" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Width="160" />
+                        <TextBox x:Name="TextBoxNewMarketplace"  HorizontalContentAlignment="Center" Margin="0 50 0 0 " Height="23" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Strawberries" materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="160" />
+
+                        <Label Content="Work day" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0 80 0 0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Width="160" Visibility="Hidden"/>
+                        <ComboBox  x:Name="ComboBoxWorkDay" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="0,110,0,0" VerticalAlignment="Top" Width="160" Height="22" SelectionChanged="ComboBoxProductType_SelectionChanged" Visibility="Hidden"/>
+
+                        <Label Content="XX:YY format" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,145,0,0" FontFamily="Yu Gothic UI Semibold" Foreground="#808080" FontSize="12" Width="300" Visibility="Hidden"/>
+
+                        <Label Content="Start Time" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,170,0,0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Width="160" Visibility="Hidden"/>
+                        <TextBox x:Name="TextBoxStartTime"  HorizontalContentAlignment="Center" Margin="0 200 0 0 " Height="23" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Strawberries" materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="160" Visibility="Hidden"/>
+
+                        <Label Content="End Time " HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="0,230,0,0" FontFamily="Yu Gothic UI Semibold" FontSize="16" Width="160" Visibility="Hidden"/>
+                        <TextBox x:Name="TextBoxEndTime"  HorizontalContentAlignment="Center" Margin="0 260 0 0 " Height="23" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Strawberries" materialDesign:HintAssist.IsFloating="True" VerticalAlignment="Top" Width="160" Visibility="Hidden"/>
+
+                        <Button Name="ButtonAddNewMarketPlace" Content="Add" Height="25" Width="160" Margin="0,315,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Yu Gothic UI Semibold" FontSize="14"  Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}" Click="ButtonAddNewMarketPlace_Click">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+                        <Button Name="ButtonCloseNewMarketPlace" Content="Close" Height="25" Width="160" Margin="0,350,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Yu Gothic UI Semibold" FontSize="14"  Foreground="White" Background="#a6f6f1" BorderBrush="{x:Null}" Click="ButtonCloseNewMarketPlace_Click">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
                     </Grid>
                 </Grid>
 
@@ -271,12 +394,9 @@
                     <Grid >
                         <Grid HorizontalAlignment="Left" Height="100" Margin="589,162,0,0" VerticalAlignment="Top" Width="100"/>
 
-
                     </Grid>
 
-
                 </Grid>
-
 
                 <!-- Place for a map-->
 

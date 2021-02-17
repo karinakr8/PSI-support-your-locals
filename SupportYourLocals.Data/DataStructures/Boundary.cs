@@ -22,7 +22,7 @@ namespace SupportYourLocals.Data
         }
 
         // Check if all lines of the boundary do not intersect eachother
-        public bool IsValid ()
+        public bool IsValid()
         {
             // Everything up to a triangle cannot intersect
             if (Count < 4)
